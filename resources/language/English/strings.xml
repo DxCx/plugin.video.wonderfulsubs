@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+	<!-- Category strings -->
+	<string id="30000">All</string>
+	<string id="30001">Latest</string>
+	<string id="30002">Popular</string>
+	<string id="30003">Search</string>
+	<string id="30004">Settings</string>
+
+	<string id="30100">Fetching Sources</string>
+	<string id="30101">Processing %s</string>
+	<string id="30102">Please choose source: </string>
+	<string id="30103">Couldn't find eligible sources</string>
+</strings>

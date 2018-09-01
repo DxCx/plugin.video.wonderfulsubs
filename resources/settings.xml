@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+	<category label="General">
+		<setting id="reverseorder" type="labelenum" label="Episode order" values="Ascending|Descending" default="Descending"/>
+		<setting id="searchhistory" type="labelenum" label="Enable search history" values="Yes|No" default="Yes"/>
+	</category>
+	<category label="Servers">
+		<!-- TODO: Remove/Update those -->
+		<setting id="serverstreamango" type="bool" label="Use Streamango" default="true"/>
+		<setting id="serverrapid" type="bool" label="Use RapidVideo" default="true"/>
+		<setting id="servermycloud" type="bool" label="Use MyCloud" default="true"/>
+		<setting id="serveropenload" type="bool" label="Use OpenLoad" default="true"/>
+
+		<setting id="prefres" label="Prefere Resolution" type="labelenum" values="360p|480p|720p|1080p" default="1080p"/>
+		<setting id="autoplay" label="Automatically play first result" type="bool" default="false"/>
+	</category>
+</settings>
