@@ -5,20 +5,39 @@ from resources.lib.ui.router import on_param, route, router_process
 from resources.lib.WonderfulSubsBrowser import WonderfulSubsBrowser
 import urlparse
 
-MENU_ITEMS = [
-    (control.lang(30005) + "[I]%s[/I]" %(control.getSetting("last_watched.name")), control.getSetting("last_watched.url"), control.getSetting("last_watched.image")),
-    (control.lang(30000), "all", ''),
-    (control.lang(30001), "latest", ''),
-    (control.lang(30002), "popular", ''),
-    (control.lang(30003), "search_history", ''),
-    (control.lang(30004), "settings", ''),
-]
-
 HISTORY_KEY = "addon.history"
+LASTWATCHED_KEY = "addon.last_watched"
+LASTWATCHED_NAME_KEY = "%s.name" % LASTWATCHED_KEY
+LASTWATCHED_URL_KEY = "%s.url" % LASTWATCHED_KEY
+LASTWATCHED_IMAGE_KEY = "%s.image" % LASTWATCHED_KEY
 HISTORY_DELIM = ":_:"
+
+MENU_ITEMS = [
+    (control.lang(30001), "all", ''),
+    (control.lang(30002), "latest", ''),
+    (control.lang(30003), "popular", ''),
+    (control.lang(30004), "search_history", ''),
+    (control.lang(30005), "settings", ''),
+]
 
 _BROWSER = WonderfulSubsBrowser()
 control.setContent('tvshows');
+
+def _add_last_watched():
+    if not control.getSetting(LASTWATCHED_URL_KEY):
+        return
+
+    MENU_ITEMS.insert(0, (
+        "%s[I]%s[/I]" % (control.lang(30000),
+                         control.getSetting(LASTWATCHED_NAME_KEY)),
+        control.getSetting(LASTWATCHED_URL_KEY),
+        control.getSetting(LASTWATCHED_IMAGE_KEY)
+    ))
+
+def __set_last_watched(url, is_dubbed, name, image):
+    control.setSetting(LASTWATCHED_URL_KEY, 'animes/%s/%s' %(url, "dub" if is_dubbed else "sub"))
+    control.setSetting(LASTWATCHED_NAME_KEY, '%s %s' %(name, "(Dub)" if is_dubbed else "(Sub)"))
+    control.setSetting(LASTWATCHED_IMAGE_KEY, image)
 
 def sortResultsByRes(fetched_urls):
     prefereResSetting = utils.parse_resolution_of_source(control.getSetting('prefres'))
@@ -85,7 +104,7 @@ def CLEAR_HISTORY(payload, params):
 
 @route('search')
 def SEARCH(payload, params):
-    query = control.keyboard(control.lang(30003))
+    query = control.keyboard(control.lang(30004))
     if not query:
         return False
 
@@ -111,6 +130,7 @@ def PLAY(payload, params):
     anime_url, episode = payload.rsplit("/", 1)
     anime_url, flavor = anime_url.rsplit("/", 1)
     is_dubbed = True if "dub" == flavor else False
+    name, image = _BROWSER.get_anime_metadata(anime_url, is_dubbed)
     sources = _BROWSER.get_episode_sources(anime_url, is_dubbed, episode)
     autoplay = True if 'true' in control.getSetting('autoplay') else False
 
@@ -121,6 +141,7 @@ def PLAY(payload, params):
         'notfound': control.lang(30103),
     })
 
+    __set_last_watched(anime_url, is_dubbed, name, image)
     return control.play_source(s.get_video_link())
 
 @route('')
@@ -129,4 +150,5 @@ def LIST_MENU(payload, params):
         [utils.allocate_item(name, url, True, image) for name, url, image in MENU_ITEMS]
     )
 
+_add_last_watched()
 router_process(control.get_plugin_url(), control.get_plugin_params())

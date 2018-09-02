@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <strings>
 	<!-- Category strings -->
-	<string id="30000">הצג הכל</string>
-	<string id="30001">החדשים ביותר</string>
-	<string id="30002">הפופולארים ביותר</string>
-	<string id="30003">חיפוש</string>
-	<string id="30004">הגדרות</string>
+	<string id="30000">נצפה אחרון: </string>
+	<string id="30001">הצג הכל</string>
+	<string id="30002">החדשים ביותר</string>
+	<string id="30003">הפופולארים ביותר</string>
+	<string id="30004">חיפוש</string>
+	<string id="30005">הגדרות</string>
 
 	<string id="30100">מחפש מקורות</string>
 	<string id="30101">מעבד %s</string>

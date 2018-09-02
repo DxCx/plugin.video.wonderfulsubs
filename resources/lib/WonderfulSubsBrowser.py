@@ -2,7 +2,6 @@ import urllib
 import itertools
 import json
 from ui import utils
-from ui import control
 from ui.BrowserBase import BrowserBase
 
 class WonderfulSubsBrowser(BrowserBase):
@@ -153,8 +152,6 @@ class WonderfulSubsBrowser(BrowserBase):
             image = image.pop()['source']
         else:
             image = None
-        
-        last_watched = self.last_watched(anime_url, is_dubbed, obj['title'], image)
 
         episodes = {}
         for sindex, s in enumerate(obj["seasons"].values()):
@@ -177,12 +174,12 @@ class WonderfulSubsBrowser(BrowserBase):
                     old_ep_info["plot"] = ep_info["plot"]
                 old_ep_info["sources"].update(ep_info["sources"])
 
-        return episodes
-
-    def last_watched(self, url, is_dubbed, name, image):
-        control.setSetting("last_watched.url", 'animes/%s/%s' %(url, "dub" if is_dubbed else "sub"))
-        control.setSetting("last_watched.name", '%s %s' %(name, "(Dub)" if is_dubbed else "(Sub)"))
-        control.setSetting("last_watched.image", image)
+        return {
+            "name": obj["title"],
+            "image": image,
+            "url": "animes/%s/%s" % (anime_url, "dub" if is_dubbed else "sub"),
+            "episodes": episodes,
+        }
 
     def search_site(self, search_string, page=1):
         data = {
@@ -221,9 +218,14 @@ class WonderfulSubsBrowser(BrowserBase):
         url = self._to_url("api/latest")
         return self._process_anime_view(url, data, "latest/%d", page)
 
+
+    def get_anime_metadata(self, anime_url, is_dubbed):
+        info = self._get_anime_info(anime_url, is_dubbed)
+        return (info["name"], info["image"])
+
     def get_anime_episodes(self, anime_url, is_dubbed, returnDirectory=False):
-        episodes = self._get_anime_info(anime_url, is_dubbed)
-        episodes = sorted(episodes.values(), reverse=True, key=lambda x:
+        info = self._get_anime_info(anime_url, is_dubbed)
+        episodes = sorted(info["episodes"].values(), reverse=True, key=lambda x:
                           float(x["id"]))
         return map(lambda x: utils.allocate_item(x['name'],
                                                  x['url'],
@@ -232,8 +234,8 @@ class WonderfulSubsBrowser(BrowserBase):
                                                  x['plot']), episodes)
 
     def get_episode_sources(self, anime_url, is_dubbed, episode):
-        episodes = self._get_anime_info(anime_url, is_dubbed)
-        if not episodes: return []
+        info = self._get_anime_info(anime_url, is_dubbed)
+        if not info["episodes"]: return []
 
-        ep = episodes[episode]
+        ep = info["episodes"][episode]
         return ep["sources"]
