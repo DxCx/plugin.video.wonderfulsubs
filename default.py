@@ -6,11 +6,12 @@ from resources.lib.WonderfulSubsBrowser import WonderfulSubsBrowser
 import urlparse
 
 MENU_ITEMS = [
-    (control.lang(30000), "all"),
-    (control.lang(30001), "latest"),
-    (control.lang(30002), "popular"),
-    (control.lang(30003), "search_history"),
-    (control.lang(30004), "settings"),
+    (control.lang(30005) + "[I]%s[/I]" %(control.getSetting("last_watched.name")), control.getSetting("last_watched.url"), control.getSetting("last_watched.image")),
+    (control.lang(30000), "all", ''),
+    (control.lang(30001), "latest", ''),
+    (control.lang(30002), "popular", ''),
+    (control.lang(30003), "search_history", ''),
+    (control.lang(30004), "settings", ''),
 ]
 
 HISTORY_KEY = "addon.history"
@@ -125,7 +126,7 @@ def PLAY(payload, params):
 @route('')
 def LIST_MENU(payload, params):
     return control.draw_items(
-        [utils.allocate_item(name, url, True, '') for name, url in MENU_ITEMS]
+        [utils.allocate_item(name, url, True, image) for name, url, image in MENU_ITEMS]
     )
 
 router_process(control.get_plugin_url(), control.get_plugin_params())

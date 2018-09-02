@@ -1,8 +1,8 @@
 import urllib
 import itertools
 import json
-from bs4 import BeautifulSoup
 from ui import utils
+from ui import control
 from ui.BrowserBase import BrowserBase
 
 class WonderfulSubsBrowser(BrowserBase):
@@ -153,6 +153,8 @@ class WonderfulSubsBrowser(BrowserBase):
             image = image.pop()['source']
         else:
             image = None
+        
+        last_watched = self.last_watched(anime_url, is_dubbed, obj['title'], image)
 
         episodes = {}
         for sindex, s in enumerate(obj["seasons"].values()):
@@ -176,6 +178,11 @@ class WonderfulSubsBrowser(BrowserBase):
                 old_ep_info["sources"].update(ep_info["sources"])
 
         return episodes
+
+    def last_watched(self, url, is_dubbed, name, image):
+        control.setSetting("last_watched.url", 'animes/%s/%s' %(url, "dub" if is_dubbed else "sub"))
+        control.setSetting("last_watched.name", '%s %s' %(name, "(Dub)" if is_dubbed else "(Sub)"))
+        control.setSetting("last_watched.image", image)
 
     def search_site(self, search_string, page=1):
         data = {
