@@ -55,12 +55,20 @@ def SETTINGS(payload, params):
 
 @route('animes/*')
 def ANIMES_PAGE(payload, params):
-    animeurl, flavor = payload.rsplit("/", 1)
-    is_dubbed = True if "dub" == flavor else False
+    anime_url, flavor_or_season = payload.rsplit("/", 1)
+    if anime_url.find("/") == -1:
+        # Seasons
+        is_dubbed = True if "dub" == flavor_or_season else False
+        seasons = _BROWSER.get_anime_seasons(anime_url, is_dubbed)
+        return control.draw_items(seasons)
+
+    season = flavor_or_season
+    anime_url, flavor = anime_url.rsplit("/", 1)
+    is_dubbed = True if "dub" == flavor_or_season else False
 
     order = control.getSetting('reverseorder')
-    episodes = _BROWSER.get_anime_episodes(animeurl, is_dubbed)
-    if ( "Ascending" in order ):
+    episodes = _BROWSER.get_anime_episodes(anime_url, is_dubbed, season)
+    if "Ascending" in order:
         episodes = reversed(episodes)
     return control.draw_items(episodes)
 
@@ -128,10 +136,11 @@ def SEARCH_PAGES(payload, params):
 @route('play/*')
 def PLAY(payload, params):
     anime_url, episode = payload.rsplit("/", 1)
+    anime_url, season = anime_url.rsplit("/", 1)
     anime_url, flavor = anime_url.rsplit("/", 1)
     is_dubbed = True if "dub" == flavor else False
     name, image = _BROWSER.get_anime_metadata(anime_url, is_dubbed)
-    sources = _BROWSER.get_episode_sources(anime_url, is_dubbed, episode)
+    sources = _BROWSER.get_episode_sources(anime_url, is_dubbed, season, episode)
     autoplay = True if 'true' in control.getSetting('autoplay') else False
 
     s = SourcesList(sources.items(), autoplay, sortResultsByRes, {
