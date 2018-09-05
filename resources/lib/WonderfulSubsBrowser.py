@@ -212,6 +212,16 @@ class WonderfulSubsBrowser(BrowserBase):
             "seasons": dict([(str(i['id']), i) for i in seasons.values()]),
         }
 
+    def _get_anime_episodes(self, info, season):
+        season = info["seasons"][season]
+        episodes = sorted(season["episodes"].values(), reverse=True, key=lambda x:
+                          float(x["id"]))
+        return map(lambda x: utils.allocate_item(x['name'],
+                                                 x['url'],
+                                                 False,
+                                                 x['image'],
+                                                 x['plot']), episodes)
+
     def search_site(self, search_string, page=1):
         data = {
             "q": search_string,
@@ -256,6 +266,9 @@ class WonderfulSubsBrowser(BrowserBase):
 
     def get_anime_seasons(self, anime_url, is_dubbed):
         info = self._get_anime_info(anime_url, is_dubbed)
+        if len(info["seasons"]) == 1:
+            return self._get_anime_episodes(info, info["seasons"].keys().pop())
+
         seasons = sorted(info["seasons"].values(), key=lambda x: x["id"])
         return map(lambda x: utils.allocate_item(x['name'],
                                                  x['url'],
@@ -263,16 +276,9 @@ class WonderfulSubsBrowser(BrowserBase):
                                                  info["image"],
                                                  info["plot"]), seasons)
 
-    def get_anime_episodes(self, anime_url, is_dubbed, season, returnDirectory=False):
+    def get_anime_episodes(self, anime_url, is_dubbed, season):
         info = self._get_anime_info(anime_url, is_dubbed)
-        season = info["seasons"][season]
-        episodes = sorted(season["episodes"].values(), reverse=True, key=lambda x:
-                          float(x["id"]))
-        return map(lambda x: utils.allocate_item(x['name'],
-                                                 x['url'],
-                                                 returnDirectory,
-                                                 x['image'],
-                                                 x['plot']), episodes)
+        return self._get_anime_episodes(info, season)
 
     def get_episode_sources(self, anime_url, is_dubbed, season, episode):
         info = self._get_anime_info(anime_url, is_dubbed)
