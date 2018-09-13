@@ -64,7 +64,7 @@ def ANIMES_PAGE(payload, params):
 
     season = flavor_or_season
     anime_url, flavor = anime_url.rsplit("/", 1)
-    is_dubbed = True if "dub" == flavor_or_season else False
+    is_dubbed = True if "dub" == flavor else False
 
     order = control.getSetting('reverseorder')
     episodes = _BROWSER.get_anime_episodes(anime_url, is_dubbed, season)
