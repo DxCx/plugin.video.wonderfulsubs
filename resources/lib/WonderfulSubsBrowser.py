@@ -1,4 +1,5 @@
 import urllib
+import math
 import itertools
 import json
 from ui import utils
@@ -49,15 +50,11 @@ class WonderfulSubsBrowser(BrowserBase):
         url = res[0]
         return utils.allocate_item(name, "animes/" + url, True, image)
 
-    def _handle_paging(self, results, base_url, page):
-        pages_html = self._PAGES_RE.findall(results)
-        # No Pages? empty list ;)
-        if not len(pages_html):
+    def _handle_paging(self, total_results, base_url, page):
+        total_pages = int(math.ceil(total_results /
+                                    float(self._RESULTS_PER_SEARCH_PAGE)))
+        if page == total_pages:
             return []
-
-        total_pages = int(self._PAGES_TOTAL_RE.findall(pages_html[0])[0])
-        if page >= total_pages:
-            return [] # Last page
 
         next_page = page + 1
         name = "Next Page (%d/%d)" % (next_page, total_pages)
@@ -78,11 +75,6 @@ class WonderfulSubsBrowser(BrowserBase):
         return [utils.allocate_item(name, base_url % next_page, True, None)]
 
     def _json_request(self, url, data):
-        # TODO: remove/alter this
-        if not url.endswith("search") and not url.endswith("anime"):
-            data = {}
-
-
         response = json.loads(self._get_request(url, data))
         if response["status"] != 200:
             raise Exception("Request %s returned with error code %d" % (url,
@@ -92,13 +84,14 @@ class WonderfulSubsBrowser(BrowserBase):
 
 
     def _process_anime_view(self, url, data, base_plugin_url, page):
-        results = self._json_request(url, data)["series"]
+        json_resp = self._json_request(url, data)
+        results = json_resp["series"]
+        total_results = json_resp["total_results"]
 
         all_results = map(self._parse_anime_view, results)
         all_results = list(itertools.chain(*all_results))
 
-        # TODO: Paging
-        # all_results += self._handle_paging(results, base_plugin_url, page)
+        all_results += self._handle_paging(total_results, base_plugin_url, page)
         return all_results
 
     def _format_episode(self, sname, anime_url, is_dubbed, ses_idx, einfo):
@@ -225,6 +218,7 @@ class WonderfulSubsBrowser(BrowserBase):
     def search_site(self, search_string, page=1):
         data = {
             "q": search_string,
+            "count": self._RESULTS_PER_SEARCH_PAGE,
             "index": (page-1) * self._RESULTS_PER_SEARCH_PAGE,
         }
 
@@ -240,25 +234,27 @@ class WonderfulSubsBrowser(BrowserBase):
 
     def get_all(self,  page=1):
         data = {
-            "page": page,
+            "count": self._RESULTS_PER_SEARCH_PAGE,
+            "index": (page-1) * self._RESULTS_PER_SEARCH_PAGE,
         }
         url = self._to_url("api/all")
         return self._process_anime_view(url, data, "all/%d", page)
 
     def get_popular(self,  page=1):
         data = {
-            "page": page,
+            "count": self._RESULTS_PER_SEARCH_PAGE,
+            "index": (page-1) * self._RESULTS_PER_SEARCH_PAGE,
         }
         url = self._to_url("api/popular")
         return self._process_anime_view(url, data, "popular/%d", page)
 
     def get_latest(self, page=1):
         data = {
-            "page": page,
+            "count": self._RESULTS_PER_SEARCH_PAGE,
+            "index": (page-1) * self._RESULTS_PER_SEARCH_PAGE,
         }
         url = self._to_url("api/latest")
         return self._process_anime_view(url, data, "latest/%d", page)
-
 
     def get_anime_metadata(self, anime_url, is_dubbed):
         info = self._get_anime_info(anime_url, is_dubbed)
