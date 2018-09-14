@@ -232,6 +232,15 @@ class WonderfulSubsBrowser(BrowserBase):
     	result.insert(len(result),utils.allocate_item("Clear..", "clear_history", True))
     	return result
 
+    def get_by_letter(self, letter, page = 1):
+        data = {
+            "letter": letter.lower(),
+            "count": self._RESULTS_PER_SEARCH_PAGE,
+            "index": (page-1) * self._RESULTS_PER_SEARCH_PAGE,
+        }
+        url = self._to_url("api/all")
+        return self._process_anime_view(url, data, "letter/%s/%%d" % letter, page)
+
     def get_all(self,  page=1):
         data = {
             "count": self._RESULTS_PER_SEARCH_PAGE,

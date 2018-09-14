@@ -5,6 +5,9 @@ from resources.lib.ui.router import on_param, route, router_process
 from resources.lib.WonderfulSubsBrowser import WonderfulSubsBrowser
 import urlparse
 
+AB_LIST = ["none"] + [chr(i) for i in range(ord("a"), ord("z")+1)]
+AB_LIST_NAMING = ["No Letter"] + [chr(i) for i in range(ord("A"), ord("Z")+1)]
+
 HISTORY_KEY = "addon.history"
 LASTWATCHED_KEY = "addon.last_watched"
 LASTWATCHED_NAME_KEY = "%s.name" % LASTWATCHED_KEY
@@ -14,10 +17,11 @@ HISTORY_DELIM = ":_:"
 
 MENU_ITEMS = [
     (control.lang(30001), "all", ''),
-    (control.lang(30002), "latest", ''),
-    (control.lang(30003), "popular", ''),
-    (control.lang(30004), "search_history", ''),
-    (control.lang(30005), "settings", ''),
+    (control.lang(30002), "letter", ''),
+    (control.lang(30003), "latest", ''),
+    (control.lang(30004), "popular", ''),
+    (control.lang(30005), "search_history", ''),
+    (control.lang(30006), "settings", ''),
 ]
 
 _BROWSER = WonderfulSubsBrowser()
@@ -71,6 +75,18 @@ def ANIMES_PAGE(payload, params):
     if "Ascending" in order:
         episodes = reversed(episodes)
     return control.draw_items(episodes)
+
+@route('letter')
+def LIST_ALL_AB(payload, params):
+    return control.draw_items([utils.allocate_item(AB_LIST_NAMING[i],
+                                                   "letter/%s/1" % x, True)
+                               for i, x in enumerate(AB_LIST)])
+
+@route('letter/*')
+def SHOW_AB_LISTING(payload, params):
+    letter, page = payload.rsplit("/", 1)
+    assert letter in AB_LIST, "Bad Param"
+    return control.draw_items(_BROWSER.get_by_letter(letter, int(page)))
 
 @route('all')
 def LATEST(payload, params):
