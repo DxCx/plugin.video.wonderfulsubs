@@ -18,6 +18,11 @@ Kodi Plugin that lets you watch almost all animes HD and for free.
 * [Android TV Box](https://github.com/DxCx/plugin.video.wonderfulsubs/wiki/Install-on-Android-TV-Box)
 * [Fire TV Stick Amazon](https://github.com/DxCx/plugin.video.wonderfulsubs/wiki/Install-on-Amazon-Fire-TV-Stick)
 
+## DASH Playback Support:
+  - InputStream Adaptive should be installed on your kodi:
+    - if it does, great, make sure you enable it ([Help](http://www.best-kodi-guides.eu/kodi-add-on-reviews/enable-inputstream-adaptive-kodi-krypton/))
+    - if it doesn't please google how to install it on your device.
+
 ## Contributors
 Contributors list can be found [here](https://github.com/DxCx/plugin.video.wonderfulsubs/wiki/Contributors)
 
