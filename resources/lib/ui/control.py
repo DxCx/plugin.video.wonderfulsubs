@@ -144,10 +144,14 @@ def draw_items(video_data, draw_cm=None):
 
 @hook_mimetype('application/dash+xml')
 def _DASH_HOOK(item):
-    print "play %s as DASH" % item
+    import inputstreamhelper
+    is_helper = inputstreamhelper.Helper('mpd')
+    if is_helper.check_inputstream():
+        item.setProperty('inputstreamaddon', is_helper.inputstream_addon)
+        item.setProperty('inputstream.adaptive.manifest_type',
+                             'mpd')
+        item.setContentLookup(False)
+    else:
+        raise Exception("InputStream Adaptive is not supported.")
 
-    item.setMimeType('application/dash+xml')
-    item.setProperty('inputstreamaddon', 'inputstream.adaptive')
-    item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
-    item.setContentLookup(False)
     return item
