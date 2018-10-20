@@ -18,6 +18,25 @@ __settings__ = xbmcaddon.Addon(ADDON_NAME)
 __language__ = __settings__.getLocalizedString
 CACHE = StorageServer.StorageServer("%s.animeinfo" % ADDON_NAME, 24)
 
+class hook_mimetype(object):
+    __MIME_HOOKS = {}
+
+    @classmethod
+    def trigger(cls, mimetype, item):
+
+        if mimetype in cls.__MIME_HOOKS.keys():
+            return cls.__MIME_HOOKS[mimetype](item)
+
+        return item
+
+    def __init__(self, mimetype):
+        self._type = mimetype
+
+    def __call__(self, func):
+        assert self._type not in self.__MIME_HOOKS.keys()
+        self.__MIME_HOOKS[self._type] = func
+        return func
+
 def setContent(contentType):
     xbmcplugin.setContent(HANDLE, contentType)
 
@@ -109,6 +128,8 @@ def play_source(link):
     if 'Content-Type' in linkInfo['headers']:
         item.setProperty('mimetype', linkInfo['headers']['Content-Type'])
 
+    # Run any mimetype hook
+    item = hook_mimetype.trigger(linkInfo['headers']['Content-Type'], item)
     xbmcplugin.setResolvedUrl(HANDLE, True, item)
 
 def draw_items(video_data, draw_cm=None):

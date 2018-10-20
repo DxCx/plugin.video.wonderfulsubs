@@ -10,6 +10,8 @@ class on_param(object):
 
     def __call__(self, func):
         self._func = func
+
+        global _REGISTERED_PARAM_HOOKS
         _REGISTERED_PARAM_HOOKS.append(self)
         return func
 
