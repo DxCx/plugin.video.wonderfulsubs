@@ -120,3 +120,13 @@ def draw_items(video_data, draw_cm=None):
                                  vid['plot'], draw_cm)
     xbmcplugin.endOfDirectory(HANDLE, succeeded=True, updateListing=False, cacheToDisc=True)
     return True
+
+@hook_mimetype('application/dash+xml')
+def _DASH_HOOK(item):
+    print "play %s as DASH" % item
+
+    item.setMimeType('application/dash+xml')
+    item.setProperty('inputstreamaddon', 'inputstream.adaptive')
+    item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
+    item.setContentLookup(False)
+    return item
