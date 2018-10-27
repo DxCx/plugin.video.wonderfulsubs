@@ -388,7 +388,7 @@ class AuthTrack():
         if data['success'] is not True:
             return control.ok_dialog('Login', 'Incorrect username or password')
         control.setSetting(token_key, '%s/%s' %(data['data']['_id'], data['token']))
-        control.setSetting(image_key, 'https://www.wonderfulsubs.com'+ data['data']['profile_pic'])
+        control.setSetting(image_key, data['data']['profile_pic'])
         control.setSetting(name_key, data['data']['username'])
         control.setSetting(flavor_key, flavor)
         control.refresh()
