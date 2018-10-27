@@ -76,6 +76,9 @@ def keyboard(text):
         return keyboard.getText()
     return None
 
+def ok_dialog(title, text):
+    return xbmcgui.Dialog().ok(title, text)
+
 def xbmc_add_player_item(name, url, iconimage='', description='', draw_cm=None):
     ok=True
     u=addon_url(url)
