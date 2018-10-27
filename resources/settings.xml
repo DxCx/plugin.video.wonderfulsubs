@@ -14,4 +14,24 @@
 		<setting id="prefres" label="Prefere Resolution" type="labelenum" values="360p|480p|720p|1080p" default="1080p"/>
 		<setting id="autoplay" label="Automatically play first result" type="bool" default="false"/>
 	</category>
+	<category label="WonderfulSubs">
+        	<setting id="WonderfulSubs.username" type="text" label="Username:" default=""/>
+        	<setting id="WonderfulSubs.password" type="text" option="hidden" label="Password:" default=""/>
+		<setting id="WonderfulSubs.login" type="action" label="Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/login/wonderfulsubs)"/>
+	</category>
+	<category label="MyAnimeList">
+        	<setting id="MyAnimeList.username" type="text" label="Username:" default=""/>
+        	<setting id="MyAnimeList.password" type="text" option="hidden" label="Password:" default=""/>
+		<setting id="MyAnimeList.login" type="action" label="Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/login/mal)"/>
+	</category>
+	<category label="Kitsu">
+        	<setting id="Kitsu.email" type="text" label="Email:" default=""/>
+        	<setting id="Kitsu.password" type="text" option="hidden" label="Password:" default=""/>
+		<setting id="Kitsu.login" type="action" label="Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/login/kitsu)"/>
+	</category>
+	<category label="AniList">
+        	<setting id="AniList.username" type="text" label="Email:" default=""/>
+        	<setting id="AniList.password" type="text" option="hidden" label="Password:" default=""/>
+		<setting id="AniList.login" type="action" label="Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/login/anilist)"/>
+	</category>
 </settings>
