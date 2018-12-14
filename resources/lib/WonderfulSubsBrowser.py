@@ -594,7 +594,7 @@ class WatchlistTrack(BrowserBase):
         base = {
             "name": '%s - %d/%d' %(res["anime_title"], res["num_watched_episodes"], res["anime_num_episodes"]),
             "url": "watchlist_query/%s/%s" %(res["anime_title"], res["anime_id"]),
-            "image": 'https://myanimelist.cdn-dena.com/'+ res["anime_image_path"][42:],
+            "image": res["anime_image_path"],
             "plot": '',
         }
 
