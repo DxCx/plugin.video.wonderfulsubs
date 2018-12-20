@@ -118,5 +118,5 @@ def __extractor_factory(regex, double_ref=False, match=0, debug=False):
             return None
     return f
 
-__register_extractor(["https://www.wonderfulsubs.com/api/video"],
+__register_extractor(["https://www.wonderfulsubs.com/api/media/stream"],
                      __extract_wonderfulsubs)
