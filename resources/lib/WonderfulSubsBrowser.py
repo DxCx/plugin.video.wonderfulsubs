@@ -110,17 +110,32 @@ class WonderfulSubsBrowser(BrowserBase):
         link = "%s?%s" % (self._to_url("api/media/stream"), urllib.urlencode(video_data))
 
         base = {}
-        base.update({
-            "name": einfo["title"],
-            "id": str(einfo["episode_number"]),
-            "url": "play/%s/%s/%d/%s" % (anime_url,
-                                      "dub" if is_dubbed else "sub",
-                                      ses_idx,
-                                      str(einfo["episode_number"])),
-            "sources": {sname: link},
-            "image": image,
-            "plot": desc,
-        })
+        #try except temporary until RedNinjaX updates cr server with ova_number
+        try:
+            base.update({
+                "name": einfo["title"],
+                "id": str(einfo["episode_number"] or einfo["ova_number"]),
+                "url": "play/%s/%s/%d/%s" % (anime_url,
+                                          "dub" if is_dubbed else "sub",
+                                          ses_idx,
+                                          str(einfo["episode_number"] or einfo["ova_number"])),
+                "sources": {sname: link},
+                "image": image,
+                "plot": desc,
+            })
+
+        except:
+            base.update({
+                "name": einfo["title"],
+                "id": str(einfo["episode_number"]),
+                "url": "play/%s/%s/%d/%s" % (anime_url,
+                                          "dub" if is_dubbed else "sub",
+                                          ses_idx,
+                                          str(einfo["episode_number"])),
+                "sources": {sname: link},
+                "image": image,
+                "plot": desc,
+            })
         return base
 
     def _get_anime_info_obj(self, anime_url):
@@ -177,9 +192,6 @@ class WonderfulSubsBrowser(BrowserBase):
                 eps = ses_obj["episodes"]
 
                 for einfo in season_col["episodes"]:
-                    if None == einfo["episode_number"]:
-                        print "[+] Skip %s" % einfo
-                        continue
 
                     ep_info = self._format_episode("Server %d" % sindex,
                                                    anime_url, is_dubbed,
