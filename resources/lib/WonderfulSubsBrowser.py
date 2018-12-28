@@ -110,21 +110,21 @@ class WonderfulSubsBrowser(BrowserBase):
         link = "%s?%s" % (self._to_url("api/media/stream"), urllib.urlencode(video_data))
 
         base = {}
-        #try except temporary until RedNinjaX updates cr server with ova_number
-        try:
+
+        if einfo.has_key("ova_number"):
             base.update({
                 "name": einfo["title"],
-                "id": str(einfo["episode_number"] or einfo["ova_number"]),
+                "id": str(einfo["ova_number"]),
                 "url": "play/%s/%s/%d/%s" % (anime_url,
                                           "dub" if is_dubbed else "sub",
                                           ses_idx,
-                                          str(einfo["episode_number"] or einfo["ova_number"])),
+                                          str(einfo["ova_number"])),
                 "sources": {sname: link},
                 "image": image,
                 "plot": desc,
             })
 
-        except:
+        else:
             base.update({
                 "name": einfo["title"],
                 "id": str(einfo["episode_number"]),
