@@ -100,31 +100,46 @@ class WonderfulSubsBrowser(BrowserBase):
         if einfo.has_key("thumbnail") and len(einfo["thumbnail"]):
             image = einfo["thumbnail"].pop().get("source", None)
 
-        rlink = einfo["retreive_link"]
+        rlink = einfo["retrieve_url"]
         if type(rlink) is list:
             rlink = rlink.pop()
 
         video_data = {
             "code": rlink,
         }
-        link = "%s?%s" % (self._to_url("api/video"), urllib.urlencode(video_data))
+        link = "%s?%s" % (self._to_url("api/media/stream"), urllib.urlencode(video_data))
 
         base = {}
-        base.update({
-            "name": einfo["title"],
-            "id": str(einfo["episode_number"]),
-            "url": "play/%s/%s/%d/%s" % (anime_url,
-                                      "dub" if is_dubbed else "sub",
-                                      ses_idx,
-                                      str(einfo["episode_number"])),
-            "sources": {sname: link},
-            "image": image,
-            "plot": desc,
-        })
+
+        if einfo.has_key("ova_number"):
+            base.update({
+                "name": einfo["title"],
+                "id": str(einfo["ova_number"]),
+                "url": "play/%s/%s/%d/%s" % (anime_url,
+                                          "dub" if is_dubbed else "sub",
+                                          ses_idx,
+                                          str(einfo["ova_number"])),
+                "sources": {sname: link},
+                "image": image,
+                "plot": desc,
+            })
+
+        else:
+            base.update({
+                "name": einfo["title"],
+                "id": str(einfo["episode_number"]),
+                "url": "play/%s/%s/%d/%s" % (anime_url,
+                                          "dub" if is_dubbed else "sub",
+                                          ses_idx,
+                                          str(einfo["episode_number"])),
+                "sources": {sname: link},
+                "image": image,
+                "plot": desc,
+            })
         return base
 
     def _get_anime_info_obj(self, anime_url):
-        results = self._json_request(self._to_url("/api/anime"), {
+        results = self._json_request(self._to_url("/api/media/series"), {
             "series": anime_url,
         })
 
@@ -136,7 +151,6 @@ class WonderfulSubsBrowser(BrowserBase):
             seasons += server["dubs"]
         else:
             seasons += server["subs"]
-            seasons += server["main"]
         return seasons
 
     def _get_anime_info(self, anime_url, is_dubbed):
@@ -178,9 +192,6 @@ class WonderfulSubsBrowser(BrowserBase):
                 eps = ses_obj["episodes"]
 
                 for einfo in season_col["episodes"]:
-                    if None == einfo["episode_number"]:
-                        print "[+] Skip %s" % einfo
-                        continue
 
                     ep_info = self._format_episode("Server %d" % sindex,
                                                    anime_url, is_dubbed,
@@ -222,7 +233,7 @@ class WonderfulSubsBrowser(BrowserBase):
             "index": (page-1) * self._RESULTS_PER_SEARCH_PAGE,
         }
 
-        url = self._to_url("api/search")
+        url = self._to_url("api/media/search")
         return self._process_anime_view(url, data, "search/%s/%%d" % search_string, page)
 
     # TODO: Not sure i want this here..
@@ -238,7 +249,7 @@ class WonderfulSubsBrowser(BrowserBase):
             "count": self._RESULTS_PER_SEARCH_PAGE,
             "index": (page-1) * self._RESULTS_PER_SEARCH_PAGE,
         }
-        url = self._to_url("api/all")
+        url = self._to_url("api/media/all")
         return self._process_anime_view(url, data, "letter/%s/%%d" % letter, page)
 
     def get_all(self,  page=1):
@@ -246,7 +257,7 @@ class WonderfulSubsBrowser(BrowserBase):
             "count": self._RESULTS_PER_SEARCH_PAGE,
             "index": (page-1) * self._RESULTS_PER_SEARCH_PAGE,
         }
-        url = self._to_url("api/all")
+        url = self._to_url("api/media/all")
         return self._process_anime_view(url, data, "all/%d", page)
 
     def get_popular(self,  page=1):
@@ -254,7 +265,7 @@ class WonderfulSubsBrowser(BrowserBase):
             "count": self._RESULTS_PER_SEARCH_PAGE,
             "index": (page-1) * self._RESULTS_PER_SEARCH_PAGE,
         }
-        url = self._to_url("api/popular")
+        url = self._to_url("api/media/popular")
         return self._process_anime_view(url, data, "popular/%d", page)
 
     def get_latest(self, page=1):
@@ -262,7 +273,7 @@ class WonderfulSubsBrowser(BrowserBase):
             "count": self._RESULTS_PER_SEARCH_PAGE,
             "index": (page-1) * self._RESULTS_PER_SEARCH_PAGE,
         }
-        url = self._to_url("api/latest")
+        url = self._to_url("api/media/latest")
         return self._process_anime_view(url, data, "latest/%d", page)
 
     def get_anime_metadata(self, anime_url, is_dubbed):
