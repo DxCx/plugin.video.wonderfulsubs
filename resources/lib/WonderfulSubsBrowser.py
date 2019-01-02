@@ -126,7 +126,7 @@ class WonderfulSubsBrowser(BrowserBase):
 
         else:
             base.update({
-                "name": einfo["title"] if ((einfo["title"].split())[-1]).isdigit() else "%s (Ep. %s)" %(einfo["title"], einfo["episode_number"]), 
+                "name": einfo["title"] if ((einfo["title"].split())[-1]).isdigit() else "Ep. %s (%s)" %(einfo["episode_number"], einfo["title"]), 
                 "id": str(einfo["episode_number"]),
                 "url": "play/%s/%s/%d/%s" % (anime_url,
                                           "dub" if is_dubbed else "sub",
