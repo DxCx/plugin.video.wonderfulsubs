@@ -100,14 +100,7 @@ class WonderfulSubsBrowser(BrowserBase):
         if einfo.has_key("thumbnail") and len(einfo["thumbnail"]):
             image = einfo["thumbnail"].pop().get("source", None)
 
-        rlink = einfo["retrieve_url"]
-        if type(rlink) is list:
-            rlink = rlink.pop()
-
-        video_data = {
-            "code": rlink,
-        }
-        link = "%s?%s" % (self._to_url("api/media/stream"), urllib.urlencode(video_data))
+        sources = self._format_sources(sname, is_dubbed, einfo)
 
         base = {}
 
@@ -119,7 +112,7 @@ class WonderfulSubsBrowser(BrowserBase):
                                           "dub" if is_dubbed else "sub",
                                           ses_idx,
                                           str(einfo["ova_number"])),
-                "sources": {sname: link},
+                "sources": sources,
                 "image": image,
                 "plot": desc,
             })
@@ -132,11 +125,40 @@ class WonderfulSubsBrowser(BrowserBase):
                                           "dub" if is_dubbed else "sub",
                                           ses_idx,
                                           str(einfo["episode_number"])),
-                "sources": {sname: link},
+                "sources": sources,
                 "image": image,
                 "plot": desc,
             })
         return base
+
+    def _format_sources(self, sname, is_dubbed, einfo): 
+        sources = {}
+
+        value = einfo.get("sources", None)
+        if value is None:
+            rlink = einfo["retrieve_url"]
+            sources.update(self._format_link(sname, rlink))
+            return sources
+
+        source_obj = einfo["sources"]
+        filter_sources = filter(lambda x: x["language"] == "dubs" if is_dubbed else x["language"] == "subs" , source_obj)
+
+        for sindex, i in enumerate(filter_sources):
+            sname = "Server %d" %(sindex)
+            rlink = i["retrieve_url"]
+            sources.update(self._format_link(sname, rlink))
+
+        return sources
+
+    def _format_link(self, sname, rlink):
+        if type(rlink) is list:
+            rlink = rlink.pop()
+
+        video_data = {
+            "code": rlink,
+            }
+        link = "%s?%s" % (self._to_url("api/media/stream"), urllib.urlencode(video_data))
+        return {sname: link}
 
     def _get_anime_info_obj(self, anime_url):
         results = self._json_request(self._to_url("/api/media/series"), {
@@ -147,10 +169,7 @@ class WonderfulSubsBrowser(BrowserBase):
 
     def _strip_seasons(self, server, is_dubbed):
         seasons = []
-        if is_dubbed:
-            seasons += server["dubs"]
-        else:
-            seasons += server["subs"]
+        seasons += server["media"]
         return seasons
 
     def _get_anime_info(self, anime_url, is_dubbed):
@@ -192,6 +211,9 @@ class WonderfulSubsBrowser(BrowserBase):
                 eps = ses_obj["episodes"]
 
                 for einfo in season_col["episodes"]:
+                    ep_flv_dubbed = einfo.get("is_dubbed", None)
+                    if not ep_flv_dubbed and is_dubbed:
+                        continue
 
                     ep_info = self._format_episode("Server %d" % sindex,
                                                    anime_url, is_dubbed,
