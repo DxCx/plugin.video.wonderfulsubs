@@ -86,7 +86,7 @@ class WonderfulSubsBrowser(BrowserBase):
     def _process_anime_view(self, url, data, base_plugin_url, page):
         json_resp = self._json_request(url, data)
         results = json_resp["series"]
-        total_results = json_resp["total_results"]
+        total_results = json_resp["total_results"] if json_resp.has_key("total_results") else page
 
         all_results = map(self._parse_anime_view, results)
         all_results = list(itertools.chain(*all_results))
@@ -297,6 +297,14 @@ class WonderfulSubsBrowser(BrowserBase):
         }
         url = self._to_url("api/media/latest")
         return self._process_anime_view(url, data, "latest/%d", page)
+
+    def get_random(self, page=1):
+        data = {
+            "count": self._RESULTS_PER_SEARCH_PAGE,
+            "index": (page-1) * self._RESULTS_PER_SEARCH_PAGE,
+        }
+        url = self._to_url("api/media/random")
+        return self._process_anime_view(url, data, "random/%d", page)
 
     def get_anime_metadata(self, anime_url, is_dubbed):
         info = self._get_anime_info(anime_url, is_dubbed)
