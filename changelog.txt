@@ -1,2 +1,4 @@
+[B]0.0.2[/B]
+- Beta Version!
 [B]0.0.1[/B]
 - Initial Release
