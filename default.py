@@ -2,7 +2,8 @@ from resources.lib.ui import control
 from resources.lib.ui import utils
 from resources.lib.ui.SourcesList import SourcesList
 from resources.lib.ui.router import on_param, route, router_process
-from resources.lib.WonderfulSubsBrowser import WonderfulSubsBrowser, AuthTrack, WatchlistTrack
+from resources.lib.WonderfulSubsBrowser import WonderfulSubsBrowser
+from resources.lib.WatchListFlavorBrowser import AuthToken, WatchList
 import urlparse
 
 AB_LIST = ["none"] + [chr(i) for i in range(ord("a"), ord("z")+1)]
@@ -30,7 +31,7 @@ MENU_ITEMS = [
 ]
 
 WATCHLIST_FLAVORS = {
-    ("MyAnimeList", "mal", 'https://myanimelist.cdn-dena.com/images/clubs/11/337063.jpg'),
+    ("MyAnimeList", "mal", 'https://myanimelist.cdn-dena.com/images/mal-logo-xsmall@2x.png?v=160803001'),
     ("AniList", "anilist", 'https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/spaces%2F-LHizcWWtVphqU90YAXO%2Favatar.png?generation=1531944291782256&alt=media'),
     ("Kitsu", "kitsu", 'https://canny.io/images/13895523beb5ed9287424264980221d4.png'),
     ("WonderfulSubs", "wonderfulsubs", control.getSetting(LOGIN_IMAGE_KEY)),
@@ -50,10 +51,39 @@ def _add_last_watched():
         control.getSetting(LASTWATCHED_IMAGE_KEY)
     ))
 
+def _add_watchlist():
+    if not control.getSetting(LOGIN_FLAVOR_KEY):
+        return
+
+    watchlistFlavor = filter(lambda x: x[1] == control.getSetting(LOGIN_FLAVOR_KEY), WATCHLIST_FLAVORS)[0]
+    
+    MENU_ITEMS.insert(0, (
+        "%s's %s" %(control.getSetting(LOGIN_NAME_KEY), watchlistFlavor[0]),
+        "watchlist/"+watchlistFlavor[1],
+        watchlistFlavor[2]
+    ))
+        
+
+    MENU_ITEMS.insert(len(MENU_ITEMS), (
+        "Logout",
+        "logout",
+        ''
+    ))
+
 def __set_last_watched(url, is_dubbed, name, image):
     control.setSetting(LASTWATCHED_URL_KEY, 'animes/%s/%s' %(url, "dub" if is_dubbed else "sub"))
     control.setSetting(LASTWATCHED_NAME_KEY, '%s %s' %(name, "(Dub)" if is_dubbed else "(Sub)"))
     control.setSetting(LASTWATCHED_IMAGE_KEY, image)
+
+def __set_login(res, flavor):
+    if not res:
+        return control.ok_dialog('Login', 'Incorrect username or password')
+
+    control.setSetting(LOGIN_TOKEN_KEY, res[0])
+    control.setSetting(LOGIN_IMAGE_KEY, res[1])
+    control.setSetting(LOGIN_NAME_KEY, res[2] if not 'mal' in flavor else control.getSetting("MyAnimeList.username"))
+    control.setSetting(LOGIN_FLAVOR_KEY, flavor)
+    control.refresh()
 
 def _add_watchlist():
     if not control.getSetting(LOGIN_FLAVOR_KEY):
@@ -107,11 +137,6 @@ def ANIMES_PAGE(payload, params):
         episodes = reversed(episodes)
     return control.draw_items(episodes)
 
-@route('login/*')
-def LOGIN(payload, params):
-    flavor = payload.rsplit("/")[0]
-    return getattr(AuthTrack(), flavor+'_login')(flavor, LOGIN_FLAVOR_KEY, LOGIN_NAME_KEY, LOGIN_IMAGE_KEY, LOGIN_TOKEN_KEY)
-
 @route('logout')
 def LOGOUT(payload, params):
     control.setSetting(LOGIN_FLAVOR_KEY, '')
@@ -123,17 +148,17 @@ def LOGOUT(payload, params):
 @route('watchlist/*')
 def WATCHLIST(payload, params):
     flavor = payload.rsplit("/")[0]
-    return control.draw_items((getattr(WatchlistTrack(), flavor+'_watchlist')(LOGIN_NAME_KEY, LOGIN_TOKEN_KEY)))
+    return control.draw_items((getattr(WatchList(), flavor+'_watchlist')(control.getSetting(LOGIN_TOKEN_KEY), control.getSetting(LOGIN_NAME_KEY))))
 
-@route('kitsu/*')
+@route('watchlist_flavor/kitsu/*')
 def KITSU_LIST(payload, params):
-    status = payload.rsplit("/")[0]
-    return control.draw_items(WatchlistTrack().get_kitsu_watchlist_status(LOGIN_TOKEN_KEY, status))
+    status = payload.rsplit("/")[1]
+    return control.draw_items(WatchList().get_kitsu_watchlist_status(control.getSetting(LOGIN_TOKEN_KEY), status))
 
-@route('mal/*')
+@route('watchlist_flavor/mal/*')
 def MAL_LIST(payload, params):
     status = payload.rsplit("/")[0]
-    return control.draw_items(WatchlistTrack().get_mal_watchlist_status(LOGIN_NAME_KEY, LOGIN_TOKEN_KEY, status))
+    return control.draw_items(WatchList().get_mal_watchlist_status(control.getSetting(LOGIN_NAME_KEY), status))
 
 @route('watchlist_query/*')
 def WATCHLIST_QUERY(payload, params):
@@ -223,7 +248,7 @@ def PLAY(payload, params):
     sources = _BROWSER.get_episode_sources(anime_url, is_dubbed, season, episode)
     autoplay = True if 'true' in control.getSetting('autoplay') else False
 
-    s = SourcesList(sources.items(), autoplay, sortResultsByRes, {
+    s = SourcesList(sorted(sources.items()), autoplay, sortResultsByRes, {
         'title': control.lang(30100),
         'processing': control.lang(30101),
         'choose': control.lang(30102),
