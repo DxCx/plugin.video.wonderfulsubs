@@ -3,7 +3,7 @@ from resources.lib.ui import utils
 from resources.lib.ui.SourcesList import SourcesList
 from resources.lib.ui.router import on_param, route, router_process
 from resources.lib.WonderfulSubsBrowser import WonderfulSubsBrowser
-from resources.lib.WatchListFlavorBrowser import AuthToken, WatchList
+from resources.lib.WatchlistIntegration import add_watchlist
 import urlparse
 
 AB_LIST = ["none"] + [chr(i) for i in range(ord("a"), ord("z")+1)]
@@ -14,11 +14,6 @@ LASTWATCHED_KEY = "addon.last_watched"
 LASTWATCHED_NAME_KEY = "%s.name" % LASTWATCHED_KEY
 LASTWATCHED_URL_KEY = "%s.url" % LASTWATCHED_KEY
 LASTWATCHED_IMAGE_KEY = "%s.image" % LASTWATCHED_KEY
-LOGIN_KEY = "addon.login"
-LOGIN_FLAVOR_KEY = "%s.flavor" % LOGIN_KEY
-LOGIN_NAME_KEY = "%s.name" % LOGIN_KEY
-LOGIN_IMAGE_KEY = "%s.image" % LOGIN_KEY
-LOGIN_TOKEN_KEY = "%s.token" % LOGIN_KEY
 HISTORY_DELIM = ":_:"
 
 MENU_ITEMS = [
@@ -29,13 +24,6 @@ MENU_ITEMS = [
     (control.lang(30005), "search_history", ''),
     (control.lang(30006), "settings", ''),
 ]
-
-WATCHLIST_FLAVORS = {
-    ("MyAnimeList", "mal", 'https://myanimelist.cdn-dena.com/images/mal-logo-xsmall@2x.png?v=160803001'),
-    ("AniList", "anilist", 'https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/spaces%2F-LHizcWWtVphqU90YAXO%2Favatar.png?generation=1531944291782256&alt=media'),
-    ("Kitsu", "kitsu", 'https://canny.io/images/13895523beb5ed9287424264980221d4.png'),
-    ("WonderfulSubs", "wonderfulsubs", control.getSetting(LOGIN_IMAGE_KEY)),
-}
 
 _BROWSER = WonderfulSubsBrowser()
 control.setContent('tvshows');
@@ -51,39 +39,10 @@ def _add_last_watched():
         control.getSetting(LASTWATCHED_IMAGE_KEY)
     ))
 
-def _add_watchlist():
-    if not control.getSetting(LOGIN_FLAVOR_KEY):
-        return
-
-    watchlistFlavor = filter(lambda x: x[1] == control.getSetting(LOGIN_FLAVOR_KEY), WATCHLIST_FLAVORS)[0]
-    
-    MENU_ITEMS.insert(0, (
-        "%s's %s" %(control.getSetting(LOGIN_NAME_KEY), watchlistFlavor[0]),
-        "watchlist/"+watchlistFlavor[1],
-        watchlistFlavor[2]
-    ))
-        
-
-    MENU_ITEMS.insert(len(MENU_ITEMS), (
-        "Logout",
-        "logout",
-        ''
-    ))
-
 def __set_last_watched(url, is_dubbed, name, image):
     control.setSetting(LASTWATCHED_URL_KEY, 'animes/%s/%s' %(url, "dub" if is_dubbed else "sub"))
     control.setSetting(LASTWATCHED_NAME_KEY, '%s %s' %(name, "(Dub)" if is_dubbed else "(Sub)"))
     control.setSetting(LASTWATCHED_IMAGE_KEY, image)
-
-def __set_login(res, flavor):
-    if not res:
-        return control.ok_dialog('Login', 'Incorrect username or password')
-
-    control.setSetting(LOGIN_TOKEN_KEY, res[0])
-    control.setSetting(LOGIN_IMAGE_KEY, res[1])
-    control.setSetting(LOGIN_NAME_KEY, res[2] if not 'mal' in flavor else control.getSetting("MyAnimeList.username"))
-    control.setSetting(LOGIN_FLAVOR_KEY, flavor)
-    control.refresh()
 
 def sortResultsByRes(fetched_urls):
     prefereResSetting = utils.parse_resolution_of_source(control.getSetting('prefres'))
@@ -117,40 +76,6 @@ def ANIMES_PAGE(payload, params):
     if "Ascending" in order:
         episodes = reversed(episodes)
     return control.draw_items(episodes)
-
-@route('login/*')
-def LOGIN(payload, params):
-    flavor = payload.rsplit("/")[0]
-    res = getattr(AuthToken(), flavor+'_login')(control.getSetting('%s.name' %(flavor)), control.getSetting('%s.password' %(flavor))) 
-    return __set_login(res, flavor)
-    
-@route('logout')
-def LOGOUT(payload, params):
-    control.setSetting(LOGIN_FLAVOR_KEY, '')
-    control.setSetting(LOGIN_NAME_KEY, '')
-    control.setSetting(LOGIN_IMAGE_KEY, '')
-    control.setSetting(LOGIN_TOKEN_KEY, '')
-    control.refresh()
-
-@route('watchlist/*')
-def WATCHLIST(payload, params):
-    flavor = payload.rsplit("/")[0]
-    return control.draw_items((getattr(WatchList(), flavor+'_watchlist')(control.getSetting(LOGIN_TOKEN_KEY), control.getSetting(LOGIN_NAME_KEY))))
-
-@route('watchlist_flavor/kitsu/*')
-def KITSU_LIST(payload, params):
-    status = payload.rsplit("/")[1]
-    return control.draw_items(WatchList().get_kitsu_watchlist_status(control.getSetting(LOGIN_TOKEN_KEY), status))
-
-@route('watchlist_flavor/mal/*')
-def MAL_LIST(payload, params):
-    status = payload.rsplit("/")[0]
-    return control.draw_items(WatchList().get_mal_watchlist_status(control.getSetting(LOGIN_NAME_KEY), status))
-
-@route('watchlist_query/*')
-def WATCHLIST_QUERY(payload, params):
-    query, _id = payload.rsplit("/", 1)
-    return control.draw_items(_BROWSER.search_site(query))
 
 @route('letter')
 def LIST_ALL_AB(payload, params):
@@ -251,6 +176,6 @@ def LIST_MENU(payload, params):
         [utils.allocate_item(name, url, True, image) for name, url, image in MENU_ITEMS]
     )
 
-_add_watchlist()
+add_watchlist(MENU_ITEMS)
 _add_last_watched()
 router_process(control.get_plugin_url(), control.get_plugin_params())

@@ -5,27 +5,22 @@
 		<setting id="searchhistory" type="labelenum" label="Enable search history" values="Yes|No" default="Yes"/>
 	</category>
 	<category label="Servers">
-		<!-- TODO: Remove/Update those -->
-		<setting id="serverstreamango" type="bool" label="Use Streamango" default="true"/>
-		<setting id="serverrapid" type="bool" label="Use RapidVideo" default="true"/>
-		<setting id="servermycloud" type="bool" label="Use MyCloud" default="true"/>
-		<setting id="serveropenload" type="bool" label="Use OpenLoad" default="true"/>
 		<setting id="prefres" label="Prefere Resolution" type="labelenum" values="360p|480p|720p|1080p" default="1080p"/>
 		<setting id="autoplay" label="Automatically play first result" type="bool" default="false"/>
 	</category>
 	<category label="WonderfulSubs">
         	<setting id="wonderfulsubs.name" type="text" label="Username:" default=""/>
         	<setting id="wonderfulsubs.password" type="text" option="hidden" label="Password:" default=""/>
-		<setting id="wonderfulsubs.login" type="action" label="Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/login/wonderfulsubs)"/>
+		<setting id="wonderfulsubs.login" type="action" label="Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/wonderfulsubs)"/>
 	</category>
 	<category label="MyAnimeList">
         	<setting id="mal.name" type="text" label="Username:" default=""/>
         	<setting id="mal.password" type="text" option="hidden" label="Password:" default=""/>
-		<setting id="mal.login" type="action" label="Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/login/mal)"/>
+		<setting id="mal.login" type="action" label="Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/mal)"/>
 	</category>
 	<category label="Kitsu">
         	<setting id="kitsu.name" type="text" label="Email:" default=""/>
         	<setting id="kitsu.password" type="text" option="hidden" label="Password:" default=""/>
-		<setting id="kitsu.login" type="action" label="Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/login/kitsu)"/>
+		<setting id="kitsu.login" type="action" label="Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/kitsu)"/>
 	</category>
 </settings>
