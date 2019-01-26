@@ -85,25 +85,6 @@ def __set_login(res, flavor):
     control.setSetting(LOGIN_FLAVOR_KEY, flavor)
     control.refresh()
 
-def _add_watchlist():
-    if not control.getSetting(LOGIN_FLAVOR_KEY):
-        return
-
-    watchlistFlavor = filter(lambda x: x[1] == control.getSetting(LOGIN_FLAVOR_KEY), WATCHLIST_FLAVORS)[0]
-    
-    MENU_ITEMS.insert(0, (
-        "%s's %s" %(control.getSetting(LOGIN_NAME_KEY), watchlistFlavor[0]),
-        "watchlist/"+watchlistFlavor[1],
-        watchlistFlavor[2]
-    ))
-        
-
-    MENU_ITEMS.insert(len(MENU_ITEMS), (
-        "Logout",
-        "logout",
-        ''
-    ))
-
 def sortResultsByRes(fetched_urls):
     prefereResSetting = utils.parse_resolution_of_source(control.getSetting('prefres'))
 
@@ -137,6 +118,12 @@ def ANIMES_PAGE(payload, params):
         episodes = reversed(episodes)
     return control.draw_items(episodes)
 
+@route('login/*')
+def LOGIN(payload, params):
+    flavor = payload.rsplit("/")[0]
+    res = getattr(AuthToken(), flavor+'_login')(control.getSetting('%s.name' %(flavor)), control.getSetting('%s.password' %(flavor))) 
+    return __set_login(res, flavor)
+    
 @route('logout')
 def LOGOUT(payload, params):
     control.setSetting(LOGIN_FLAVOR_KEY, '')
