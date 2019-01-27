@@ -1,7 +1,8 @@
+import bs4 as bs, itertools, json, re, requests
 from collections import defaultdict
-from ui import control
+from ui import control, utils
 from ui.router import on_param, route, router_process
-from WatchListFlavorBrowser import AuthToken, WatchList
+from WonderfulSubsBrowser import WonderfulSubsBrowser
 
 LOGIN_KEY = "addon.login"
 LOGIN_FLAVOR_KEY = "%s.flavor" % LOGIN_KEY
@@ -40,6 +41,14 @@ class WatchlistFlavorBase(object):
         return self._TITLE
 
     @property
+    def username(self):
+        return control.getSetting('%s.name' % (self.name()))
+
+    @property
+    def password(self):
+        return control.getSetting('%s.password' % (self.name()))
+
+    @property
     def login_name(self):
         return control.getSetting(LOGIN_NAME_KEY)
 
@@ -47,14 +56,36 @@ class WatchlistFlavorBase(object):
     def login_token(self):
         return control.getSetting(LOGIN_TOKEN_KEY)
 
-    def login(self):
+    def format_login_data(self, name, image, token):
+
+        login_data = {
+            "name": name,
+            "image": image,
+            "token": token,
+            }
+
+        return login_data
+
+    def _parse_view(self, base):
+        result = []
+
+        result.append(utils.allocate_item("%s" % base["name"],
+                                          base["url"],
+                                          True,
+                                          base["image"],
+                                          base["plot"]))
+
+        return result
+        
+            
+    #def login(self):
         # TODO: Should implement child classes for each Auth Token.
         # TODO: Login should return formated dictionary of {'name', 'image',
         # 'token'}
-        login_method = getattr(AuthToken(), self.name() + '_login')
-        username = control.getSetting('%s.name' % (self.name()))
-        password = control.getSetting('%s.password' % (self.name()))
-        return login_method(username, password)
+        #login_method = getattr(AuthToken(), self.name() + '_login')
+        #username = control.getSetting('%s.name' % (self.name()))
+        #password = control.getSetting('%s.password' % (self.name()))
+        #return login_method(username, password)
 
 class WatchlistFlavor(object):
     _SELECTED = None
@@ -83,13 +114,21 @@ class WatchlistFlavor(object):
         return WatchlistFlavor._SELECTED
 
     @staticmethod
+    def watchlist_request():
+        return WatchlistFlavor.get_active_flavor().watchlist()
+
+    @staticmethod
+    def watchlist_status_request(status):
+        return WatchlistFlavor.get_active_flavor().get_watchlist_status(status)
+
+    @staticmethod
     def login_request(flavor):
         if not WatchlistFlavor.__is_flavor_valid(flavor):
             raise Exception("Invalid flavor %s" % flavor)
 
-        flavor = WatchlistFlavor.__get_flavor_class(flavor)()
+        flavor_class = WatchlistFlavor.__get_flavor_class(flavor)()
         return WatchlistFlavor.__set_login(flavor,
-                                           flavor.login())
+                                           flavor_class.login())
 
     @staticmethod
     def __set_login(flavor, res):
@@ -120,6 +159,96 @@ class MyAnimeListWLF(WatchlistFlavorBase):
     _NAME = "mal"
     _IMAGE = "https://myanimelist.cdn-dena.com/images/mal-logo-xsmall@2x.png?v=160803001"
 
+    def login(self):
+        s = requests.session()
+
+        crsf_res = s.get('https://myanimelist.net/').text
+        crsf = (re.compile("<meta name='csrf_token' content='(.+?)'>").findall(crsf_res))[0]
+
+        payload = {
+            "user_name": self.username,
+            "password": self.password,
+            "cookie": 1,
+            "sublogin": "Login",
+            "submit": 1,
+            "csrf_token": crsf
+            }
+
+        url = "https://myanimelist.net/login.php?from=%2F"
+        s.get(url)
+        result = s.post(url, data=payload)
+        soup = bs.BeautifulSoup(result.text, 'html.parser')
+        results = soup.find_all('div', attrs={"class":"badresult"})
+
+        if results:
+            return
+
+        return self.format_login_data(self.username, '', ('%s/%s' %(s.cookies['MALHLOGSESSID'], s.cookies['MALSESSIONID'])))
+
+    def watchlist(self):
+        url = "https://myanimelist.net/animelist/%s" %(self.login_name)
+        return self._process_watchlist_view(url, '', "mal/%d", page=1)
+
+    def cookies(self):
+        logsess_id, sess_id = self.login_token.rsplit("/", 1)
+
+        cookies = {
+            'MALHLOGSESSID': logsess_id,
+            'MALSESSIONID': sess_id,
+            'is_logged_in': '1'
+            }
+
+        return cookies
+
+    def _base_watchlist_view(self, res):
+
+        base = {
+            "name": res.text,
+            "url": 'watchlist_flavor/mal/' + (res['href']).rsplit('=', 1)[-1],
+            "image": '',
+            "plot": '',
+        }
+
+        return self._parse_view(base)
+
+    def _process_watchlist_view(self, url, params, base_plugin_url, page):
+        result = requests.get(url)
+        soup = bs.BeautifulSoup(result.text)
+        results = [x for x in soup.find_all('a', {'class': 'status-button'})]
+        all_results = map(self._base_watchlist_view, results)
+        all_results = list(itertools.chain(*all_results))
+        return all_results
+
+    def get_watchlist_status(self, status):
+
+        params = {
+            "status": status
+            }
+        
+        url = "https://myanimelist.net/animelist/%s" %(self.login_name)
+        return self._process_status_view(url, params, "mal/%d", page=1)
+
+    def _process_status_view(self, url, params, base_plugin_url, page):
+        result = requests.get(url, params=params).text
+        soup = bs.BeautifulSoup(result)
+        table = soup.find('table', attrs={'class':'list-table'})
+        table_body = table.attrs['data-items']
+        results = json.loads(table_body)
+        all_results = map(self._base_watchlist_status_view, results)
+        all_results = list(itertools.chain(*all_results))
+        return all_results
+
+    def _base_watchlist_status_view(self, res):
+
+        base = {
+            "name": '%s - %d/%d' %(res["anime_title"], res["num_watched_episodes"], res["anime_num_episodes"]),
+            "url": "watchlist_query/%s/%s" %(res["anime_title"], res["anime_id"]),
+            "image": res["anime_image_path"],
+            "plot": '',
+        }
+
+        return self._parse_view(base)
+
 class AniListWLF(WatchlistFlavorBase):
     _TITLE = "AniList"
     _NAME = "anilist"
@@ -130,6 +259,97 @@ class KitsuWLF(WatchlistFlavorBase):
     _NAME = "kitsu"
     _IMAGE = "https://canny.io/images/13895523beb5ed9287424264980221d4.png"
 
+    def login(self):
+        r = requests.post('https://kitsu.io/api/oauth/token',
+                          params={"grant_type": "password", "username": '%s' %(self.username), "password": '%s' %(self.password)})
+
+        if r.status_code != 200:
+            return
+
+        data = json.loads(r.text)
+        user_res = requests.get('https://kitsu.io/api/edge/users?filter[self]=true',
+                                headers=self.header(data['access_token']))
+
+        data2 = json.loads(user_res.text)["data"][0]
+
+        return self.format_login_data((data2["attributes"]["name"]), '', ('%s/%s' %(data2['id'], data['access_token'])))
+
+    def header(self, token):
+
+        header = {
+            'Content-Type': 'application/vnd.api+json',
+            'Accept': 'application/vnd.api+json',
+            'Authorization': "Bearer {}".format(token),
+            }
+
+        return header
+
+    def watchlist(self):
+        _id, token = self.login_token.rsplit("/", 1)
+        headers = self.header(token)
+        params = {"filter[user_id]": _id}
+        url = "https://kitsu.io/api/edge/library-entries"
+        return self._process_watchlist_view(url, params, headers, "kitsu/%d", page=1)
+
+    def _base_watchlist_view(self, res):
+
+        base = {
+            "name": res.capitalize(),
+            "url": 'watchlist_flavor/kitsu/'+res,
+            "image": '',
+            "plot": '',
+        }
+
+        return self._parse_view(base)
+
+    def _process_watchlist_view(self, url, params, headers, base_plugin_url, page):
+        result = requests.get(url, params=params, headers=headers).text
+        results = json.loads(result)["meta"]["statusCounts"]
+        all_results = map(self._base_watchlist_view, results)
+        all_results = list(itertools.chain(*all_results))
+        return all_results
+
+    def get_watchlist_status(self, status):
+        if status == "onHold":
+            status = "on_hold"
+
+        _id, token = self.login_token.rsplit("/", 1)
+        headers = self.header(token)
+        url = "https://kitsu.io/api/edge/library-entries"
+
+        params = {
+            "fields[anime]": "slug,posterImage,canonicalTitle,titles,synopsis,subtype,startDate,status,averageRating,popularityRank,ratingRank,episodeCount",
+            "fields[users]": "id",
+            "filter[user_id]": _id,
+            "filter[kind]": "anime",
+            "filter[status]": status,
+            "include": "anime,user,mediaReaction",
+            "page[limit]": "500",
+            "page[offset]": "0",
+            "sort": "anime.titles.canonical",
+            }
+
+        return self._process_watchlist_status_view(url, params, headers, "kitsu/%d", page=1)
+
+    def _process_watchlist_status_view(self, url, params, headers, base_plugin_url, page):
+        result = requests.get(url, params=params, headers=headers).text
+        results = json.loads(result)["included"][1:]
+        results2 = json.loads(result)["data"]
+        all_results = map(self._base_watchlist_status_view, results, results2)
+        all_results = list(itertools.chain(*all_results))
+        return all_results
+
+    def _base_watchlist_status_view(self, res, res2):
+
+        base = {
+            "name": '%s - %d/%d' %(res["attributes"]['canonicalTitle'], res2["attributes"]['progress'], res["attributes"]['episodeCount'] if res["attributes"]['episodeCount'] is not None else 0),
+            "url": "watchlist_query/%s/%s" % (res["attributes"]['canonicalTitle'], res["id"]),
+            "image": res["attributes"]['posterImage']['medium'],
+            "plot": res["attributes"]["synopsis"],
+        }
+
+        return self._parse_view(base)
+
 class WonderfulSubsWLF(WatchlistFlavorBase):
     _TITLE = "WonderfulSubs"
     _NAME = "wonderfulsubs"
@@ -137,6 +357,63 @@ class WonderfulSubsWLF(WatchlistFlavorBase):
     @property
     def image(self):
         return control.getSetting(LOGIN_IMAGE_KEY)
+
+    def login(self):
+        r = requests.post('https://www.wonderfulsubs.com/api/users/login',
+                          json={"username": self.username, "password": self.password})
+
+        data = json.loads(r.text)
+
+        if data['success'] is not True:
+            return
+
+        return self.format_login_data((data['data']['username']), (data['data']['profile_pic']), ('%s/%s' %(data['data']['_id'], data['token'])))
+
+    def watchlist(self):
+        url = 'https://www.wonderfulsubs.com/api/watchlist/list?_id=%s' %(self.login_token.split("/")[0])
+        return self._process_watchlist_view(url, "watchlist/%d", page=1)
+
+    def header(self):
+
+        header = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": "Bearer {}".format(self.login_token.split("/")[1])
+            }
+
+        return header
+
+    def _parse_watchlist_view(self, res):
+        result = []
+        
+        base = {
+            "name": '%s' %(res['title']),
+            "url": "animes/" + res["url"].replace("/watch/", ""),
+            "image": res['poster'],
+            "plot": '',
+        }
+
+        if res["is_dubbed"]:
+            result.append(utils.allocate_item("%s (Dub)" % base["name"],
+                                              "%s/dub" % base["url"],
+                                              True,
+                                              base["image"],
+                                              base["plot"]))
+        if res["is_subbed"]:
+            result.append(utils.allocate_item("%s (Sub)" % base["name"],
+                                              "%s/sub" % base["url"],
+                                              True,
+                                              base["image"],
+                                              base["plot"]))
+
+        return result
+
+    def _process_watchlist_view(self, url, base_plugin_url, page):
+        r = requests.get(url, headers=self.header())
+        results = json.loads(r.text)['data']['watch_list']
+        all_results = map(self._parse_watchlist_view, results)
+        all_results = list(itertools.chain(*all_results))
+        return all_results
 
 @route('watchlist_login/*')
 def WL_LOGIN(payload, params):
@@ -148,25 +425,21 @@ def WL_LOGOUT(payload, params):
 
 # TODO: one route of watch list.
 # get_active_flavor and call a function of flavor.
-@route('watchlist/*')
+@route('watchlist')
 def WATCHLIST(payload, params):
-    flavor = payload.rsplit("/")[0]
-    return control.draw_items((getattr(WatchList(), flavor+'_watchlist')(control.getSetting(LOGIN_TOKEN_KEY), control.getSetting(LOGIN_NAME_KEY))))
+    return control.draw_items(WatchlistFlavor.watchlist_request())
 
 @route('watchlist_flavor/kitsu/*')
 def KITSU_LIST(payload, params):
-    status = payload.rsplit("/")[1]
-    return control.draw_items(WatchList().get_kitsu_watchlist_status(control.getSetting(LOGIN_TOKEN_KEY), status))
+    return control.draw_items(WatchlistFlavor.watchlist_status_request(payload.rsplit("/")[1]))
 
 @route('watchlist_flavor/mal/*')
 def MAL_LIST(payload, params):
-    status = payload.rsplit("/")[0]
-    return control.draw_items(WatchList().get_mal_watchlist_status(control.getSetting(LOGIN_NAME_KEY), status))
+    return control.draw_items(WatchlistFlavor.watchlist_status_request(payload.rsplit("/")[1]))
 
 @route('watchlist_query/*')
 def WATCHLIST_QUERY(payload, params):
-    query, _id = payload.rsplit("/", 1)
-    return control.draw_items(_BROWSER.search_site(query))
+    return control.draw_items(WonderfulSubsBrowser().search_site(payload.rsplit("/")[0]))
 # End of above TODO
 
 def add_watchlist(items):
