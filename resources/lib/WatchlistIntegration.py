@@ -249,11 +249,6 @@ class MyAnimeListWLF(WatchlistFlavorBase):
 
         return self._parse_view(base)
 
-class AniListWLF(WatchlistFlavorBase):
-    _TITLE = "AniList"
-    _NAME = "anilist"
-    _IMAGE = "https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/spaces%2F-LHizcWWtVphqU90YAXO%2Favatar.png?generation=1531944291782256&alt=media"
-
 class KitsuWLF(WatchlistFlavorBase):
     _TITLE = "Kitsu"
     _NAME = "kitsu"
