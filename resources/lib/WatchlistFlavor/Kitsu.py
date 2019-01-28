@@ -20,7 +20,7 @@ class KitsuWLF(WatchlistFlavorBase):
 
         data = json.loads(r.text)
         user_res = requests.get('https://kitsu.io/api/edge/users?filter[self]=true',
-                                headers=self.header(data['access_token']))
+                                headers=self.__header(data['access_token']))
 
         data2 = json.loads(user_res.text)["data"][0]
 
@@ -28,7 +28,7 @@ class KitsuWLF(WatchlistFlavorBase):
                                        '',
                                        ('%s/%s' % (data2['id'], data['access_token'])))
 
-    def header(self, token):
+    def __header(self, token):
         header = {
             'Content-Type': 'application/vnd.api+json',
             'Accept': 'application/vnd.api+json',
@@ -39,7 +39,7 @@ class KitsuWLF(WatchlistFlavorBase):
 
     def watchlist(self):
         _id, token = self._login_token.rsplit("/", 1)
-        headers = self.header(token)
+        headers = self.__header(token)
         params = {"filter[user_id]": _id}
         url = "https://kitsu.io/api/edge/library-entries"
         return self._process_watchlist_status_view(url, params, headers, "watchlist/%d", page=1)
@@ -66,7 +66,7 @@ class KitsuWLF(WatchlistFlavorBase):
             status = "on_hold"
 
         _id, token = self._login_token.rsplit("/", 1)
-        headers = self.header(token)
+        headers = self.__header(token)
         url = "https://kitsu.io/api/edge/library-entries"
 
         params = {

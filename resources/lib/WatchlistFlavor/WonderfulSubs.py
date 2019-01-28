@@ -29,7 +29,7 @@ class WonderfulSubsWLF(WatchlistFlavorBase):
         url = 'https://www.wonderfulsubs.com/api/watchlist/list?_id=%s' % (self._login_token.split("/")[0])
         return self._process_watchlist_view(url, "watchlist/%d", page=1)
 
-    def header(self):
+    def __header(self):
         header = {
             "Content-Type": "application/json",
             "Accept": "application/json",
@@ -64,7 +64,7 @@ class WonderfulSubsWLF(WatchlistFlavorBase):
         return result
 
     def _process_watchlist_view(self, url, base_plugin_url, page):
-        r = requests.get(url, headers=self.header())
+        r = requests.get(url, headers=self.__header())
         results = json.loads(r.text)['data']['watch_list']
         all_results = map(self._base_watchlist_view, results)
         all_results = list(itertools.chain(*all_results))

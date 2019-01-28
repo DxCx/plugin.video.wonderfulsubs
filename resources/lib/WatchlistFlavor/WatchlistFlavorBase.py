@@ -1,3 +1,4 @@
+from ..ui import utils
 
 class WatchlistFlavorBase(object):
     _TITLE = None
