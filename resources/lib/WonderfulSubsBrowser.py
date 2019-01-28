@@ -298,6 +298,14 @@ class WonderfulSubsBrowser(BrowserBase):
         url = self._to_url("api/media/latest")
         return self._process_anime_view(url, data, "latest/%d", page)
 
+    def get_random(self, page=1):
+        data = {
+            "count": self._RESULTS_PER_SEARCH_PAGE,
+            "index": (page-1) * self._RESULTS_PER_SEARCH_PAGE,
+        }
+        url = self._to_url("api/media/random")
+        return self._process_anime_view(url, data, "random/%d", page)
+
     def get_anime_metadata(self, anime_url, is_dubbed):
         info = self._get_anime_info(anime_url, is_dubbed)
         return (info["name"], info["image"])

@@ -6,8 +6,9 @@
 	<string id="30002">לפי א-ב</string>
 	<string id="30003">החדשים ביותר</string>
 	<string id="30004">הפופולארים ביותר</string>
-	<string id="30005">חיפוש</string>
-	<string id="30006">הגדרות</string>
+	<string id="30005">אקראי</string>
+	<string id="30006">חיפוש</string>
+	<string id="30007">הגדרות</string>
 
 	<string id="30100">מחפש מקורות</string>
 	<string id="30101">מעבד %s</string>

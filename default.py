@@ -20,8 +20,9 @@ MENU_ITEMS = [
     (control.lang(30002), "letter", ''),
     (control.lang(30003), "latest", ''),
     (control.lang(30004), "popular", ''),
-    (control.lang(30005), "search_history", ''),
-    (control.lang(30006), "settings", ''),
+    (control.lang(30005), "random", ''),
+    (control.lang(30006), "search_history", ''),
+    (control.lang(30007), "settings", ''),
 ]
 
 _BROWSER = WonderfulSubsBrowser()
@@ -112,6 +113,14 @@ def POPSUBBED(payload, params):
 def POPSUBBED_PAGES(payload, params):
     return control.draw_items(_BROWSER.get_popular(int(payload)))
 
+@route('random')
+def RANDOM(payload, params):
+    return control.draw_items(_BROWSER.get_random())
+
+@route('random/*')
+def RANDOM_PAGES(payload, params):
+    return control.draw_items(_BROWSER.get_random(int(payload)))
+
 @route('search_history')
 def SEARCH_HISTORY(payload, params):
     history = control.getSetting(HISTORY_KEY)
@@ -159,7 +168,7 @@ def PLAY(payload, params):
     sources = _BROWSER.get_episode_sources(anime_url, is_dubbed, season, episode)
     autoplay = True if 'true' in control.getSetting('autoplay') else False
 
-    s = SourcesList(sources.items(), autoplay, sortResultsByRes, {
+    s = SourcesList(sorted(sources.items()), autoplay, sortResultsByRes, {
         'title': control.lang(30100),
         'processing': control.lang(30101),
         'choose': control.lang(30102),
