@@ -11,11 +11,9 @@ class WonderfulSubsBrowser(BrowserBase):
 
     def _parse_anime_view(self, res):
         result = []
-        image = res["poster_tall"]
+        image = res.get("poster_tall", None)
         if image:
             image = image.pop()['source']
-        else:
-            image = None
 
         base = {
             "name": res["title"],
@@ -174,11 +172,9 @@ class WonderfulSubsBrowser(BrowserBase):
 
     def _get_anime_info(self, anime_url, is_dubbed):
         obj = self._get_anime_info_obj(anime_url)
-        image = obj["poster_tall"]
+        image = obj.get("poster_tall", None)
         if image:
             image = image.pop()['source']
-        else:
-            image = None
 
         seasons = {}
         ses_idx = 0
