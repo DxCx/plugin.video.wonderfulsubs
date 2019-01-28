@@ -40,17 +40,6 @@ class MyAnimeListWLF(WatchlistFlavorBase):
         url = "https://myanimelist.net/animelist/%s" % (self._login_name)
         return self._process_watchlist_view(url, '', "watchlist/%d", page=1)
 
-    def __cookies(self):
-        logsess_id, sess_id = self._login_token.rsplit("/", 1)
-
-        cookies = {
-            'MALHLOGSESSID': logsess_id,
-            'MALSESSIONID': sess_id,
-            'is_logged_in': '1'
-            }
-
-        return cookies
-
     def _base_watchlist_view(self, res):
         base = {
             "name": res.text,
