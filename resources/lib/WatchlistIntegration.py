@@ -4,12 +4,6 @@ from ui import control, utils
 from ui.router import on_param, route, router_process
 from WonderfulSubsBrowser import WonderfulSubsBrowser
 
-LOGIN_KEY = "addon.login"
-LOGIN_FLAVOR_KEY = "%s.flavor" % LOGIN_KEY
-LOGIN_NAME_KEY = "%s.name" % LOGIN_KEY
-LOGIN_IMAGE_KEY = "%s.image" % LOGIN_KEY
-LOGIN_TOKEN_KEY = "%s.token" % LOGIN_KEY
-
 class WatchlistFlavorBase(object):
     _TITLE = None
     _NAME = None
@@ -78,30 +72,28 @@ class WatchlistFlavorBase(object):
             ]
 
 class WatchlistFlavor(object):
-    _SELECTED = None
+    __LOGIN_KEY = "addon.login"
+    __LOGIN_FLAVOR_KEY = "%s.flavor" % __LOGIN_KEY
+    __LOGIN_NAME_KEY = "%s.name" % __LOGIN_KEY
+    __LOGIN_IMAGE_KEY = "%s.image" % __LOGIN_KEY
+    __LOGIN_TOKEN_KEY = "%s.token" % __LOGIN_KEY
 
-    @staticmethod
-    def __get_flavor_class(name):
-        for flav in WatchlistFlavorBase.__subclasses__():
-            if flav.name() == name:
-                return flav
-        return None
+    __SELECTED = None
 
-    @staticmethod
-    def __is_flavor_valid(name):
-        return WatchlistFlavor.__get_flavor_class(name) != None
+    def __init__(self):
+        raise Exception("Static Class should not be created")
 
     @staticmethod
     def get_active_flavor():
-        selected = control.getSetting(LOGIN_FLAVOR_KEY)
+        selected = control.getSetting(WatchlistFlavor.__LOGIN_FLAVOR_KEY)
         if not selected:
             return None
 
-        if not WatchlistFlavor._SELECTED:
-            WatchlistFlavor._SELECTED = \
-                    WatchlistFlavor.__get_flavor_class(selected)()
+        if not WatchlistFlavor.__SELECTED:
+            WatchlistFlavor.__SELECTED = \
+                    WatchlistFlavor.__instance_flavor(selected)
 
-        return WatchlistFlavor._SELECTED
+        return WatchlistFlavor.__SELECTED
 
     @staticmethod
     def watchlist_request():
@@ -116,31 +108,51 @@ class WatchlistFlavor(object):
         if not WatchlistFlavor.__is_flavor_valid(flavor):
             raise Exception("Invalid flavor %s" % flavor)
 
-        flavor_class = WatchlistFlavor.__get_flavor_class(flavor)()
+        flavor_class = WatchlistFlavor.__instance_flavor(flavor)
         return WatchlistFlavor.__set_login(flavor,
                                            flavor_class.login())
+
+    @staticmethod
+    def logout_request():
+        control.setSetting(WatchlistFlavor.__LOGIN_FLAVOR_KEY, '')
+        control.setSetting(WatchlistFlavor.__LOGIN_NAME_KEY, '')
+        control.setSetting(WatchlistFlavor.__LOGIN_IMAGE_KEY, '')
+        control.setSetting(WatchlistFlavor.__LOGIN_TOKEN_KEY, '')
+        control.refresh()
+
+    @staticmethod
+    def __get_flavor_class(name):
+        for flav in WatchlistFlavorBase.__subclasses__():
+            if flav.name() == name:
+                return flav
+        return None
+
+    @staticmethod
+    def __is_flavor_valid(name):
+        return WatchlistFlavor.__get_flavor_class(name) != None
+
+    @staticmethod
+    def __instance_flavor(name):
+        login_name = control.getSetting(WatchlistFlavor.__LOGIN_NAME_KEY)
+        login_token = control.getSetting(WatchlistFlavor.__LOGIN_TOKEN_KEY)
+        login_image = control.getSetting(WatchlistFlavor.__LOGIN_IMAGE_KEY)
+        username = control.getSetting('%s.name' % name)
+        password = control.getSetting('%s.password' % name)
+
+        flavor_class = WatchlistFlavor.__get_flavor_class(name)
+        return flavor_class(login_name, username, password, login_image, login_token)
 
     @staticmethod
     def __set_login(flavor, res):
         if not res:
             return control.ok_dialog('Login', 'Incorrect username or password')
 
-        control.setSetting(LOGIN_FLAVOR_KEY, flavor)
-        control.setSetting(LOGIN_TOKEN_KEY, res['token'])
-        control.setSetting(LOGIN_IMAGE_KEY, res['image'])
-        control.setSetting(LOGIN_NAME_KEY, res['name'])
+        control.setSetting(WatchlistFlavor.__LOGIN_FLAVOR_KEY, flavor)
+        control.setSetting(WatchlistFlavor.__LOGIN_TOKEN_KEY, res['token'])
+        control.setSetting(WatchlistFlavor.__LOGIN_IMAGE_KEY, res['image'])
+        control.setSetting(WatchlistFlavor.__LOGIN_NAME_KEY, res['name'])
         control.refresh()
-
-    @staticmethod
-    def logout_request():
-        control.setSetting(LOGIN_FLAVOR_KEY, '')
-        control.setSetting(LOGIN_NAME_KEY, '')
-        control.setSetting(LOGIN_IMAGE_KEY, '')
-        control.setSetting(LOGIN_TOKEN_KEY, '')
-        control.refresh()
-
-    def __init__(self):
-        raise Exception("Static Class should not be created")
+        return control.ok_dialog('Login', 'Success')
 
 # TODO: Move into thier own files, Base class should be its own file too,
 # Each file imports from this base class.
