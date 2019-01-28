@@ -86,7 +86,7 @@ class WonderfulSubsBrowser(BrowserBase):
     def _process_anime_view(self, url, data, base_plugin_url, page):
         json_resp = self._json_request(url, data)
         results = json_resp["series"]
-        total_results = json_resp["total_results"] if json_resp.has_key("total_results") else page
+        total_results = json_resp["total_results"]
 
         all_results = map(self._parse_anime_view, results)
         all_results = list(itertools.chain(*all_results))
