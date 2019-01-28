@@ -1,0 +1,41 @@
+from ui import control
+from ui.router import route
+from WonderfulSubsBrowser import WonderfulSubsBrowser
+from WatchlistFlavor import WatchlistFlavor
+
+@route('watchlist_login/*')
+def WL_LOGIN(payload, params):
+    return WatchlistFlavor.login_request(payload.rsplit("/")[0])
+
+@route('watchlist_logout')
+def WL_LOGOUT(payload, params):
+    return WatchlistFlavor.logout_request()
+
+@route('watchlist')
+def WATCHLIST(payload, params):
+    return control.draw_items(WatchlistFlavor.watchlist_request())
+
+@route('watchlist_status_type/*')
+def WATCHLIST_STATUS_TYPE(payload, params):
+    return control.draw_items(WatchlistFlavor.watchlist_status_request(payload.rsplit("/")[0]))
+
+@route('watchlist_query/*')
+def WATCHLIST_QUERY(payload, params):
+    return control.draw_items(WonderfulSubsBrowser().search_site(payload.rsplit("/")[0]))
+
+def add_watchlist(items):
+    flavor = WatchlistFlavor.get_active_flavor()
+    if not flavor:
+        return
+
+    items.insert(0, (
+        "%s's %s" % (flavor.login_name, flavor.title),
+        "watchlist",
+        flavor.image,
+    ))
+
+    items.insert(len(items), (
+        "Logout",
+        "watchlist_logout",
+        ''
+    ))

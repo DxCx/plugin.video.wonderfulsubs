@@ -3,6 +3,7 @@ from resources.lib.ui import utils
 from resources.lib.ui.SourcesList import SourcesList
 from resources.lib.ui.router import on_param, route, router_process
 from resources.lib.WonderfulSubsBrowser import WonderfulSubsBrowser
+from resources.lib.WatchlistIntegration import add_watchlist
 import urlparse
 
 AB_LIST = ["none"] + [chr(i) for i in range(ord("a"), ord("z")+1)]
@@ -184,5 +185,6 @@ def LIST_MENU(payload, params):
         [utils.allocate_item(name, url, True, image) for name, url, image in MENU_ITEMS]
     )
 
+add_watchlist(MENU_ITEMS)
 _add_last_watched()
 router_process(control.get_plugin_url(), control.get_plugin_params())
