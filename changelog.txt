@@ -1,3 +1,6 @@
+[B]0.0.3[/B]
+- Random Button (By @SwagOtaku)
+- Watchlists Support (By @SwagOtaku)
 [B]0.0.2[/B]
 - Beta Version!
 [B]0.0.1[/B]
