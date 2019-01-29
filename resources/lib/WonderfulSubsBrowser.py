@@ -144,12 +144,11 @@ class WonderfulSubsBrowser(BrowserBase):
         for sindex, i in enumerate(filter_sources):
             if len(i) != 3:
                 sname = "Server %d %s" %(sindex, (i.keys()[2]).capitalize())
-                rlink = i["retrieve_url"]
-                sources.update(self._format_link(sname, rlink))
             else:
                 sname = "Server %d" %(sindex)
-                rlink = i["retrieve_url"]
-                sources.update(self._format_link(sname, rlink))
+
+            rlink = i["retrieve_url"]
+            sources.update(self._format_link(sname, rlink))
 
         return sources
 
