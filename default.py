@@ -138,7 +138,7 @@ def CLEAR_HISTORY(payload, params):
 
 @route('search')
 def SEARCH(payload, params):
-    query = control.keyboard(control.lang(30004))
+    query = control.keyboard(control.lang(30006))
     if not query:
         return False
 
