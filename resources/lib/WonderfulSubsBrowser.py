@@ -142,9 +142,14 @@ class WonderfulSubsBrowser(BrowserBase):
         filter_sources = filter(lambda x: x["language"] == "dubs" if is_dubbed else x["language"] == "subs" , source_obj)
 
         for sindex, i in enumerate(filter_sources):
-            sname = "Server %d" %(sindex)
-            rlink = i["retrieve_url"]
-            sources.update(self._format_link(sname, rlink))
+            if len(i) != 3:
+                sname = "Server %d %s" %(sindex, (i.keys()[2]).capitalize())
+                rlink = i["retrieve_url"]
+                sources.update(self._format_link(sname, rlink))
+            else:
+                sname = "Server %d" %(sindex)
+                rlink = i["retrieve_url"]
+                sources.update(self._format_link(sname, rlink))
 
         return sources
 
