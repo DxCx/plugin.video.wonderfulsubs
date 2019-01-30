@@ -52,7 +52,7 @@ class MyAnimeListWLF(WatchlistFlavorBase):
 
     def _process_watchlist_view(self, url, params, base_plugin_url, page):
         result = requests.get(url)
-        soup = bs.BeautifulSoup(result.text)
+        soup = bs.BeautifulSoup(result.text, 'html.parser')
         results = [x for x in soup.find_all('a', {'class': 'status-button'})]
         all_results = map(self._base_watchlist_view, results)
         all_results = list(itertools.chain(*all_results))
@@ -68,7 +68,7 @@ class MyAnimeListWLF(WatchlistFlavorBase):
 
     def _process_status_view(self, url, params, base_plugin_url, page):
         result = requests.get(url, params=params).text
-        soup = bs.BeautifulSoup(result)
+        soup = bs.BeautifulSoup(result, 'html.parser')
         table = soup.find('table', attrs={'class':'list-table'})
         table_body = table.attrs['data-items']
         results = json.loads(table_body)
