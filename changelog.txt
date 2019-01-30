@@ -1,3 +1,5 @@
+[B]0.0.4[/B]
+- Fix parsing of partial keys (By @SwagOtaku)
 [B]0.0.3[/B]
 - Random Button (By @SwagOtaku)
 - Watchlists Support (By @SwagOtaku)
