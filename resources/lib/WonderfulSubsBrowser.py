@@ -154,7 +154,7 @@ class WonderfulSubsBrowser(BrowserBase):
 
     def _format_link(self, sname, rlink):
         if type(rlink) is list:
-            rlink = rlink.pop()
+            rlink = rlink[0]
 
         video_data = {
             "code": rlink,
