@@ -80,7 +80,7 @@ class MyAnimeListWLF(WatchlistFlavorBase):
         base = {
             "name": '%s - %d/%d' % (res["anime_title"], res["num_watched_episodes"], res["anime_num_episodes"]),
             "url": "watchlist_query/%s/%s" % (res["anime_title"], res["anime_id"]),
-            "image": res["anime_image_path"],
+            "image": "https://myanimelist.cdn-dena.com/images/anime/%sl.jpg" %(re.search('anime/(.*).jpg', res["anime_image_path"])).group(1),
             "plot": '',
         }
 
