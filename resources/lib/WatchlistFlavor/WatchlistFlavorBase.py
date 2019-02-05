@@ -5,7 +5,7 @@ class WatchlistFlavorBase(object):
     _NAME = None
     _IMAGE = None
 
-    def __init__(self, login_name, username, password, login_image, login_token):
+    def __init__(self, login_name, username, password, login_image, login_token, sort, title_lang):
         if type(self) is WatchlistFlavorBase:
             raise Exception("Base Class should not be created")
 
@@ -14,6 +14,8 @@ class WatchlistFlavorBase(object):
         self._password = password
         self._login_image = login_image
         self._login_token = login_token
+        self._sort = sort
+        self._title_lang = title_lang
 
     @classmethod
     def name(cls):
