@@ -60,7 +60,8 @@ class MyAnimeListWLF(WatchlistFlavorBase):
 
     def get_watchlist_status(self, status):
         params = {
-            "status": status
+            "status": status,
+            "order": self.__get_sort(),
             }
 
         url = "https://myanimelist.net/animelist/%s" % (self._login_name)
@@ -86,3 +87,11 @@ class MyAnimeListWLF(WatchlistFlavorBase):
 
         return self._parse_view(base)
 
+    def __get_sort(self):
+        sort_types = {
+            "Anime Title": 1,
+            "Last Updated": 5,
+            "Progress": 12,
+            }
+
+        return sort_types[self._sort]
