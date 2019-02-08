@@ -38,6 +38,10 @@ class WatchlistFlavor(object):
         return WatchlistFlavor.get_active_flavor().get_watchlist_status(status)
 
     @staticmethod
+    def watchlist_sync_request(episode, kitsu_id):
+        return WatchlistFlavor.get_active_flavor().sync(episode, kitsu_id)
+
+    @staticmethod
     def login_request(flavor):
         if not WatchlistFlavor.__is_flavor_valid(flavor):
             raise Exception("Invalid flavor %s" % flavor)

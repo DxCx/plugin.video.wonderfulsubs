@@ -3,7 +3,7 @@ from resources.lib.ui import utils
 from resources.lib.ui.SourcesList import SourcesList
 from resources.lib.ui.router import on_param, route, router_process
 from resources.lib.WonderfulSubsBrowser import WonderfulSubsBrowser
-from resources.lib.WatchlistIntegration import add_watchlist
+from resources.lib.WatchlistIntegration import add_watchlist, sync_watchlist
 import urlparse
 
 AB_LIST = ["none"] + [chr(i) for i in range(ord("a"), ord("z")+1)]
@@ -161,7 +161,8 @@ def SEARCH_PAGES(payload, params):
 
 @route('play/*')
 def PLAY(payload, params):
-    anime_url, episode = payload.rsplit("/", 1)
+    anime_url, kitsu_id = payload.rsplit("/", 1)
+    anime_url, episode = anime_url.rsplit("/", 1)
     anime_url, season = anime_url.rsplit("/", 1)
     anime_url, flavor = anime_url.rsplit("/", 1)
     is_dubbed = True if "dub" == flavor else False
@@ -176,6 +177,7 @@ def PLAY(payload, params):
         'notfound': control.lang(30103),
     })
 
+    sync_watchlist(episode, kitsu_id)
     __set_last_watched(anime_url, is_dubbed, name, image)
     return control.play_source(s.get_video_link())
 

@@ -86,3 +86,42 @@ class MyAnimeListWLF(WatchlistFlavorBase):
 
         return self._parse_view(base)
 
+    def __cookies(self):
+        logsess_id, sess_id = self._login_token.rsplit("/", 1)
+
+        cookies = {
+            'MALHLOGSESSID': logsess_id,
+            'MALSESSIONID': sess_id,
+            'is_logged_in': '1'
+            }
+
+        return cookies
+
+    def sync(self, episode, kitsu_id):
+        arm = requests.get("https://arm.now.sh/api/v1/search?type=kitsu&id=" + kitsu_id)
+        if arm.status_code != 200:
+            raise Exception("AnimeID not found")
+        
+        mal_id = json.loads(arm.text)["services"]["mal"]
+        url = "https://myanimelist.net/anime/" + mal_id
+        result = requests.get(url, cookies=self.__cookies()).text
+        soup = bs.BeautifulSoup(result, 'html.parser')
+        csrf = soup.find("meta",  {"name":"csrf_token"})["content"]
+        match = soup.find('h2', {'class' : 'mt8'})
+        if match:
+            url = 'https://myanimelist.net/ownlist/anime/edit.json'
+        else:
+            url = 'https://myanimelist.net/ownlist/anime/add.json'
+
+        return self.__update_library(url, episode, mal_id, csrf)
+
+    def __update_library(self, url, episode, mal_id, csrf):
+        payload = {
+            "anime_id": int(mal_id),
+            "status": 1,
+            "score": 0,
+            "num_watched_episodes": int(episode),
+            "csrf_token": csrf
+            }
+
+        requests.post(url, headers={'Content-Type': 'application/json'}, cookies=self.__cookies(), json=payload)

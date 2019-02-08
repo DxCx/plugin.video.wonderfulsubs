@@ -103,3 +103,57 @@ class KitsuWLF(WatchlistFlavorBase):
 
         return self._parse_view(base)
 
+    def sync(self, episode, kitsu_id):
+        uid, token = self._login_token.rsplit("/", 1)
+        url = "https://kitsu.io/api/edge/library-entries"
+        filter_params = {
+            "filter[user_id]": uid,
+            "filter[anime_id]": kitsu_id
+            }
+        scrobble = requests.get(url, headers=self.__header(token), params=filter_params).text
+        item_dict = json.loads(scrobble)
+        if len(item_dict['data']) == 0:
+            return self.__post_update_library(episode, kitsu_id, token, uid)
+
+        animeid = item_dict['data'][0]['id']
+        return self.__patch_update_library(animeid, episode, token)
+
+    def __post_update_library(self, episode, kitsu_id, token, uid):
+        params = {
+                "data": {
+                    "type": "libraryEntries",
+                    "attributes": {
+                        'status': 'current',
+                        'progress': int(episode)
+                        },
+                    "relationships":{
+                        "user":{
+                            "data":{
+                                "id": int(uid),
+                                "type": "users"
+                            }
+                       },
+                      "anime":{
+                            "data":{
+                                "id": int(kitsu_id),
+                                "type": "anime"
+                            }
+                        }
+                    }
+                }
+            }
+
+        requests.post("https://kitsu.io/api/edge/library-entries", headers=self.__header(token), json=params)
+
+    def __patch_update_library(self, animeid, episode, token):
+        params = {
+            'data': {
+                'id': int(animeid),
+                'type': 'libraryEntries',
+                'attributes': {
+                    'progress': int(episode)
+                    }
+                }
+            }
+
+        requests.patch("https://kitsu.io/api/edge/library-entries/%s" %(animeid), headers=self.__header(token), json=params)
