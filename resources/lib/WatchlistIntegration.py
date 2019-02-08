@@ -27,6 +27,9 @@ def sync_watchlist(episode, kitsu_id):
     flavor = WatchlistFlavor.get_active_flavor()
     if not flavor:
         return
+
+    if "WonderfulSubs" in flavor.title:
+        return
     
     WatchlistFlavor.watchlist_sync_request(episode, kitsu_id)
 
