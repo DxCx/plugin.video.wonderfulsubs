@@ -1,28 +1,26 @@
 import itertools
 import json
-import requests
 from WatchlistFlavorBase import WatchlistFlavorBase
 
 class KitsuWLF(WatchlistFlavorBase):
+    _URL = "https://kitsu.io/api"
     _TITLE = "Kitsu"
     _NAME = "kitsu"
     _IMAGE = "https://canny.io/images/13895523beb5ed9287424264980221d4.png"
 
     def login(self):
-        r = requests.post('https://kitsu.io/api/oauth/token', params={
+        params = {
             "grant_type": "password",
             "username": self._username,
             "password": self._password
-        })
+            }
+        resp = self._post_request(self._to_url("oauth/token"), params=params)
 
-        if r.status_code != 200:
+        if resp.status_code != 200:
             return
 
-        data = json.loads(r.text)
-        user_res = requests.get('https://kitsu.io/api/edge/users?filter[self]=true',
-                                headers=self.__header(data['access_token']))
-
-        data2 = json.loads(user_res.text)["data"][0]
+        data = json.loads(resp.text)
+        data2 = json.loads(self._send_request(self._to_url("edge/users?filter[self]=true"), headers=self.__header(data['access_token'])))["data"][0]
 
         return self._format_login_data((data2["attributes"]["name"]),
                                        '',
@@ -41,7 +39,7 @@ class KitsuWLF(WatchlistFlavorBase):
         _id, token = self._login_token.rsplit("/", 1)
         headers = self.__header(token)
         params = {"filter[user_id]": _id}
-        url = "https://kitsu.io/api/edge/library-entries"
+        url = self._to_url("edge/library-entries")
         return self._process_watchlist_status_view(url, params, headers, "watchlist/%d", page=1)
 
     def _base_watchlist_status_view(self, res):
@@ -55,7 +53,7 @@ class KitsuWLF(WatchlistFlavorBase):
         return self._parse_view(base)
 
     def _process_watchlist_status_view(self, url, params, headers, base_plugin_url, page):
-        result = requests.get(url, params=params, headers=headers).text
+        result = self._send_request(url, headers=headers, params=params)
         results = json.loads(result)["meta"]["statusCounts"]
         all_results = map(self._base_watchlist_status_view, results)
         all_results = list(itertools.chain(*all_results))
@@ -67,7 +65,7 @@ class KitsuWLF(WatchlistFlavorBase):
 
         _id, token = self._login_token.rsplit("/", 1)
         headers = self.__header(token)
-        url = "https://kitsu.io/api/edge/library-entries"
+        url = self._to_url("edge/library-entries")
 
         params = {
             "fields[anime]": "slug,posterImage,canonicalTitle,titles,synopsis,subtype,startDate,status,averageRating,popularityRank,ratingRank,episodeCount",
@@ -84,9 +82,9 @@ class KitsuWLF(WatchlistFlavorBase):
         return self._process_watchlist_view(url, params, headers, "watchlist/%d", page=1)
 
     def _process_watchlist_view(self, url, params, headers, base_plugin_url, page):
-        result = requests.get(url, params=params, headers=headers).text
-        results = json.loads(result)["included"][1:]
-        results2 = json.loads(result)["data"]
+        result = json.loads(self._send_request(url, headers=headers, params=params))
+        results = result["included"][1:]
+        results2 = result["data"]
         all_results = map(self._base_watchlist_view, results, results2)
         all_results = list(itertools.chain(*all_results))
         return all_results
@@ -105,20 +103,20 @@ class KitsuWLF(WatchlistFlavorBase):
 
     def sync(self, episode, kitsu_id):
         uid, token = self._login_token.rsplit("/", 1)
-        url = "https://kitsu.io/api/edge/library-entries"
-        filter_params = {
+        url = self._to_url("edge/library-entries")
+        params = {
             "filter[user_id]": uid,
             "filter[anime_id]": kitsu_id
             }
-        scrobble = requests.get(url, headers=self.__header(token), params=filter_params).text
+        scrobble = self._send_request(url, headers=self.__header(token), params=params)
         item_dict = json.loads(scrobble)
         if len(item_dict['data']) == 0:
-            return self.__post_update_library(episode, kitsu_id, token, uid)
+            return self.__post_params(url, episode, kitsu_id, token, uid)
 
         animeid = item_dict['data'][0]['id']
-        return self.__patch_update_library(animeid, episode, token)
+        return self.__patch_params(url, animeid, episode, token)
 
-    def __post_update_library(self, episode, kitsu_id, token, uid):
+    def __post_params(self, url, episode, kitsu_id, token, uid):
         params = {
                 "data": {
                     "type": "libraryEntries",
@@ -143,9 +141,9 @@ class KitsuWLF(WatchlistFlavorBase):
                 }
             }
 
-        requests.post("https://kitsu.io/api/edge/library-entries", headers=self.__header(token), json=params)
+        self._post_request(url, headers=self.__header(token), json=params)
 
-    def __patch_update_library(self, animeid, episode, token):
+    def __patch_params(self, url, animeid, episode, token):
         params = {
             'data': {
                 'id': int(animeid),
@@ -156,4 +154,4 @@ class KitsuWLF(WatchlistFlavorBase):
                 }
             }
 
-        requests.patch("https://kitsu.io/api/edge/library-entries/%s" %(animeid), headers=self.__header(token), json=params)
+        self._patch_request("%s/%s" %(url, animeid), headers=self.__header(token), json=params)

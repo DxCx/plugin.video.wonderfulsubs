@@ -6,6 +6,7 @@ import requests
 from WatchlistFlavorBase import WatchlistFlavorBase
 
 class MyAnimeListWLF(WatchlistFlavorBase):
+    _URL = "https://myanimelist.net"
     _TITLE = "MyAnimeList"
     _NAME = "mal"
     _IMAGE = "https://myanimelist.cdn-dena.com/images/mal-logo-xsmall@2x.png?v=160803001"
@@ -13,7 +14,7 @@ class MyAnimeListWLF(WatchlistFlavorBase):
     def login(self):
         s = requests.session()
 
-        crsf_res = s.get('https://myanimelist.net/').text
+        crsf_res = s.get(self._URL).text
         crsf = (re.compile("<meta name='csrf_token' content='(.+?)'>").findall(crsf_res))[0]
 
         payload = {
@@ -25,7 +26,7 @@ class MyAnimeListWLF(WatchlistFlavorBase):
             "csrf_token": crsf
             }
 
-        url = "https://myanimelist.net/login.php?from=%2F"
+        url = self._to_url("login.php?from=%2F")
         s.get(url)
         result = s.post(url, data=payload)
         soup = bs.BeautifulSoup(result.text, 'html.parser')
@@ -37,7 +38,7 @@ class MyAnimeListWLF(WatchlistFlavorBase):
         return self._format_login_data(self._username, '', ('%s/%s' % (s.cookies['MALHLOGSESSID'], s.cookies['MALSESSIONID'])))
 
     def watchlist(self):
-        url = "https://myanimelist.net/animelist/%s" % (self._login_name)
+        url = self._to_url("animelist/%s" % (self._login_name))
         return self._process_watchlist_view(url, '', "watchlist/%d", page=1)
 
     def _base_watchlist_view(self, res):
@@ -51,8 +52,8 @@ class MyAnimeListWLF(WatchlistFlavorBase):
         return self._parse_view(base)
 
     def _process_watchlist_view(self, url, params, base_plugin_url, page):
-        result = requests.get(url)
-        soup = bs.BeautifulSoup(result.text, 'html.parser')
+        result = self._send_request(url)
+        soup = bs.BeautifulSoup(result, 'html.parser')
         results = [x for x in soup.find_all('a', {'class': 'status-button'})]
         all_results = map(self._base_watchlist_view, results)
         all_results = list(itertools.chain(*all_results))
@@ -63,11 +64,11 @@ class MyAnimeListWLF(WatchlistFlavorBase):
             "status": status
             }
 
-        url = "https://myanimelist.net/animelist/%s" % (self._login_name)
+        url = self._to_url("animelist/%s" % (self._login_name))
         return self._process_status_view(url, params, "watchlist/%d", page=1)
 
     def _process_status_view(self, url, params, base_plugin_url, page):
-        result = requests.get(url, params=params).text
+        result = self._send_request(url, params=params)
         soup = bs.BeautifulSoup(result, 'html.parser')
         table = soup.find('table', attrs={'class':'list-table'})
         table_body = table.attrs['data-items']
@@ -98,20 +99,19 @@ class MyAnimeListWLF(WatchlistFlavorBase):
         return cookies
 
     def sync(self, episode, kitsu_id):
-        arm = requests.get("https://arm.now.sh/api/v1/search?type=kitsu&id=" + kitsu_id)
-        if arm.status_code != 200:
+        arm_resp = requests.get("https://arm.now.sh/api/v1/search?type=kitsu&id=" + kitsu_id)
+        if arm_resp.status_code != 200:
             raise Exception("AnimeID not found")
         
-        mal_id = json.loads(arm.text)["services"]["mal"]
-        url = "https://myanimelist.net/anime/" + mal_id
-        result = requests.get(url, cookies=self.__cookies()).text
+        mal_id = json.loads(arm_resp.text)["services"]["mal"]
+        result = self._send_request(self._to_url("anime/%s" % (mal_id)), cookies=self.__cookies())
         soup = bs.BeautifulSoup(result, 'html.parser')
         csrf = soup.find("meta",  {"name":"csrf_token"})["content"]
         match = soup.find('h2', {'class' : 'mt8'})
         if match:
-            url = 'https://myanimelist.net/ownlist/anime/edit.json'
+            url = self._to_url("ownlist/anime/edit.json")
         else:
-            url = 'https://myanimelist.net/ownlist/anime/add.json'
+            url = self._to_url("ownlist/anime/add.json")
 
         return self.__update_library(url, episode, mal_id, csrf)
 
@@ -124,4 +124,4 @@ class MyAnimeListWLF(WatchlistFlavorBase):
             "csrf_token": csrf
             }
 
-        requests.post(url, headers={'Content-Type': 'application/json'}, cookies=self.__cookies(), json=payload)
+        self._post_request(url, headers={'Content-Type': 'application/json'}, cookies=self.__cookies(), json=payload)
