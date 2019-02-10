@@ -78,10 +78,13 @@ class MyAnimeListWLF(WatchlistFlavorBase):
         return all_results
 
     def _base_watchlist_status_view(self, res):
+        IMAGE_ID_RE = re.search('anime/(.*).jpg', res["anime_image_path"])
+        image_id = IMAGE_ID_RE.group(1)
+
         base = {
             "name": '%s - %d/%d' % (res["anime_title"], res["num_watched_episodes"], res["anime_num_episodes"]),
             "url": "watchlist_query/%s/%s" % (res["anime_title"], res["anime_id"]),
-            "image": "https://myanimelist.cdn-dena.com/images/anime/%sl.jpg" %(re.search('anime/(.*).jpg', res["anime_image_path"])).group(1),
+            "image": "https://myanimelist.cdn-dena.com/images/anime/%sl.jpg" %(image_id),
             "plot": '',
         }
 

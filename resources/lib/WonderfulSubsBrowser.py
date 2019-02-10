@@ -238,9 +238,9 @@ class WonderfulSubsBrowser(BrowserBase):
             "seasons": dict([(str(i['id']), i) for i in seasons.values()]),
         }
 
-    def _get_anime_episodes(self, info, season, order):
+    def _get_anime_episodes(self, info, season, desc_order):
         season = info["seasons"][season]
-        episodes = sorted(season["episodes"].values(), reverse=order, key=lambda x:
+        episodes = sorted(season["episodes"].values(), reverse=desc_order, key=lambda x:
                           float(x["id"]))
         return map(lambda x: utils.allocate_item(x['name'],
                                                  x['url'],
@@ -310,10 +310,10 @@ class WonderfulSubsBrowser(BrowserBase):
         info = self._get_anime_info(anime_url, is_dubbed)
         return (info["name"], info["image"])
 
-    def get_anime_seasons(self, anime_url, is_dubbed, order):
+    def get_anime_seasons(self, anime_url, is_dubbed, desc_order):
         info = self._get_anime_info(anime_url, is_dubbed)
         if len(info["seasons"]) == 1:
-            return self._get_anime_episodes(info, info["seasons"].keys().pop(), order)
+            return self._get_anime_episodes(info, info["seasons"].keys().pop(), desc_order)
 
         seasons = sorted(info["seasons"].values(), key=lambda x: x["id"])
         return map(lambda x: utils.allocate_item(x['name'],
@@ -322,9 +322,9 @@ class WonderfulSubsBrowser(BrowserBase):
                                                  info["image"],
                                                  info["plot"]), seasons)
 
-    def get_anime_episodes(self, anime_url, is_dubbed, season, order):
+    def get_anime_episodes(self, anime_url, is_dubbed, season, desc_order):
         info = self._get_anime_info(anime_url, is_dubbed)
-        return self._get_anime_episodes(info, season, order)
+        return self._get_anime_episodes(info, season, desc_order)
 
     def get_episode_sources(self, anime_url, is_dubbed, season, episode):
         info = self._get_anime_info(anime_url, is_dubbed)

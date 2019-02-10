@@ -62,18 +62,18 @@ def SETTINGS(payload, params):
 @route('animes/*')
 def ANIMES_PAGE(payload, params):
     anime_url, flavor_or_season = payload.rsplit("/", 1)
-    order = False if "Ascending" in control.getSetting('reverseorder') else True
+    desc_order = False if "Ascending" in control.getSetting('reverseorder') else True
     if anime_url.find("/") == -1:
         # Seasons
         is_dubbed = True if "dub" == flavor_or_season else False
-        seasons = _BROWSER.get_anime_seasons(anime_url, is_dubbed, order)
+        seasons = _BROWSER.get_anime_seasons(anime_url, is_dubbed, desc_order)
         return control.draw_items(seasons)
 
     season = flavor_or_season
     anime_url, flavor = anime_url.rsplit("/", 1)
     is_dubbed = True if "dub" == flavor else False
 
-    episodes = _BROWSER.get_anime_episodes(anime_url, is_dubbed, season, order)
+    episodes = _BROWSER.get_anime_episodes(anime_url, is_dubbed, season, desc_order)
     return control.draw_items(episodes)
 
 @route('letter')
