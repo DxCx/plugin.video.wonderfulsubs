@@ -142,4 +142,3 @@ class MyAnimeListWLF(WatchlistFlavorBase):
             }
 
         return sort_types[self._sort]
-
