@@ -38,8 +38,12 @@ class WatchlistFlavor(object):
         return WatchlistFlavor.get_active_flavor().get_watchlist_status(status)
 
     @staticmethod
-    def watchlist_sync_request(episode, kitsu_id):
-        return WatchlistFlavor.get_active_flavor().sync(episode, kitsu_id)
+    def watchlist_update_request(episode, kitsu_id):
+        desc_update = control.fetch_desc_update()
+        if not desc_update:
+            return
+
+        return WatchlistFlavor.get_active_flavor().watchlist_update(episode, kitsu_id)
 
     @staticmethod
     def login_request(flavor):

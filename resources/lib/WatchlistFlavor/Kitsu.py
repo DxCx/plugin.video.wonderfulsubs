@@ -101,7 +101,7 @@ class KitsuWLF(WatchlistFlavorBase):
 
         return self._parse_view(base)
 
-    def sync(self, episode, kitsu_id):
+    def watchlist_update(self, episode, kitsu_id):
         uid, token = self._login_token.rsplit("/", 1)
         url = self._to_url("edge/library-entries")
         params = {

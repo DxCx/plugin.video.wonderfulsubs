@@ -3,7 +3,7 @@ from resources.lib.ui import utils
 from resources.lib.ui.SourcesList import SourcesList
 from resources.lib.ui.router import on_param, route, router_process
 from resources.lib.WonderfulSubsBrowser import WonderfulSubsBrowser
-from resources.lib.WatchlistIntegration import add_watchlist, sync_watchlist
+from resources.lib.WatchlistIntegration import add_watchlist, watchlist_update
 import urlparse
 
 AB_LIST = ["none"] + [chr(i) for i in range(ord("a"), ord("z")+1)]
@@ -177,9 +177,9 @@ def PLAY(payload, params):
         'notfound': control.lang(30103),
     })
 
-    sync_watchlist(episode, kitsu_id)
     __set_last_watched(anime_url, is_dubbed, name, image)
-    return control.play_source(s.get_video_link())
+    control.play_source(s.get_video_link())
+    watchlist_update(episode, kitsu_id)
 
 @route('')
 def LIST_MENU(payload, params):

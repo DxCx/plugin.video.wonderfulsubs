@@ -42,22 +42,18 @@ class watchlistPlayer(xbmc.Player):
     def __init__(self):
         xbmc.Player.__init__(self)
 
-# called when kodi starts playing a file
-    def onPlayBackStarted(self):
-        return
-
-# called when user stops kodi playing a file
     def onPlayBackStopped(self):
-        return
+        return yesno_dialog("Watchlist", "Update Watchlist Episode Progress", "Not Yet")
 
-# called when kodi stops playing a file
     def onPlayBackEnded(self):
-        return
+        return yesno_dialog("Watchlist", "Update Watchlist Episode Progress", "Not Yet")
 
-def trigger_watchlistPlayer():
-    wplayer = watchlistPlayer()
-    while not xbmc.abortRequested:
-        xbmc.sleep(4000)
+def fetch_desc_update():
+    desc_update = watchlistPlayer()
+    xbmc.sleep(500)  # Wait until playback starts
+    while desc_update.isPlaying():
+        xbmc.sleep(500)
+    return desc_update
 
 def setContent(contentType):
     xbmcplugin.setContent(HANDLE, contentType)
@@ -100,6 +96,9 @@ def keyboard(text):
 
 def ok_dialog(title, text):
     return xbmcgui.Dialog().ok(title, text)
+
+def yesno_dialog(title, text, nolabel=None, yeslabel=None):
+    return xbmcgui.Dialog().yesno(title, text, nolabel=nolabel, yeslabel=yeslabel)
 
 def xbmc_add_player_item(name, url, iconimage='', description='', draw_cm=None):
     ok=True

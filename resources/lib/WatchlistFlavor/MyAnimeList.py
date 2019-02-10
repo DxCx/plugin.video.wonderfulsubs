@@ -98,12 +98,16 @@ class MyAnimeListWLF(WatchlistFlavorBase):
 
         return cookies
 
-    def sync(self, episode, kitsu_id):
+    def _kitsu_to_mal_id(self, kitsu_id):
         arm_resp = requests.get("https://arm.now.sh/api/v1/search?type=kitsu&id=" + kitsu_id)
         if arm_resp.status_code != 200:
             raise Exception("AnimeID not found")
-        
+
         mal_id = json.loads(arm_resp.text)["services"]["mal"]
+        return mal_id
+
+    def watchlist_update(self, episode, kitsu_id):
+        mal_id = self._kitsu_to_mal_id(kitsu_id)
         result = self._send_request(self._to_url("anime/%s" % (mal_id)), cookies=self.__cookies())
         soup = bs.BeautifulSoup(result, 'html.parser')
         csrf = soup.find("meta",  {"name":"csrf_token"})["content"]
