@@ -17,10 +17,15 @@
         	<setting id="mal.name" type="text" label="Username:" default=""/>
         	<setting id="mal.password" type="text" option="hidden" label="Password:" default=""/>
 		<setting id="mal.login" type="action" label="Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/mal)"/>
+		<setting type="lsep" label="Watchlist"/>
+		<setting id="mal.sort" type="labelenum" label="Sort by:" values="Last Updated|Progress|Anime Title" default="Anime Title"/>
 	</category>
 	<category label="Kitsu">
         	<setting id="kitsu.name" type="text" label="Email:" default=""/>
         	<setting id="kitsu.password" type="text" option="hidden" label="Password:" default=""/>
 		<setting id="kitsu.login" type="action" label="Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/kitsu)"/>
+		<setting type="lsep" label="Watchlist"/>
+		<setting id="kitsu.sort" type="labelenum" label="Sort by:" values="Date Updated|Progress|Title" default="Title"/>
+		<setting id="kitsu.titles" type="labelenum" label="How titles will be displayed:" values="Canonical|Romanized|English" default="Canonical"/>
 	</category>
 </settings>

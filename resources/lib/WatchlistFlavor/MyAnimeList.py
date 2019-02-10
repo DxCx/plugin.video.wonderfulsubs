@@ -61,7 +61,8 @@ class MyAnimeListWLF(WatchlistFlavorBase):
 
     def get_watchlist_status(self, status):
         params = {
-            "status": status
+            "status": status,
+            "order": self.__get_sort(),
             }
 
         url = self._to_url("animelist/%s" % (self._login_name))
@@ -78,10 +79,13 @@ class MyAnimeListWLF(WatchlistFlavorBase):
         return all_results
 
     def _base_watchlist_status_view(self, res):
+        IMAGE_ID_RE = re.search('anime/(.*).jpg', res["anime_image_path"])
+        image_id = IMAGE_ID_RE.group(1)
+
         base = {
             "name": '%s - %d/%d' % (res["anime_title"], res["num_watched_episodes"], res["anime_num_episodes"]),
             "url": "watchlist_query/%s/%s" % (res["anime_title"], res["anime_id"]),
-            "image": res["anime_image_path"],
+            "image": "https://myanimelist.cdn-dena.com/images/anime/%sl.jpg" %(image_id),
             "plot": '',
         }
 
@@ -129,3 +133,13 @@ class MyAnimeListWLF(WatchlistFlavorBase):
             }
 
         self._post_request(url, headers={'Content-Type': 'application/json'}, cookies=self.__cookies(), json=payload)
+
+    def __get_sort(self):
+        sort_types = {
+            "Anime Title": 1,
+            "Last Updated": 5,
+            "Progress": 12,
+            }
+
+        return sort_types[self._sort]
+

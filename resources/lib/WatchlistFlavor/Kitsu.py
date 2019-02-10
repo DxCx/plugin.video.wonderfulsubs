@@ -76,7 +76,7 @@ class KitsuWLF(WatchlistFlavorBase):
             "include": "anime,user,mediaReaction",
             "page[limit]": "500",
             "page[offset]": "0",
-            "sort": "anime.titles.canonical",
+            "sort": self.__get_sort(),
             }
 
         return self._process_watchlist_view(url, params, headers, "watchlist/%d", page=1)
@@ -91,7 +91,7 @@ class KitsuWLF(WatchlistFlavorBase):
 
     def _base_watchlist_view(self, res, res2):
         base = {
-            "name": '%s - %d/%d' % (res["attributes"]['canonicalTitle'],
+            "name": '%s - %d/%d' % (res["attributes"]["titles"].get(self.__get_title_lang(), res["attributes"]['canonicalTitle']),
                                     res2["attributes"]['progress'],
                                     res["attributes"]['episodeCount'] if res["attributes"]['episodeCount'] is not None else 0),
             "url": "watchlist_query/%s/%s" % (res["attributes"]['canonicalTitle'], res["id"]),
@@ -155,3 +155,22 @@ class KitsuWLF(WatchlistFlavorBase):
             }
 
         self._patch_request("%s/%s" %(url, animeid), headers=self.__header(token), json=params)
+
+    def __get_sort(self):
+        sort_types = {
+            "Date Updated": "-progressed_at",
+            "Progress": "-progress",
+            "Title": "anime.titles." + self.__get_title_lang(),
+            }
+
+        return sort_types[self._sort]
+
+    def __get_title_lang(self):
+        title_langs = {
+            "Canonical": "canonical",
+            "English": "en",
+            "Romanized": "en_jp",
+            }
+
+        return title_langs[self._title_lang]
+

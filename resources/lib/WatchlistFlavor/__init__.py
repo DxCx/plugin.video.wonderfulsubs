@@ -80,9 +80,11 @@ class WatchlistFlavor(object):
         login_image = control.getSetting(WatchlistFlavor.__LOGIN_IMAGE_KEY)
         username = control.getSetting('%s.name' % name)
         password = control.getSetting('%s.password' % name)
+        sort = control.getSetting('%s.sort' % name)
+        title_lang = control.getSetting('%s.titles' % name)
 
         flavor_class = WatchlistFlavor.__get_flavor_class(name)
-        return flavor_class(login_name, username, password, login_image, login_token)
+        return flavor_class(login_name, username, password, login_image, login_token, sort, title_lang)
 
     @staticmethod
     def __set_login(flavor, res):

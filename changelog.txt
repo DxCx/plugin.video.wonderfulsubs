@@ -1,3 +1,6 @@
+[B]0.0.5[/B]
+- Change "A-B Listings" to "A-Z Listings" (Thanks @SwagOtaku)
+- Fixes batch (NA And Watchlists) (Thanks @SwagOtaku)
 [B]0.0.4[/B]
 - Fix parsing of partial keys (By @SwagOtaku)
 [B]0.0.3[/B]
