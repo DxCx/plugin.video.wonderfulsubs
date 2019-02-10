@@ -37,6 +37,28 @@ class hook_mimetype(object):
         self.__MIME_HOOKS[self._type] = func
         return func
 
+class watchlistPlayer(xbmc.Player):
+
+    def __init__(self):
+        xbmc.Player.__init__(self)
+
+# called when kodi starts playing a file
+    def onPlayBackStarted(self):
+        return
+
+# called when user stops kodi playing a file
+    def onPlayBackStopped(self):
+        return
+
+# called when kodi stops playing a file
+    def onPlayBackEnded(self):
+        return
+
+def trigger_watchlistPlayer():
+    wplayer = watchlistPlayer()
+    while not xbmc.abortRequested:
+        xbmc.sleep(4000)
+
 def setContent(contentType):
     xbmcplugin.setContent(HANDLE, contentType)
 
