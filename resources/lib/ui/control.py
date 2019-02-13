@@ -51,8 +51,12 @@ class watchlistPlayer(xbmc.Player):
 def fetch_desc_update():
     desc_update = watchlistPlayer()
     xbmc.sleep(500)  # Wait until playback starts
+    if not desc_update.isPlaying():
+        return
+
     while desc_update.isPlaying():
         xbmc.sleep(500)
+
     return desc_update
 
 def setContent(contentType):
