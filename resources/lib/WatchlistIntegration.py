@@ -27,9 +27,6 @@ def watchlist_update(episode, kitsu_id):
     flavor = WatchlistFlavor.get_active_flavor()
     if not flavor:
         return
-
-    if "WonderfulSubs" in flavor.title:
-        return
     
     return lambda: WatchlistFlavor.watchlist_update_request(episode, kitsu_id)
 

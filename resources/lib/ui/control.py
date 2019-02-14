@@ -40,7 +40,7 @@ class hook_mimetype(object):
 class watchlistPlayer(xbmc.Player):
 
     def __init__(self, *args, **kwargs):
-        self.action = kwargs['action']
+        self._on_done = kwargs['action']
         xbmc.Player.__init__(self)
 
     def onPlayBackStarted(self):
@@ -51,20 +51,20 @@ class watchlistPlayer(xbmc.Player):
         if not update_ep:
             return
 
-        return self.action()
+        return self._on_done()
 
     def onPlayBackEnded(self):
-        return self.action()
+        return self._on_done()
 
-def fetch_desc_update(update):
+def fetch_wupdate(update):
     if not update:
         return
 
-    desc_update = watchlistPlayer(action=update)
+    get_update = watchlistPlayer(action=update)
     xbmc.sleep(500)  # Wait until playback starts
     while not xbmc.Monitor().abortRequested():
         xbmc.sleep(500)
-    return desc_update
+    return get_update
 
 def setContent(contentType):
     xbmcplugin.setContent(HANDLE, contentType)
@@ -153,7 +153,7 @@ def _prefetch_play_link(link):
         "headers": linkInfo.headers,
     }
 
-def play_source(link):
+def play_source(link, update):
     linkInfo = _prefetch_play_link(link)
     if not linkInfo:
         xbmcplugin.setResolvedUrl(HANDLE, False, xbmcgui.ListItem())
@@ -166,6 +166,7 @@ def play_source(link):
     # Run any mimetype hook
     item = hook_mimetype.trigger(linkInfo['headers']['Content-Type'], item)
     xbmcplugin.setResolvedUrl(HANDLE, True, item)
+    fetch_wupdate(update)
 
 def draw_items(video_data, draw_cm=None):
     for vid in video_data:
