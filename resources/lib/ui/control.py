@@ -39,24 +39,31 @@ class hook_mimetype(object):
 
 class watchlistPlayer(xbmc.Player):
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        self.action = kwargs['action']
         xbmc.Player.__init__(self)
 
+    def onPlayBackStarted(self):
+        pass
+
     def onPlayBackStopped(self):
-        return yesno_dialog("Watchlist", "Update Watchlist Episode Progress", "Not Yet")
+        update_ep = yesno_dialog("Watchlist", "Update Watchlist Episode Progress", "Not Yet")
+        if not update_ep:
+            return
+
+        return self.action()
 
     def onPlayBackEnded(self):
-        return yesno_dialog("Watchlist", "Update Watchlist Episode Progress", "Not Yet")
+        return self.action()
 
-def fetch_desc_update():
-    desc_update = watchlistPlayer()
-    xbmc.sleep(500)  # Wait until playback starts
-    if not desc_update.isPlaying():
+def fetch_desc_update(update):
+    if not update:
         return
 
-    while desc_update.isPlaying():
+    desc_update = watchlistPlayer(action=update)
+    xbmc.sleep(500)  # Wait until playback starts
+    while not xbmc.Monitor().abortRequested():
         xbmc.sleep(500)
-
     return desc_update
 
 def setContent(contentType):

@@ -39,10 +39,6 @@ class WatchlistFlavor(object):
 
     @staticmethod
     def watchlist_update_request(episode, kitsu_id):
-        desc_update = control.fetch_desc_update()
-        if not desc_update:
-            return
-
         return WatchlistFlavor.get_active_flavor().watchlist_update(episode, kitsu_id)
 
     @staticmethod

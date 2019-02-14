@@ -177,7 +177,7 @@ def PLAY(payload, params):
 
     __set_last_watched(anime_url, is_dubbed, name, image)
     control.play_source(s.get_video_link())
-    watchlist_update(episode, kitsu_id)
+    control.fetch_desc_update(watchlist_update(episode, kitsu_id))
 
 @route('')
 def LIST_MENU(payload, params):
