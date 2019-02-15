@@ -66,3 +66,6 @@ class WonderfulSubsWLF(WatchlistFlavorBase):
         all_results = map(self._base_watchlist_view, results)
         all_results = list(itertools.chain(*all_results))
         return all_results
+
+    def watchlist_update(self, episode, kitsu_id):
+        return
