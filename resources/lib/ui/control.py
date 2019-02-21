@@ -60,7 +60,10 @@ def fetch_wupdate(update):
     if not update:
         return
 
-    get_update = watchlistPlayer(action=update)
+    if not update():
+        return
+
+    get_update = watchlistPlayer(action=update())
     xbmc.sleep(500)  # Wait until playback starts
     while not xbmc.Monitor().abortRequested():
         xbmc.sleep(500)

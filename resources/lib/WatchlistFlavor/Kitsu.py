@@ -111,10 +111,10 @@ class KitsuWLF(WatchlistFlavorBase):
         scrobble = self._send_request(url, headers=self.__header(token), params=params)
         item_dict = json.loads(scrobble)
         if len(item_dict['data']) == 0:
-            return self.__post_params(url, episode, kitsu_id, token, uid)
+            return lambda: self.__post_params(url, episode, kitsu_id, token, uid)
 
         animeid = item_dict['data'][0]['id']
-        return self.__patch_params(url, animeid, episode, token)
+        return lambda: self.__patch_params(url, animeid, episode, token)
 
     def __post_params(self, url, episode, kitsu_id, token, uid):
         params = {

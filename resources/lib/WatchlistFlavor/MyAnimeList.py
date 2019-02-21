@@ -121,7 +121,7 @@ class MyAnimeListWLF(WatchlistFlavorBase):
         else:
             url = self._to_url("ownlist/anime/add.json")
 
-        return self.__update_library(url, episode, mal_id, csrf)
+        return lambda: self.__update_library(url, episode, mal_id, csrf)
 
     def __update_library(self, url, episode, mal_id, csrf):
         payload = {
