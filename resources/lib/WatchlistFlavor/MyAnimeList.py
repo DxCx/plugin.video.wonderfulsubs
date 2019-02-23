@@ -80,7 +80,7 @@ class MyAnimeListWLF(WatchlistFlavorBase):
 
     def _base_watchlist_status_view(self, res):
         IMAGE_ID_RE = re.search('anime/(.*).jpg', res["anime_image_path"])
-        image_id = IMAGE_ID_RE.group(1)
+        image_id = IMAGE_ID_RE.group(1) if IMAGE_ID_RE else ""
 
         base = {
             "name": '%s - %d/%d' % (res["anime_title"], res["num_watched_episodes"], res["anime_num_episodes"]),
