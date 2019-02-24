@@ -173,4 +173,3 @@ class KitsuWLF(WatchlistFlavorBase):
             }
 
         return title_langs[self._title_lang]
-
