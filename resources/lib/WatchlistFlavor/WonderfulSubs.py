@@ -68,4 +68,4 @@ class WonderfulSubsWLF(WatchlistFlavorBase):
         return all_results
 
     def watchlist_update(self, episode, kitsu_id):
-        return
+        return False

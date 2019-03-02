@@ -14,4 +14,8 @@
 	<string id="30101">Processing %s</string>
 	<string id="30102">Please choose source: </string>
 	<string id="30103">Couldn't find eligible sources</string>
+
+	<string id="30200">Watchlist</string>
+	<string id="30201">Update Watchlist Episode Progress</string>
+	<string id="30202">Not Yet</string>
 </strings>

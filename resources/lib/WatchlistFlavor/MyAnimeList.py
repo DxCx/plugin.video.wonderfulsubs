@@ -43,8 +43,8 @@ class MyAnimeListWLF(WatchlistFlavorBase):
 
     def _base_watchlist_view(self, res):
         base = {
-            "name": res.text,
-            "url": 'watchlist_status_type/' + (res['href']).rsplit('=', 1)[-1],
+            "name": res[0],
+            "url": 'watchlist_status_type/' + str(res[1]),
             "image": '',
             "plot": '',
         }
@@ -52,28 +52,33 @@ class MyAnimeListWLF(WatchlistFlavorBase):
         return self._parse_view(base)
 
     def _process_watchlist_view(self, url, params, base_plugin_url, page):
-        result = self._send_request(url)
-        soup = bs.BeautifulSoup(result, 'html.parser')
-        results = [x for x in soup.find_all('a', {'class': 'status-button'})]
-        all_results = map(self._base_watchlist_view, results)
+        all_results = map(self._base_watchlist_view, self._mal_statuses())
         all_results = list(itertools.chain(*all_results))
         return all_results
 
+    def _mal_statuses(self):
+        statuses = [
+            ("All Anime", 7),
+            ("Currently Watching", 1),
+            ("Completed", 2),
+            ("On Hold", 3),
+            ("Dropped", 4),
+            ("Plan to Watch", 6),
+            ]
+
+        return statuses
+        
     def get_watchlist_status(self, status):
         params = {
             "status": status,
             "order": self.__get_sort(),
             }
 
-        url = self._to_url("animelist/%s" % (self._login_name))
+        url = self._to_url("animelist/%s/load.json" % (self._login_name))
         return self._process_status_view(url, params, "watchlist/%d", page=1)
 
     def _process_status_view(self, url, params, base_plugin_url, page):
-        result = self._send_request(url, params=params)
-        soup = bs.BeautifulSoup(result, 'html.parser')
-        table = soup.find('table', attrs={'class':'list-table'})
-        table_body = table.attrs['data-items']
-        results = json.loads(table_body)
+        results = json.loads(self._send_request(url, params=params))
         all_results = map(self._base_watchlist_status_view, results)
         all_results = list(itertools.chain(*all_results))
         return all_results
@@ -127,12 +132,11 @@ class MyAnimeListWLF(WatchlistFlavorBase):
         payload = {
             "anime_id": int(mal_id),
             "status": 1,
-            "score": 0,
             "num_watched_episodes": int(episode),
             "csrf_token": csrf
             }
 
-        self._post_request(url, headers={'Content-Type': 'application/json'}, cookies=self.__cookies(), json=payload)
+        self._post_request(url, cookies=self.__cookies(), json=payload)
 
     def __get_sort(self):
         sort_types = {

@@ -28,7 +28,7 @@ def watchlist_update(episode, kitsu_id):
     if not flavor:
         return
     
-    return lambda: WatchlistFlavor.watchlist_update_request(episode, kitsu_id)
+    return WatchlistFlavor.watchlist_update_request(episode, kitsu_id)
 
 def add_watchlist(items):
     flavor = WatchlistFlavor.get_active_flavor()
