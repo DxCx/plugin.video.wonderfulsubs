@@ -55,6 +55,9 @@ def sortResultsByRes(fetched_urls):
                   utils.parse_resolution_of_source(x[0]),
                   reverse=True)
 
+def on_stopped():
+    return control.yesno_dialog(control.lang(30200), control.lang(30201), control.lang(30202))
+
 @route('settings')
 def SETTINGS(payload, params):
     return control.settingsMenu();
@@ -176,7 +179,7 @@ def PLAY(payload, params):
     })
 
     __set_last_watched(anime_url, is_dubbed, name, image)
-    control.play_source(s.get_video_link(), watchlist_update(episode, kitsu_id))
+    control.play_source(s.get_video_link(), watchlist_update(episode, kitsu_id), on_stopped)
 
 @route('')
 def LIST_MENU(payload, params):

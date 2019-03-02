@@ -41,12 +41,14 @@ class watchlistPlayer(xbmc.Player):
 
     def __init__(self, *args, **kwargs):
         self._on_playback_done = kwargs['action']
+        self._on_stopped = kwargs['dialog']
+        super(watchlistPlayer, self).__init__()
 
     def onPlayBackStarted(self):
         pass
 
     def onPlayBackStopped(self):
-        if not on_stopped():
+        if not self._on_stopped():
             return
 
         self._on_playback_done()
@@ -54,18 +56,14 @@ class watchlistPlayer(xbmc.Player):
     def onPlayBackEnded(self):
         self._on_playback_done()
 
-def handle_player(on_playback_done):
+def handle_player(on_playback_done, on_stopped):
     if not on_playback_done:
         return
 
-    get_player = watchlistPlayer(action=on_playback_done)
+    get_player = watchlistPlayer(action=on_playback_done, dialog=on_stopped)
     xbmc.sleep(500)  # Wait until playback starts
     while xbmc.Player().isPlaying():
         xbmc.sleep(500)
-
-def on_stopped():
-    update_ep = yesno_dialog(lang(30200), lang(30201), lang(30202))
-    return update_ep
 
 def setContent(contentType):
     xbmcplugin.setContent(HANDLE, contentType)
@@ -154,7 +152,7 @@ def _prefetch_play_link(link):
         "headers": linkInfo.headers,
     }
 
-def play_source(link, on_episode_done=None):
+def play_source(link, on_episode_done=None, on_stopped=None):
     linkInfo = _prefetch_play_link(link)
     if not linkInfo:
         xbmcplugin.setResolvedUrl(HANDLE, False, xbmcgui.ListItem())
@@ -167,7 +165,7 @@ def play_source(link, on_episode_done=None):
     # Run any mimetype hook
     item = hook_mimetype.trigger(linkInfo['headers']['Content-Type'], item)
     xbmcplugin.setResolvedUrl(HANDLE, True, item)
-    handle_player(on_episode_done)
+    handle_player(on_episode_done, on_stopped)
 
 def draw_items(video_data, draw_cm=None):
     for vid in video_data:
