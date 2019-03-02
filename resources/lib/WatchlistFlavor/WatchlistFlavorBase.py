@@ -1,6 +1,8 @@
+import requests
 from ..ui import utils
 
 class WatchlistFlavorBase(object):
+    _URL = None
     _TITLE = None
     _NAME = None
     _IMAGE = None
@@ -39,6 +41,13 @@ class WatchlistFlavorBase(object):
         return self._TITLE
 
     @property
+    def url(self):
+        if self._URL is None:
+            raise Exception("Missing Url")
+
+        return self._URL
+
+    @property
     def login_name(self):
         return self._login_name
 
@@ -50,6 +59,9 @@ class WatchlistFlavorBase(object):
 
     def get_watchlist_status(self, status):
         raise NotImplementedError("get_watchlist_status should be implemented by subclass")
+
+    def watchlist_update(self, episode, kitsu_id):
+        raise NotImplementedError("watchlist_update should be implemented by subclass")
 
     def _format_login_data(self, name, image, token):
         login_data = {
@@ -69,3 +81,16 @@ class WatchlistFlavorBase(object):
                                 base["plot"])
             ]
 
+    def _to_url(self, url=''):
+        if url.startswith("/"):
+            url = url[1:]
+        return "%s/%s" % (self._URL, url)
+
+    def _send_request(self, url, headers=None, cookies=None, data=None, params=None):
+        return requests.get(url, headers=headers, cookies=cookies, data=data, params=params).text
+
+    def _post_request(self, url, headers=None, cookies=None, params=None, json=None):
+        return requests.post(url, headers=headers, cookies=cookies, params=params, json=json)
+
+    def _patch_request(self, url, headers=None, cookies=None, params=None, json=None):
+        return requests.patch(url, headers=headers, cookies=cookies, params=params, json=json)

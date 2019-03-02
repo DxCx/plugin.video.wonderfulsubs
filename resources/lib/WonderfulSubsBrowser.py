@@ -92,7 +92,7 @@ class WonderfulSubsBrowser(BrowserBase):
         all_results += self._handle_paging(total_results, base_plugin_url, page)
         return all_results
 
-    def _format_episode(self, sname, anime_url, is_dubbed, ses_idx, einfo):
+    def _format_episode(self, sname, anime_url, is_dubbed, ses_idx, einfo, kitsu_id):
         desc = None if not einfo.has_key("description") else einfo["description"]
         image = None
         if einfo.has_key("thumbnail") and len(einfo["thumbnail"]):
@@ -119,10 +119,11 @@ class WonderfulSubsBrowser(BrowserBase):
             base.update({
                 "name": einfo["title"] if "Episode" in einfo["title"] else "Ep. %s (%s)" %(einfo["episode_number"], einfo["title"]), 
                 "id": str(einfo["episode_number"]),
-                "url": "play/%s/%s/%d/%s" % (anime_url,
+                "url": "play/%s/%s/%d/%s/%s" % (anime_url,
                                           "dub" if is_dubbed else "sub",
                                           ses_idx,
-                                          str(einfo["episode_number"])),
+                                          str(einfo["episode_number"]),
+                                          kitsu_id),
                 "sources": sources,
                 "image": image,
                 "plot": desc,
@@ -217,7 +218,8 @@ class WonderfulSubsBrowser(BrowserBase):
 
                     ep_info = self._format_episode("Server %d" % sindex,
                                                    anime_url, is_dubbed,
-                                                   ses_obj["id"], einfo)
+                                                   ses_obj["id"], einfo,
+                                                   season_col.get("kitsu_id", None))
                     if not eps.has_key(ep_info["id"]):
                         eps[ep_info["id"]] = ep_info
                         continue

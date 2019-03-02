@@ -3,7 +3,7 @@ from resources.lib.ui import utils
 from resources.lib.ui.SourcesList import SourcesList
 from resources.lib.ui.router import on_param, route, router_process
 from resources.lib.WonderfulSubsBrowser import WonderfulSubsBrowser
-from resources.lib.WatchlistIntegration import add_watchlist
+from resources.lib.WatchlistIntegration import add_watchlist, watchlist_update
 import urlparse
 
 AB_LIST = ["none"] + [chr(i) for i in range(ord("a"), ord("z")+1)]
@@ -54,6 +54,10 @@ def sortResultsByRes(fetched_urls):
     return sorted(filtered_urls, key=lambda x:
                   utils.parse_resolution_of_source(x[0]),
                   reverse=True)
+
+#Will be called when player is stopped in the middle of the episode
+def on_stopped():
+    return control.yesno_dialog(control.lang(30200), control.lang(30201), control.lang(30202))
 
 @route('settings')
 def SETTINGS(payload, params):
@@ -159,7 +163,8 @@ def SEARCH_PAGES(payload, params):
 
 @route('play/*')
 def PLAY(payload, params):
-    anime_url, episode = payload.rsplit("/", 1)
+    anime_url, kitsu_id = payload.rsplit("/", 1)
+    anime_url, episode = anime_url.rsplit("/", 1)
     anime_url, season = anime_url.rsplit("/", 1)
     anime_url, flavor = anime_url.rsplit("/", 1)
     is_dubbed = True if "dub" == flavor else False
@@ -175,7 +180,7 @@ def PLAY(payload, params):
     })
 
     __set_last_watched(anime_url, is_dubbed, name, image)
-    return control.play_source(s.get_video_link())
+    control.play_source(s.get_video_link(), watchlist_update(episode, kitsu_id), on_stopped)
 
 @route('')
 def LIST_MENU(payload, params):
