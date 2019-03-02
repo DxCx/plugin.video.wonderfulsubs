@@ -55,6 +55,7 @@ def sortResultsByRes(fetched_urls):
                   utils.parse_resolution_of_source(x[0]),
                   reverse=True)
 
+#Will be called when player is stopped in the middle of the episode
 def on_stopped():
     return control.yesno_dialog(control.lang(30200), control.lang(30201), control.lang(30202))
 
