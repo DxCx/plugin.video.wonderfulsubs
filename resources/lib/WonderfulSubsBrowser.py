@@ -106,10 +106,11 @@ class WonderfulSubsBrowser(BrowserBase):
             base.update({
                 "name": einfo["title"],
                 "id": str(einfo["ova_number"]),
-                "url": "play/%s/%s/%d/%s" % (anime_url,
+                "url": "play/%s/%s/%d/%s/%s" % (anime_url,
                                           "dub" if is_dubbed else "sub",
                                           ses_idx,
-                                          str(einfo["ova_number"])),
+                                          str(einfo["ova_number"]),
+                                          kitsu_id),
                 "sources": sources,
                 "image": image,
                 "plot": desc,
