@@ -167,13 +167,14 @@ def play_source(link, on_episode_done=None, on_stopped=None):
     xbmcplugin.setResolvedUrl(HANDLE, True, item)
     handle_player(on_episode_done, on_stopped)
 
-def draw_items(video_data, draw_cm=None):
+def draw_items(video_data, contentType="tvshows", draw_cm=None):
     for vid in video_data:
         if vid['is_dir']:
             xbmc_add_dir(vid['name'], vid['url'], vid['image'], vid['plot'], draw_cm)
         else:
             xbmc_add_player_item(vid['name'], vid['url'], vid['image'],
                                  vid['plot'], draw_cm)
+    setContent(contentType)
     xbmcplugin.endOfDirectory(HANDLE, succeeded=True, updateListing=False, cacheToDisc=True)
     return True
 
