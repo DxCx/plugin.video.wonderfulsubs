@@ -27,7 +27,6 @@ MENU_ITEMS = [
 ]
 
 _BROWSER = WonderfulSubsBrowser()
-control.setContent('tvshows');
 
 def _add_last_watched():
     if not control.getSetting(LASTWATCHED_URL_KEY):
@@ -185,7 +184,8 @@ def PLAY(payload, params):
 @route('')
 def LIST_MENU(payload, params):
     return control.draw_items(
-        [utils.allocate_item(name, url, True, image) for name, url, image in MENU_ITEMS]
+        [utils.allocate_item(name, url, True, image) for name, url, image in MENU_ITEMS],
+        control.getSetting("menucontent.type"),
     )
 
 add_watchlist(MENU_ITEMS)
