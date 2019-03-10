@@ -61,9 +61,12 @@ def handle_player(on_playback_done, on_stopped):
         return
 
     get_player = watchlistPlayer(action=on_playback_done, dialog=on_stopped)
-    xbmc.sleep(500)  # Wait until playback starts
+    for i in range(0, 240):
+        if xbmc.Player().isPlayingVideo(): break
+        xbmc.sleep(1000)
+
     while xbmc.Player().isPlaying():
-        xbmc.sleep(500)
+        xbmc.sleep(5000)
 
 def setContent(contentType):
     xbmcplugin.setContent(HANDLE, contentType)
