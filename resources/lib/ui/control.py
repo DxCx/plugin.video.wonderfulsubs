@@ -39,11 +39,19 @@ class hook_mimetype(object):
 
 class watchlistPlayer(xbmc.Player):
 
-    def __init__(self, *args, **kwargs):
-        self._on_playback_done = kwargs['action']
-        self._on_stopped = kwargs['dialog']
+    def __init__(self):
         super(watchlistPlayer, self).__init__()
+        self._on_playback_done = None
+        self._on_stopped = None
 
+    def handle_player(self, on_playback_done, on_stopped):
+        if not on_playback_done:
+            return
+
+        self._on_playback_done = on_playback_done
+        self._on_stopped = on_stopped
+        self.keepAlive()
+        
     def onPlayBackStarted(self):
         pass
 
@@ -56,17 +64,13 @@ class watchlistPlayer(xbmc.Player):
     def onPlayBackEnded(self):
         self._on_playback_done()
 
-def handle_player(on_playback_done, on_stopped):
-    if not on_playback_done:
-        return
+    def keepAlive(self):
+        for i in range(0, 240):
+            if xbmc.Player().isPlayingVideo(): break
+            xbmc.sleep(1000)
 
-    get_player = watchlistPlayer(action=on_playback_done, dialog=on_stopped)
-    for i in range(0, 240):
-        if xbmc.Player().isPlayingVideo(): break
-        xbmc.sleep(1000)
-
-    while xbmc.Player().isPlaying():
-        xbmc.sleep(5000)
+        while xbmc.Player().isPlaying():
+            xbmc.sleep(5000)
 
 def setContent(contentType):
     xbmcplugin.setContent(HANDLE, contentType)
@@ -168,7 +172,7 @@ def play_source(link, on_episode_done=None, on_stopped=None):
     # Run any mimetype hook
     item = hook_mimetype.trigger(linkInfo['headers']['Content-Type'], item)
     xbmcplugin.setResolvedUrl(HANDLE, True, item)
-    handle_player(on_episode_done, on_stopped)
+    watchlistPlayer().handle_player(on_episode_done, on_stopped)
 
 def draw_items(video_data, draw_cm=None):
     for vid in video_data:
