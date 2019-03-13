@@ -66,10 +66,10 @@ class watchlistPlayer(xbmc.Player):
 
     def keepAlive(self):
         for i in range(0, 240):
-            if xbmc.Player().isPlayingVideo(): break
+            if self.isPlayingVideo(): break
             xbmc.sleep(1000)
 
-        while xbmc.Player().isPlaying():
+        while self.isPlaying():
             xbmc.sleep(5000)
 
 def setContent(contentType):
