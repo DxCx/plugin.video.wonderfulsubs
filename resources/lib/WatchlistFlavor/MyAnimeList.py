@@ -9,7 +9,7 @@ class MyAnimeListWLF(WatchlistFlavorBase):
     _URL = "https://myanimelist.net"
     _TITLE = "MyAnimeList"
     _NAME = "mal"
-    _IMAGE = "https://myanimelist.cdn-dena.com/images/mal-logo-xsmall@2x.png?v=160803001"
+    _IMAGE = "https://cdn.myanimelist.net/images/mal-logo-xsmall@2x.png?v=160803001"
 
     def login(self):
         s = requests.session()
@@ -90,7 +90,7 @@ class MyAnimeListWLF(WatchlistFlavorBase):
         base = {
             "name": '%s - %d/%d' % (res["anime_title"], res["num_watched_episodes"], res["anime_num_episodes"]),
             "url": "watchlist_query/%s/%s" % (res["anime_title"], res["anime_id"]),
-            "image": "https://myanimelist.cdn-dena.com/images/anime/%sl.jpg" %(image_id),
+            "image": "https://cdn.myanimelist.net/images/anime/%sl.jpg" %(image_id),
             "plot": '',
         }
 
