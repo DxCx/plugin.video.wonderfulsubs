@@ -174,7 +174,7 @@ def draw_items(video_data, contentType="tvshows", draw_cm=None):
         else:
             xbmc_add_player_item(vid['name'], vid['url'], vid['image'],
                                  vid['plot'], draw_cm)
-    xbmcplugin.setContent(HANDLE, contentType)
+    setContent(contentType)
     xbmcplugin.endOfDirectory(HANDLE, succeeded=True, updateListing=False, cacheToDisc=True)
     return True
 
