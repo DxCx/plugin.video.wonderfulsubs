@@ -52,11 +52,11 @@ class MyAnimeListWLF(WatchlistFlavorBase):
         return self._parse_view(base)
 
     def _process_watchlist_view(self, url, params, base_plugin_url, page):
-        all_results = map(self._base_watchlist_view, self._mal_statuses())
+        all_results = map(self._base_watchlist_view, self.__mal_statuses())
         all_results = list(itertools.chain(*all_results))
         return all_results
 
-    def _mal_statuses(self):
+    def __mal_statuses(self):
         statuses = [
             ("All Anime", 7),
             ("Currently Watching", 1),
