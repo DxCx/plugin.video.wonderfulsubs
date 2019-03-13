@@ -65,9 +65,6 @@ def handle_player(on_playback_done, on_stopped):
     while xbmc.Player().isPlaying():
         xbmc.sleep(500)
 
-def setContent(contentType):
-    xbmcplugin.setContent(HANDLE, contentType)
-
 def refresh():
     return xbmc.executebuiltin('Container.Refresh')
 
@@ -174,7 +171,7 @@ def draw_items(video_data, contentType="tvshows", draw_cm=None):
         else:
             xbmc_add_player_item(vid['name'], vid['url'], vid['image'],
                                  vid['plot'], draw_cm)
-    setContent(contentType)
+    xbmcplugin.setContent(HANDLE, contentType)
     xbmcplugin.endOfDirectory(HANDLE, succeeded=True, updateListing=False, cacheToDisc=True)
     return True
 
