@@ -144,8 +144,8 @@ class AniChart(WatchlistFlavorBase):
     def get_airing(self):
         today = datetime.date.today()
         today_ts = int(time.mktime(today.timetuple()))
-        weekStart = today_ts
-        weekEnd = today_ts + 86400
+        weekStart = today_ts - 86400
+        weekEnd = today_ts + (86400*3)
 
         query = '''
         query (
@@ -175,6 +175,7 @@ class AniChart(WatchlistFlavorBase):
                 english
         }
         description
+        isAdult
         coverImage {
                 extraLarge
         }
@@ -194,18 +195,18 @@ class AniChart(WatchlistFlavorBase):
 
     def _process_anichart_view(self, query, variables, base_plugin_url, page):
         result = self._post_request(self._URL, json={'query': query, 'variables': variables})
-        results = result.json()['data']['Page']['airingSchedules']
+        results = filter(lambda x: x['media']['isAdult'] == False, result.json()['data']['Page']['airingSchedules'])
         all_results = map(self._base_anichart_view, results)
         all_results = list(itertools.chain(*all_results))
         return all_results
 
     def _base_anichart_view(self, res):
-        airingAt = datetime.datetime.utcfromtimestamp(res['airingAt']).strftime('%I:%M %p (UTC)')
+        airingAt = datetime.datetime.fromtimestamp(res['airingAt']).strftime('%I:%M %p on %a')
         ts = int(time.time())
         is_airing = 'airing' if res['airingAt'] > ts else "aired"
 
         base = {
-            "name": "%s - Ep %s %s at %s" % (res['media']['title']['romaji'],
+            "name": "%s - [I]Ep %s %s at %s[/I]" % (res['media']['title']['romaji'],
                                              res['episode'],
                                              is_airing,
                                              airingAt),
