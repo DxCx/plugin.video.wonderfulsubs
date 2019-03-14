@@ -23,6 +23,9 @@ def WATCHLIST_STATUS_TYPE(payload, params):
 def WATCHLIST_QUERY(payload, params):
     return control.draw_items(WonderfulSubsBrowser().search_site(payload.rsplit("/")[0]))
 
+def get_anichart():
+    return WatchlistFlavor.anichart_request()
+
 def watchlist_update(episode, kitsu_id):
     flavor = WatchlistFlavor.get_active_flavor()
     if not flavor:
