@@ -3,7 +3,7 @@ from resources.lib.ui import utils
 from resources.lib.ui.SourcesList import SourcesList
 from resources.lib.ui.router import on_param, route, router_process
 from resources.lib.WonderfulSubsBrowser import WonderfulSubsBrowser
-from resources.lib.WatchlistIntegration import add_watchlist, watchlist_update
+from resources.lib.WatchlistIntegration import add_watchlist, watchlist_update, get_anichart
 import urlparse
 
 AB_LIST = ["none"] + [chr(i) for i in range(ord("a"), ord("z")+1)]
@@ -17,13 +17,14 @@ LASTWATCHED_IMAGE_KEY = "%s.image" % LASTWATCHED_KEY
 HISTORY_DELIM = ":_:"
 
 MENU_ITEMS = [
-    (control.lang(30001), "all", ''),
-    (control.lang(30002), "letter", ''),
-    (control.lang(30003), "latest", ''),
-    (control.lang(30004), "popular", ''),
-    (control.lang(30005), "random", ''),
-    (control.lang(30006), "search_history", ''),
-    (control.lang(30007), "settings", ''),
+    (control.lang(30001), "anichart_airing", ''),
+    (control.lang(30002), "all", ''),
+    (control.lang(30003), "letter", ''),
+    (control.lang(30004), "latest", ''),
+    (control.lang(30005), "popular", ''),
+    (control.lang(30006), "random", ''),
+    (control.lang(30007), "search_history", ''),
+    (control.lang(30008), "settings", ''),
 ]
 
 _BROWSER = WonderfulSubsBrowser()
@@ -92,11 +93,11 @@ def SHOW_AB_LISTING(payload, params):
     return control.draw_items(_BROWSER.get_by_letter(letter, int(page)))
 
 @route('all')
-def LATEST(payload, params):
+def ALL(payload, params):
     return control.draw_items(_BROWSER.get_all())
 
 @route('all/*')
-def LATEST_PAGES(payload, params):
+def ALL_PAGES(payload, params):
     return control.draw_items(_BROWSER.get_all(int(payload)))
 
 @route('latest')
@@ -122,6 +123,10 @@ def RANDOM(payload, params):
 @route('random/*')
 def RANDOM_PAGES(payload, params):
     return control.draw_items(_BROWSER.get_random(int(payload)))
+
+@route('anichart_airing')
+def ANICHART_AIRING(payload, params):
+    return control.draw_items(get_anichart())
 
 @route('search_history')
 def SEARCH_HISTORY(payload, params):
