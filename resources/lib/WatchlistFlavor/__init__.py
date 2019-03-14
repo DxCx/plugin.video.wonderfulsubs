@@ -4,6 +4,7 @@ from WatchlistFlavorBase import WatchlistFlavorBase
 import MyAnimeList
 import WonderfulSubs
 import Kitsu
+import AniList
 
 class WatchlistFlavor(object):
     __LOGIN_KEY = "addon.login"
@@ -40,6 +41,10 @@ class WatchlistFlavor(object):
     @staticmethod
     def watchlist_update_request(episode, kitsu_id):
         return WatchlistFlavor.get_active_flavor().watchlist_update(episode, kitsu_id)
+
+    @staticmethod
+    def anichart_request():
+        return AniList.AniChart().get_airing()
 
     @staticmethod
     def login_request(flavor):
