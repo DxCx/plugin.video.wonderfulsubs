@@ -229,3 +229,6 @@ class AniChart(WatchlistFlavorBase):
         }
 
         return self._parse_view(base)
+
+    def watchlist_update(self, episode, kitsu_id):
+        return False
