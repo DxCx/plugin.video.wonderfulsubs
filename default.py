@@ -128,6 +128,10 @@ def RANDOM_PAGES(payload, params):
 def ANICHART_AIRING(payload, params):
     return control.draw_items(get_anichart())
 
+@route('anichart_airing/*')
+def ANICHART_AIRING_PAGES(payload, params):
+    return control.draw_items(get_anichart(int(payload)))
+
 @route('search_history')
 def SEARCH_HISTORY(payload, params):
     history = control.getSetting(HISTORY_KEY)

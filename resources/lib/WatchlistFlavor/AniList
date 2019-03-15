@@ -140,12 +140,20 @@ class AniChart(WatchlistFlavorBase):
 
     def __init__(self):
         pass
+
+    def _handle_paging(self, hasNextPage, base_url, page):
+        if not hasNextPage:
+            return []
+
+        next_page = page + 1
+        name = "Next Page (%d)" %(next_page)
+        return self._allocate_page(name, base_url % next_page)
     
-    def get_airing(self):
+    def get_airing(self, page):
         today = datetime.date.today()
         today_ts = int(time.mktime(today.timetuple()))
         weekStart = today_ts - 86400
-        weekEnd = today_ts + (86400*3)
+        weekEnd = today_ts + (86400*6)
 
         query = '''
         query (
@@ -188,16 +196,21 @@ class AniChart(WatchlistFlavorBase):
         variables = {
             'weekStart': weekStart,
             'weekEnd': weekEnd,
-            'page': 1
+            'page': page
             }
 
-        return self._process_anichart_view(query, variables, "anichart/%d", page=1)
+        return self._process_anichart_view(query, variables, "anichart_airing/%d", page)
 
     def _process_anichart_view(self, query, variables, base_plugin_url, page):
         result = self._post_request(self._URL, json={'query': query, 'variables': variables})
-        results = filter(lambda x: x['media']['isAdult'] == False, result.json()['data']['Page']['airingSchedules'])
+        json_res = result.json()['data']['Page']
+        results = filter(lambda x: x['media']['isAdult'] == False, json_res['airingSchedules'])
+        hasNextPage = json_res['pageInfo']['hasNextPage']
+
         all_results = map(self._base_anichart_view, results)
         all_results = list(itertools.chain(*all_results))
+
+        all_results += self._handle_paging(hasNextPage, base_plugin_url, page)
         return all_results
 
     def _base_anichart_view(self, res):

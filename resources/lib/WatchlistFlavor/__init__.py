@@ -43,8 +43,8 @@ class WatchlistFlavor(object):
         return WatchlistFlavor.get_active_flavor().watchlist_update(episode, kitsu_id)
 
     @staticmethod
-    def anichart_request():
-        return AniList.AniChart().get_airing()
+    def anichart_request(page):
+        return AniList.AniChart().get_airing(page)
 
     @staticmethod
     def login_request(flavor):
