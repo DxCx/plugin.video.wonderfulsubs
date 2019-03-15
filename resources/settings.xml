@@ -30,9 +30,9 @@
 		<setting id="kitsu.titles" type="labelenum" label="How titles will be displayed:" values="Canonical|Romanized|English" default="Canonical"/>
 	</category>
 	<category label="AniList">
-        	<setting id="anilist.name" type="text" label="Email:" default=""/>
+        	<setting id="anilist.name" type="text" label="Username:" default=""/>
         	<setting id="anilist.password" type="text" option="hidden" visible="false" label="Password:" default=""/>
-		<setting id="anilist.login" type="action" label="Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/anilist)"/>
+		<setting id="anilist.login" type="action" label="Click to Add..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/anilist)"/>
 		<setting id="anilist.sort" type="labelenum" label="Sort by:" values="Score|Progress|Last Updated|Last Added" default="Progress"/>
 	</category>
 </settings>
