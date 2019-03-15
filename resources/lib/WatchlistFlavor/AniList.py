@@ -220,9 +220,9 @@ class AniChart(WatchlistFlavorBase):
 
         base = {
             "name": "%s - [I]Ep %s %s at %s[/I]" % (res['media']['title']['romaji'],
-                                             res['episode'],
-                                             is_airing,
-                                             airingAt),
+                                                    res['episode'],
+                                                    is_airing,
+                                                    airingAt),
             "url": "watchlist_query/%s" % (res['media']['title']['romaji']),
             "image": res['media']['coverImage']['extraLarge'],
             "plot": res['media']['description'],
