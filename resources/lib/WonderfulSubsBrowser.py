@@ -191,7 +191,7 @@ class WonderfulSubsBrowser(BrowserBase):
             }
 
             if not season_col.has_key("title"):
-                if s["type"] == "specials":
+                if season_col["type"] == "specials":
                     ses_obj["name"] = "Special"
                 else:
                     ses_obj["name"] = "Episodes"
