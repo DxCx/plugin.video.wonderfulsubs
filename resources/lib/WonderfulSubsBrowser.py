@@ -171,11 +171,6 @@ class WonderfulSubsBrowser(BrowserBase):
 
         return results
 
-    def _strip_seasons(self, server, is_dubbed):
-        seasons = []
-        seasons += server["media"]
-        return seasons
-
     def _get_anime_info(self, anime_url, is_dubbed):
         obj = self._get_anime_info_obj(anime_url)
         image = obj.get("poster_tall", None)
@@ -184,54 +179,53 @@ class WonderfulSubsBrowser(BrowserBase):
 
         seasons = {}
         ses_idx = 0
-        for sindex, s in enumerate(obj["seasons"].values()):
-            for season_col in self._strip_seasons(s, is_dubbed):
-                ses_obj = {
-                    "episodes": {},
-                    "id": ses_idx,
-                    "url": "animes/%s/%s/%d" % (
-                        anime_url,
-                        "dub" if is_dubbed else "sub",
-                        ses_idx,
-                    ),
-                }
+        for sindex, season_col in enumerate(obj["seasons"]):
+            ses_obj = {
+                "episodes": {},
+                "id": ses_idx,
+                "url": "animes/%s/%s/%d" % (
+                    anime_url,
+                    "dub" if is_dubbed else "sub",
+                    ses_idx,
+                ),
+            }
 
-                if not season_col.has_key("title"):
-                    if season_col["type"] == "specials":
-                        ses_obj["name"] = "Special"
-                    else:
-                        ses_obj["name"] = "Episodes"
+            if not season_col.has_key("title"):
+                if s["type"] == "specials":
+                    ses_obj["name"] = "Special"
                 else:
-                    ses_obj["name"] = season_col["title"]
+                    ses_obj["name"] = "Episodes"
+            else:
+                ses_obj["name"] = season_col["title"]
 
-                # TODO: by ID, not name
-                if seasons.has_key(ses_obj["name"]):
-                    ses_obj = seasons[ses_obj["name"]]
-                else:
-                    seasons[ses_obj["name"]] = ses_obj
-                    ses_idx += 1
-                eps = ses_obj["episodes"]
+            # TODO: by ID, not name
+            if seasons.has_key(ses_obj["name"]):
+                ses_obj = seasons[ses_obj["name"]]
+            else:
+                seasons[ses_obj["name"]] = ses_obj
+                ses_idx += 1
+            eps = ses_obj["episodes"]
 
-                for einfo in season_col["episodes"]:
-                    ep_flv_dubbed = einfo.get("is_dubbed", None)
-                    if not ep_flv_dubbed and is_dubbed:
-                        continue
+            for einfo in season_col["episodes"]:
+                ep_flv_dubbed = einfo.get("is_dubbed", None)
+                if not ep_flv_dubbed and is_dubbed:
+                    continue
 
-                    ep_info = self._format_episode("Server %d" % sindex,
-                                                   anime_url, is_dubbed,
-                                                   ses_obj["id"], einfo,
-                                                   season_col.get("kitsu_id", None))
-                    if not eps.has_key(ep_info["id"]):
-                        eps[ep_info["id"]] = ep_info
-                        continue
+                ep_info = self._format_episode("Server %d" % sindex,
+                                                anime_url, is_dubbed,
+                                                ses_obj["id"], einfo,
+                                                season_col.get("kitsu_id", None))
+                if not eps.has_key(ep_info["id"]):
+                    eps[ep_info["id"]] = ep_info
+                    continue
 
-                    old_ep_info = eps[ep_info["id"]]
-                    if not old_ep_info["image"]:
-                        old_ep_info["image"] = ep_info["image"]
-                    if not old_ep_info["plot"]:
-                        old_ep_info["name"] = ep_info["name"]
-                        old_ep_info["plot"] = ep_info["plot"]
-                    old_ep_info["sources"].update(ep_info["sources"])
+                old_ep_info = eps[ep_info["id"]]
+                if not old_ep_info["image"]:
+                    old_ep_info["image"] = ep_info["image"]
+                if not old_ep_info["plot"]:
+                    old_ep_info["name"] = ep_info["name"]
+                    old_ep_info["plot"] = ep_info["plot"]
+                old_ep_info["sources"].update(ep_info["sources"])
 
         return {
             "name": obj["title"],
