@@ -2,13 +2,14 @@
 <strings>
 	<!-- Category strings -->
 	<string id="30000">נצפה אחרון: </string>
-	<string id="30001">הצג הכל</string>
-	<string id="30002">לפי א-ב</string>
-	<string id="30003">החדשים ביותר</string>
-	<string id="30004">הפופולארים ביותר</string>
-	<string id="30005">אקראי</string>
-	<string id="30006">חיפוש</string>
-	<string id="30007">הגדרות</string>
+	<string id="30001">יומן שידורים</string>
+	<string id="30002">הצג הכל</string>
+	<string id="30003">לפי א-ב</string>
+	<string id="30004">החדשים ביותר</string>
+	<string id="30005">הפופולארים ביותר</string>
+	<string id="30006">אקראי</string>
+	<string id="30007">חיפוש</string>
+	<string id="30008">הגדרות</string>
 
 	<string id="30100">מחפש מקורות</string>
 	<string id="30101">מעבד %s</string>

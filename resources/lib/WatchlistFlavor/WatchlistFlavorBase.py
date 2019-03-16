@@ -81,9 +81,6 @@ class WatchlistFlavorBase(object):
                                 base["plot"])
             ]
 
-    def _allocate_page(self, name, base_url):
-        return [utils.allocate_item(name, base_url, True, None)]
-
     def _to_url(self, url=''):
         if url.startswith("/"):
             url = url[1:]

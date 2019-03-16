@@ -3,6 +3,7 @@ from resources.lib.ui import utils
 from resources.lib.ui.SourcesList import SourcesList
 from resources.lib.ui.router import on_param, route, router_process
 from resources.lib.WonderfulSubsBrowser import WonderfulSubsBrowser
+from resources.lib.AniChartBrowser import AniChartBrowser
 from resources.lib.WatchlistIntegration import add_watchlist, watchlist_update
 import urlparse
 
@@ -126,11 +127,11 @@ def RANDOM_PAGES(payload, params):
 
 @route('anichart_airing')
 def ANICHART_AIRING(payload, params):
-    return control.draw_items(_BROWSER.get_anichart_airing())
+    return control.draw_items(AniChartBrowser().get_airing())
 
 @route('anichart_airing/*')
 def ANICHART_AIRING_PAGES(payload, params):
-    return control.draw_items(_BROWSER.get_anichart_airing(int(payload)))
+    return control.draw_items(AniChartBrowser().get_airing(int(payload)))
 
 @route('search_history')
 def SEARCH_HISTORY(payload, params):
