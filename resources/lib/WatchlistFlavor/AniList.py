@@ -141,7 +141,6 @@ class AniListWLF(WatchlistFlavorBase):
 
         return sort_types[self._sort]
 
-
     def watchlist_update(self, episode, kitsu_id):
         return False
 
