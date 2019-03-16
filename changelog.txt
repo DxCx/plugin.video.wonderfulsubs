@@ -1,3 +1,9 @@
+[B]0.0.6[/B]
+	- Adds Kitsu & MAL sync [SwagOtaku]
+	- Improve Watchlist handling [SwagOtaku]
+	- Adds AniList WatchList Flavor [SwagOtaku]
+	- Adds Airing Calendar [SwagOtaku]
+	- Adds Setting to set content type of main menu [SwagOtaku]
 [B]0.0.5[/B]
 - Change "A-B Listings" to "A-Z Listings" (Thanks @RedNinjaX)
 - Fixes batch (NA And Watchlists) (Thanks @SwagOtaku)
