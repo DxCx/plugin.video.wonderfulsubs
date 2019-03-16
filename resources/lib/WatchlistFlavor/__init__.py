@@ -4,6 +4,7 @@ from WatchlistFlavorBase import WatchlistFlavorBase
 import MyAnimeList
 import WonderfulSubs
 import Kitsu
+import AniList
 
 class WatchlistFlavor(object):
     __LOGIN_KEY = "addon.login"
@@ -93,4 +94,3 @@ class WatchlistFlavor(object):
         control.setSetting(WatchlistFlavor.__LOGIN_NAME_KEY, res['name'])
         control.refresh()
         return control.ok_dialog('Login', 'Success')
-
