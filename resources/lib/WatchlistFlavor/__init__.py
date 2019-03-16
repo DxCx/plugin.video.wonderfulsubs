@@ -43,10 +43,6 @@ class WatchlistFlavor(object):
         return WatchlistFlavor.get_active_flavor().watchlist_update(episode, kitsu_id)
 
     @staticmethod
-    def anichart_request(page):
-        return AniList.AniChart().get_airing(page)
-
-    @staticmethod
     def login_request(flavor):
         if not WatchlistFlavor.__is_flavor_valid(flavor):
             raise Exception("Invalid flavor %s" % flavor)
@@ -98,4 +94,3 @@ class WatchlistFlavor(object):
         control.setSetting(WatchlistFlavor.__LOGIN_NAME_KEY, res['name'])
         control.refresh()
         return control.ok_dialog('Login', 'Success')
-

@@ -13,8 +13,8 @@ class AniListWLF(WatchlistFlavorBase):
     #Not login, but retrieveing userId for watchlist
     def login(self):
         query = '''
-        query ($id: Int, $name: String) {
-            User(id: $id, name: $name) {
+        query ($name: String) {
+            User(name: $name) {
                 id
                 }
             }
@@ -25,11 +25,12 @@ class AniListWLF(WatchlistFlavorBase):
             }
 
         result = self._post_request(self._URL, json={'query': query, 'variables': variables})
+        results = result.json()
 
-        if result.status_code != 200:
+        if results.has_key("errors"):
             return
 
-        userId = result.json()['data']['User']['id']
+        userId = results['data']['User']['id']
 
         return self._format_login_data(self._username,
                                        '',
@@ -110,8 +111,13 @@ class AniListWLF(WatchlistFlavorBase):
 
     def _process_status_view(self, query, variables, base_plugin_url, page):
         result = self._post_request(self._URL, json={'query': query, 'variables': variables})
-        results = result.json()['data']['MediaListCollection']['lists'][0]['entries']
-        all_results = map(self._base_watchlist_status_view, reversed(results))
+        results = result.json()
+
+        if results.has_key("errors"):
+            return
+
+        entries = results['data']['MediaListCollection']['lists'][0]['entries']
+        all_results = map(self._base_watchlist_status_view, reversed(entries))
         all_results = list(itertools.chain(*all_results))
         return all_results
 
@@ -134,6 +140,10 @@ class AniListWLF(WatchlistFlavorBase):
             }
 
         return sort_types[self._sort]
+
+
+    def watchlist_update(self, episode, kitsu_id):
+        return False
 
 class AniChart(WatchlistFlavorBase):
     _URL = "https://graphql.anilist.co"
@@ -203,11 +213,16 @@ class AniChart(WatchlistFlavorBase):
 
     def _process_anichart_view(self, query, variables, base_plugin_url, page):
         result = self._post_request(self._URL, json={'query': query, 'variables': variables})
-        json_res = result.json()['data']['Page']
-        results = filter(lambda x: x['media']['isAdult'] == False, json_res['airingSchedules'])
+        results = result.json()
+
+        if results.has_key("errors"):
+            return
+
+        json_res = results['data']['Page']
+        filter_json = filter(lambda x: x['media']['isAdult'] == False, json_res['airingSchedules'])
         hasNextPage = json_res['pageInfo']['hasNextPage']
 
-        all_results = map(self._base_anichart_view, results)
+        all_results = map(self._base_anichart_view, filter_json)
         all_results = list(itertools.chain(*all_results))
 
         all_results += self._handle_paging(hasNextPage, base_plugin_url, page)
@@ -229,6 +244,3 @@ class AniChart(WatchlistFlavorBase):
         }
 
         return self._parse_view(base)
-
-    def watchlist_update(self, episode, kitsu_id):
-        return False
