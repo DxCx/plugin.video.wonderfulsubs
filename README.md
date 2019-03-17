@@ -3,7 +3,7 @@
 Kodi Plugin that lets you watch almost all animes HD and for free.
 **This Plugin Requires Kodi Version 17.0+**
 
-## TODO: Images
+<img width="32%" src="https://user-images.githubusercontent.com/29440677/54495769-2d199b00-48a4-11e9-95c8-79a9519a64b8.png"> <img width="32%" src="https://user-images.githubusercontent.com/29440677/54495723-c1cfc900-48a3-11e9-9853-ca3deaab86e5.png"> <img width="32%" src="https://user-images.githubusercontent.com/29440677/54495731-de6c0100-48a3-11e9-9110-7837f8ca052a.png">
 
 ## Features
 * Watch status tracking.
