@@ -34,8 +34,7 @@ class WonderfulSubsBrowser(BrowserBase):
             "plot": res["description"],
         }
 
-        if self._BASE_FLAVOR:
-            res.pop(self._pop_flavor_key(), None)
+        res.pop(self._pop_flavor_key(), None)
 
         if res.get("is_dubbed", None):
             result.append(utils.allocate_item("%s (Dub)" % base["name"],
