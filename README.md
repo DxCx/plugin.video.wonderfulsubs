@@ -20,7 +20,7 @@ Kodi Plugin that lets you watch almost all animes HD and for free.
 
 ## DASH Playback Support:
   - InputStream Adaptive should be installed on your kodi:
-    - if it does, great, make sure you enable it ([Help](http://www.best-kodi-guides.eu/kodi-add-on-reviews/enable-inputstream-adaptive-kodi-krypton/))
+    - if it does, great, make sure you enable it ([Help](https://github.com/DxCx/plugin.video.wonderfulsubs/wiki/Enable-InputStream-Adaptive)
     - if it doesn't please google how to install it on your device.
 
 ## Contributors
