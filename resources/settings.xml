@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
 	<category label="General">
-		<setting id="baseflavor" type="labelenum" label="Filter Anime" values="Subs Only|Dubs Only| " default=" "/>
+		<setting id="baseflavor" type="labelenum" label="Filter Anime" values="Subs Only|Dubs Only|None" default="None"/>
 		<setting id="reverseorder" type="labelenum" label="Episode order" values="Ascending|Descending" default="Descending"/>
 		<setting id="searchhistory" type="labelenum" label="Enable search history" values="Yes|No" default="Yes"/>
 		<setting id="menucontent.type" type="labelenum" label="Set menu content type" values="addons|tvshows" default="tvshows"/>
