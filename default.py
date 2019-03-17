@@ -29,7 +29,7 @@ MENU_ITEMS = [
     (control.lang(30009), "settings", ''),
 ]
 
-_BROWSER = WonderfulSubsBrowser()
+_BROWSER = WonderfulSubsBrowser(control.getSetting('baseflavor'))
 
 def _add_last_watched():
     if not control.getSetting(LASTWATCHED_URL_KEY):
