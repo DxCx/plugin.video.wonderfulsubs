@@ -11,15 +11,16 @@ class WonderfulSubsBrowser(BrowserBase):
 
     def __init__(self, base_flavor):
         super(WonderfulSubsBrowser, self).__init__()
-        self._BASE_FLAVOR = base_flavor
+        self._POP_FLAVOR = self._pop_flavor_key(base_flavor)
 
-    def _pop_flavor_key(self):
+    def _pop_flavor_key(self, base_flavor):
         flavor_key = {
             "Subs Only": "is_dubbed",
             "Dubs Only": "is_subbed",
+            "None": None
             }
 
-        return flavor_key.get(self._BASE_FLAVOR, None)
+        return flavor_key[base_flavor]
 
     def _parse_anime_view(self, res):
         result = []
@@ -34,7 +35,9 @@ class WonderfulSubsBrowser(BrowserBase):
             "plot": res["description"],
         }
 
-        res.pop(self._pop_flavor_key(), None)
+        if self._POP_FLAVOR:
+            res.pop(self._POP_FLAVOR)
+            
 
         if res.get("is_dubbed", None):
             result.append(utils.allocate_item("%s (Dub)" % base["name"],
