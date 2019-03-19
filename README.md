@@ -10,7 +10,6 @@ Kodi Plugin that lets you watch almost all animes HD and for free.
 * Add your favorite animes as favorite for easy access later
 * Fast loading times
 * Login & Watchlist support
-* Note for Airing Anime Calendar: time shown, does not reflect the time the episode for that anime will be available to watch in addon. It's the time episode aired in Japan. Data is provided by AniChart
 
 ## Instructions:
 
