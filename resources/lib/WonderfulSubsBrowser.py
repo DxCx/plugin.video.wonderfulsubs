@@ -96,7 +96,8 @@ class WonderfulSubsBrowser(BrowserBase):
         desc = None if not einfo.has_key("description") else einfo["description"]
         image = None
         if einfo.has_key("thumbnail") and len(einfo["thumbnail"]):
-            image = einfo["thumbnail"].pop().get("source", None)
+            image_idx = 0 if len(einfo["thumbnail"]) == 1 else 1
+            image = einfo["thumbnail"].pop(image_idx).get("source", None)
 
         sources = self._format_sources(sname, is_dubbed, einfo)
 
