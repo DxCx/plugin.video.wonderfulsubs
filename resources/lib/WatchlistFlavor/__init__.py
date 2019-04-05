@@ -1,5 +1,6 @@
 from ..ui import control
 from WatchlistFlavorBase import WatchlistFlavorBase
+from time import time
 
 import MyAnimeList
 import WonderfulSubs
@@ -12,6 +13,9 @@ class WatchlistFlavor(object):
     __LOGIN_NAME_KEY = "%s.name" % __LOGIN_KEY
     __LOGIN_IMAGE_KEY = "%s.image" % __LOGIN_KEY
     __LOGIN_TOKEN_KEY = "%s.token" % __LOGIN_KEY
+    __LOGIN_TIMESTAMP_KEY = "%s.timestamp" % __LOGIN_KEY
+
+    __TIMESTAMP = int(time())
 
     __SELECTED = None
 
@@ -23,6 +27,10 @@ class WatchlistFlavor(object):
         selected = control.getSetting(WatchlistFlavor.__LOGIN_FLAVOR_KEY)
         if not selected:
             return None
+
+        login_ts = int(control.getSetting(WatchlistFlavor.__LOGIN_TIMESTAMP_KEY))
+        if login_ts <= WatchlistFlavor.__TIMESTAMP:
+            return WatchlistFlavor.logout_request()
 
         if not WatchlistFlavor.__SELECTED:
             WatchlistFlavor.__SELECTED = \
@@ -57,7 +65,8 @@ class WatchlistFlavor(object):
         control.setSetting(WatchlistFlavor.__LOGIN_NAME_KEY, '')
         control.setSetting(WatchlistFlavor.__LOGIN_IMAGE_KEY, '')
         control.setSetting(WatchlistFlavor.__LOGIN_TOKEN_KEY, '')
-        control.refresh()
+        control.setSetting(WatchlistFlavor.__LOGIN_TIMESTAMP_KEY, '')
+        return control.refresh()
 
     @staticmethod
     def __get_flavor_class(name):
@@ -92,5 +101,6 @@ class WatchlistFlavor(object):
         control.setSetting(WatchlistFlavor.__LOGIN_TOKEN_KEY, res['token'])
         control.setSetting(WatchlistFlavor.__LOGIN_IMAGE_KEY, res['image'])
         control.setSetting(WatchlistFlavor.__LOGIN_NAME_KEY, res['name'])
+        control.setSetting(WatchlistFlavor.__LOGIN_TIMESTAMP_KEY, "%d" % (time()+2592000))
         control.refresh()
         return control.ok_dialog('Login', 'Success')
