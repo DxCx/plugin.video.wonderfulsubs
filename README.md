@@ -1,3 +1,5 @@
+[![img](https://img.shields.io/discord/386361030353354765.svg?style=flat-square&logo=discord&label=Chat%20%2F%20Support&colorB=7289DA)](https://discord.gg/yH6ABZM)
+
 # plugin.video.wonderfulsubs - Wonderfulsubs plugin for kodi
 
 Kodi Plugin that lets you watch almost all animes HD and for free.
