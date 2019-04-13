@@ -1,3 +1,6 @@
+[B]0.0.7[/B]
+- Fix for search (By @SwakOtaku)
+- Better HLS Handling (by @SwagOtaku)
 [B]0.0.6[/B]
 	- Adds Kitsu & MAL sync [SwagOtaku]
 	- Improve Watchlist handling [SwagOtaku]
