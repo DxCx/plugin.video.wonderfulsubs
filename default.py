@@ -15,7 +15,7 @@ LASTWATCHED_KEY = "addon.last_watched"
 LASTWATCHED_NAME_KEY = "%s.name" % LASTWATCHED_KEY
 LASTWATCHED_URL_KEY = "%s.url" % LASTWATCHED_KEY
 LASTWATCHED_IMAGE_KEY = "%s.image" % LASTWATCHED_KEY
-HISTORY_DELIM = ":_:"
+HISTORY_DELIM = ";"
 
 MENU_ITEMS = [
     (control.lang(30001), "anichart_airing", ''),
@@ -149,7 +149,7 @@ def CLEAR_HISTORY(payload, params):
 
 @route('search')
 def SEARCH(payload, params):
-    query = control.keyboard(control.lang(30006))
+    query = control.keyboard(control.lang(30007))
     if not query:
         return False
 
