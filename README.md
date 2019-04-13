@@ -1,4 +1,4 @@
-[![img](https://img.shields.io/discord/386361030353354765.svg?style=flat-square&logo=discord&label=Chat%20%2F%20Support&colorB=7289DA)](https://discordapp.com/invite/SkBBGfZ)
+[![img](https://img.shields.io/discord/386361030353354765.svg?style=flat-square&logo=discord&label=Chat%20%2F%20Support&colorB=7289DA)](https://discord.gg/yH6ABZM)
 
 # plugin.video.wonderfulsubs - Wonderfulsubs plugin for kodi
 
