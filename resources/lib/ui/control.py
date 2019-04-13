@@ -114,6 +114,11 @@ def ok_dialog(title, text):
 def yesno_dialog(title, text, nolabel=None, yeslabel=None):
     return xbmcgui.Dialog().yesno(title, text, nolabel=nolabel, yeslabel=yeslabel)
 
+def multiselect_dialog(title, _list):
+    if isinstance(_list, list):
+        return xbmcgui.Dialog().multiselect(title, _list)
+    return None
+
 def xbmc_add_player_item(name, url, iconimage='', description='', draw_cm=None):
     ok=True
     u=addon_url(url)
