@@ -4,7 +4,7 @@ from resources.lib.ui.SourcesList import SourcesList
 from resources.lib.ui.router import on_param, route, router_process
 from resources.lib.WonderfulSubsBrowser import WonderfulSubsBrowser
 from resources.lib.AniListBrowser import AniListBrowser
-from resources.lib.WatchlistIntegration import add_watchlist, watchlist_update
+from resources.lib.WatchlistIntegration import set_browser, add_watchlist, watchlist_update
 import urlparse
 
 AB_LIST = ["none"] + [chr(i) for i in range(ord("a"), ord("z")+1)]
@@ -213,6 +213,7 @@ def LIST_MENU(payload, params):
         control.getSetting("menucontent.type"),
     )
 
-add_watchlist(_BROWSER, MENU_ITEMS)
+set_browser(_BROWSER)
+add_watchlist(MENU_ITEMS)
 _add_last_watched()
 router_process(control.get_plugin_url(), control.get_plugin_params())
