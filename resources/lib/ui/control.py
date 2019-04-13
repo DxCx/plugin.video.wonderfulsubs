@@ -195,3 +195,17 @@ def _DASH_HOOK(item):
         raise Exception("InputStream Adaptive is not supported.")
 
     return item
+
+@hook_mimetype('application/vnd.apple.mpegurl')
+def _HLS_HOOK(item):
+    import inputstreamhelper
+    is_helper = inputstreamhelper.Helper('hls')
+    if is_helper.check_inputstream():
+        item.setProperty('inputstreamaddon', is_helper.inputstream_addon)
+        item.setProperty('inputstream.adaptive.manifest_type',
+                             'hls')
+        item.setContentLookup(False)
+    else:
+        raise Exception("InputStream Adaptive is not supported.")
+
+    return item
