@@ -1,3 +1,5 @@
+[B]0.0.9[/B]
+- Bugfix for watchlist [SwagOtaku]
 [B]0.0.8[/B]
 - Better icon image and plot [SwagOtaku]
 - Add Search by Genere & Tags Selector [SwagOtaku]
