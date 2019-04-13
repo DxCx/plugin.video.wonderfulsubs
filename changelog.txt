@@ -1,3 +1,7 @@
+[B]0.0.8[/B]
+- Better icon image and plot (by @SwagOtaku)
+- Add Search by Genere & Tags Selector (By @SwagOtaku)
+- Add Setting to filter for only dub/sub content (By @SwagOtaku)
 [B]0.0.7[/B]
 - Fix for search (By @SwakOtaku)
 - Better HLS Handling (by @SwagOtaku)
