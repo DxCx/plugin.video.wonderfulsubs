@@ -5,11 +5,12 @@
 	<string id="30001">יומן שידורים</string>
 	<string id="30002">הצג הכל</string>
 	<string id="30003">לפי א-ב</string>
-	<string id="30004">החדשים ביותר</string>
-	<string id="30005">הפופולארים ביותר</string>
-	<string id="30006">אקראי</string>
-	<string id="30007">חיפוש</string>
-	<string id="30008">הגדרות</string>
+	<string id="30004">לפי סיגנון</string>
+	<string id="30005">החדשים ביותר</string>
+	<string id="30006">הפופולארים ביותר</string>
+	<string id="30007">אקראי</string>
+	<string id="30008">חיפוש</string>
+	<string id="30009">הגדרות</string>
 
 	<string id="30100">מחפש מקורות</string>
 	<string id="30101">מעבד %s</string>
