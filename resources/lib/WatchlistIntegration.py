@@ -3,7 +3,7 @@ from ui.router import route
 from WatchlistFlavor import WatchlistFlavor
 
 _BROWSER = None
-def _set_browser(browser):
+def set_browser(browser):
     global _BROWSER
     _BROWSER = browser
 
@@ -34,12 +34,10 @@ def watchlist_update(episode, kitsu_id):
 
     return WatchlistFlavor.watchlist_update_request(episode, kitsu_id)
 
-def add_watchlist(browser, items):
+def add_watchlist(items):
     flavor = WatchlistFlavor.get_active_flavor()
     if not flavor:
         return
-
-    _set_browser(browser)
 
     items.insert(0, (
         "%s's %s" % (flavor.login_name, flavor.title),
