@@ -29,7 +29,8 @@ MENU_ITEMS = [
     (control.lang(30009), "settings", ''),
 ]
 
-_BROWSER = WonderfulSubsBrowser(control.getSetting('baseflavor'))
+_FLAVOR = control.getSetting('baseflavor')
+_BROWSER = WonderfulSubsBrowser(_FLAVOR)
 
 def _add_last_watched():
     if not control.getSetting(LASTWATCHED_URL_KEY):
@@ -212,6 +213,6 @@ def LIST_MENU(payload, params):
         control.getSetting("menucontent.type"),
     )
 
-add_watchlist(MENU_ITEMS)
+add_watchlist(_BROWSER, MENU_ITEMS)
 _add_last_watched()
 router_process(control.get_plugin_url(), control.get_plugin_params())
