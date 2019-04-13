@@ -3,7 +3,7 @@ from resources.lib.ui import utils
 from resources.lib.ui.SourcesList import SourcesList
 from resources.lib.ui.router import on_param, route, router_process
 from resources.lib.WonderfulSubsBrowser import WonderfulSubsBrowser
-from resources.lib.AniChartBrowser import AniChartBrowser
+from resources.lib.AniListBrowser import AniListBrowser
 from resources.lib.WatchlistIntegration import add_watchlist, watchlist_update
 import urlparse
 
@@ -21,11 +21,12 @@ MENU_ITEMS = [
     (control.lang(30001), "anichart_airing", ''),
     (control.lang(30002), "all", ''),
     (control.lang(30003), "letter", ''),
-    (control.lang(30004), "latest", ''),
-    (control.lang(30005), "popular", ''),
-    (control.lang(30006), "random", ''),
-    (control.lang(30007), "search_history", ''),
-    (control.lang(30008), "settings", ''),
+    (control.lang(30004), "anilist_genres", ''),
+    (control.lang(30005), "latest", ''),
+    (control.lang(30006), "popular", ''),
+    (control.lang(30007), "random", ''),
+    (control.lang(30008), "search_history", ''),
+    (control.lang(30009), "settings", ''),
 ]
 
 _BROWSER = WonderfulSubsBrowser()
@@ -59,6 +60,10 @@ def sortResultsByRes(fetched_urls):
 #Will be called when player is stopped in the middle of the episode
 def on_stopped():
     return control.yesno_dialog(control.lang(30200), control.lang(30201), control.lang(30202))
+
+#Will be called on genre page
+def genre_dialog(genre_display_list):
+    return control.multiselect_dialog(control.lang(30004), genre_display_list)
 
 @route('settings')
 def SETTINGS(payload, params):
@@ -127,11 +132,20 @@ def RANDOM_PAGES(payload, params):
 
 @route('anichart_airing')
 def ANICHART_AIRING(payload, params):
-    return control.draw_items(AniChartBrowser().get_airing())
+    return control.draw_items(AniListBrowser().get_airing())
 
 @route('anichart_airing/*')
 def ANICHART_AIRING_PAGES(payload, params):
-    return control.draw_items(AniChartBrowser().get_airing(int(payload)))
+    return control.draw_items(AniListBrowser().get_airing(int(payload)))
+
+@route('anilist_genres')
+def ANILIST_GENRES(payload, params):
+    return control.draw_items(AniListBrowser().get_genres(genre_dialog))
+
+@route('anilist_genres/*')
+def ANILIST_GENRES_PAGES(payload, params):
+    genres, tags, page = payload.split("/")[-3:]
+    return control.draw_items(AniListBrowser().get_genres_page(genres, tags, int(page)))
 
 @route('search_history')
 def SEARCH_HISTORY(payload, params):
@@ -149,7 +163,7 @@ def CLEAR_HISTORY(payload, params):
 
 @route('search')
 def SEARCH(payload, params):
-    query = control.keyboard(control.lang(30006))
+    query = control.keyboard(control.lang(30008))
     if not query:
         return False
 
