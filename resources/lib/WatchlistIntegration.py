@@ -1,7 +1,11 @@
 from ui import control
 from ui.router import route
-from WonderfulSubsBrowser import WonderfulSubsBrowser
 from WatchlistFlavor import WatchlistFlavor
+
+_BROWSER = None
+def _set_browser(browser):
+    global _BROWSER
+    _BROWSER = browser
 
 @route('watchlist_login/*')
 def WL_LOGIN(payload, params):
@@ -21,19 +25,21 @@ def WATCHLIST_STATUS_TYPE(payload, params):
 
 @route('watchlist_query/*')
 def WATCHLIST_QUERY(payload, params):
-    return control.draw_items(WonderfulSubsBrowser().search_site(payload.rsplit("/")[0]))
+    return control.draw_items(_BROWSER.search_site(payload.rsplit("/")[0]))
 
 def watchlist_update(episode, kitsu_id):
     flavor = WatchlistFlavor.get_active_flavor()
     if not flavor:
         return
-    
+
     return WatchlistFlavor.watchlist_update_request(episode, kitsu_id)
 
-def add_watchlist(items):
+def add_watchlist(browser, items):
     flavor = WatchlistFlavor.get_active_flavor()
     if not flavor:
         return
+
+    _set_browser(browser)
 
     items.insert(0, (
         "%s's %s" % (flavor.login_name, flavor.title),
