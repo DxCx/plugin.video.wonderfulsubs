@@ -96,7 +96,8 @@ class WonderfulSubsBrowser(BrowserBase):
         desc = None if not einfo.has_key("description") else einfo["description"]
         image = None
         if einfo.has_key("thumbnail") and len(einfo["thumbnail"]):
-            image = einfo["thumbnail"].pop().get("source", None)
+            image_idx = 0 if len(einfo["thumbnail"]) == 1 else 1
+            image = einfo["thumbnail"].pop(image_idx).get("source", None)
 
         sources = self._format_sources(sname, is_dubbed, einfo)
 
@@ -203,6 +204,9 @@ class WonderfulSubsBrowser(BrowserBase):
                         ses_obj["name"] = "Episodes"
                 else:
                     ses_obj["name"] = season_col["title"]
+
+                ses_obj["image"] = "https://media.kitsu.io/anime/poster_images/%s/large.jpg" %(season_col.get("kitsu_id", ''))
+                ses_obj["plot"] = season_col.get("description", None)
 
                 # TODO: by ID, not name
                 if seasons.has_key(ses_obj["name"]):
@@ -322,8 +326,8 @@ class WonderfulSubsBrowser(BrowserBase):
         return map(lambda x: utils.allocate_item(x['name'],
                                                  x['url'],
                                                  True,
-                                                 info["image"],
-                                                 info["plot"]), seasons)
+                                                 x["image"],
+                                                 x["plot"]), seasons)
 
     def get_anime_episodes(self, anime_url, is_dubbed, season, desc_order):
         info = self._get_anime_info(anime_url, is_dubbed)
