@@ -39,13 +39,13 @@ class WonderfulSubsBrowser(BrowserBase):
             res.pop(self._POP_FLAVOR)
 
         if res.get("is_dubbed", None):
-            result.append(utils.allocate_item("%s (Dub)" % base["name"],
+            result.append(utils.allocate_item("%s (Dub)" % base["name"] if not self._POP_FLAVOR else base["name"],
                                               "%s/dub" % base["url"],
                                               True,
                                               base["image"],
                                               base["plot"]))
         if res.get("is_subbed", None):
-            result.append(utils.allocate_item("%s (Sub)" % base["name"],
+            result.append(utils.allocate_item("%s (Sub)" % base["name"] if not self._POP_FLAVOR else base["name"],
                                               "%s/sub" % base["url"],
                                               True,
                                               base["image"],
