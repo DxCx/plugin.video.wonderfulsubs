@@ -73,6 +73,10 @@ def genre_dialog(genre_display_list):
 def SETTINGS(payload, params):
     return control.settingsMenu();
 
+@route('clear_cache')
+def CLEAR_CACHE(payload, params):
+    return control.clear_cache();
+
 @route('animes/*')
 def ANIMES_PAGE(payload, params):
     anime_url, flavor_or_season = payload.rsplit("/", 1)
