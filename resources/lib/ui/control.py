@@ -87,6 +87,9 @@ def setSetting(id, value):
 def cache(funct, *args):
     return CACHE.cacheFunction(funct, *args)
 
+def clear_cache():
+    return CACHE.delete("%")
+
 def lang(x):
     return __language__(x).encode('utf-8')
 
