@@ -43,13 +43,15 @@ class watchlistPlayer(xbmc.Player):
         super(watchlistPlayer, self).__init__()
         self._on_playback_done = None
         self._on_stopped = None
+        self._on_percent = None
 
-    def handle_player(self, on_playback_done, on_stopped):
+    def handle_player(self, on_playback_done, on_stopped, on_percent):
         if not on_playback_done:
             return
 
         self._on_playback_done = on_playback_done
         self._on_stopped = on_stopped
+        self._on_percent = on_percent()
         self.keepAlive()
         
     def onPlayBackStarted(self):
@@ -64,10 +66,30 @@ class watchlistPlayer(xbmc.Player):
     def onPlayBackEnded(self):
         self._on_playback_done()
 
+    def getWatchedPercent(self):
+        watched_percent = 0
+        current_time = self.getTime()
+        media_length = self.getTotalTime()
+
+        if int(media_length) is not 0:
+            watched_percent = float(current_time) / float(media_length) * 100
+
+        return watched_percent
+
+    def onWatchedPercent(self):
+        while self.isPlaying():
+            xbmc.sleep(5000)
+            if self.getWatchedPercent() > self._on_percent:
+                self._on_playback_done()
+                break
+
     def keepAlive(self):
         for i in range(0, 240):
             if self.isPlayingVideo(): break
             xbmc.sleep(1000)
+
+        if self._on_percent:
+            return self.onWatchedPercent()
 
         while self.isPlaying():
             xbmc.sleep(5000)
@@ -161,7 +183,7 @@ def _prefetch_play_link(link):
         "headers": linkInfo.headers,
     }
 
-def play_source(link, on_episode_done=None, on_stopped=None):
+def play_source(link, on_episode_done=None, on_stopped=None, on_percent=None):
     linkInfo = _prefetch_play_link(link)
     if not linkInfo:
         xbmcplugin.setResolvedUrl(HANDLE, False, xbmcgui.ListItem())
@@ -174,7 +196,7 @@ def play_source(link, on_episode_done=None, on_stopped=None):
     # Run any mimetype hook
     item = hook_mimetype.trigger(linkInfo['headers']['Content-Type'], item)
     xbmcplugin.setResolvedUrl(HANDLE, True, item)
-    watchlistPlayer().handle_player(on_episode_done, on_stopped)
+    watchlistPlayer().handle_player(on_episode_done, on_stopped, on_percent)
 
 def draw_items(video_data, contentType="tvshows", draw_cm=None):
     for vid in video_data:

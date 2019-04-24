@@ -10,30 +10,40 @@
 		<setting id="prefres" label="Prefere Resolution" type="labelenum" values="360p|480p|720p|1080p" default="1080p"/>
 		<setting id="autoplay" label="Automatically play first result" type="bool" default="false"/>
 	</category>
-	<category label="WonderfulSubs">
-        	<setting id="wonderfulsubs.name" type="text" label="Username:" default=""/>
-        	<setting id="wonderfulsubs.password" type="text" option="hidden" label="Password:" default=""/>
-		<setting id="wonderfulsubs.login" type="action" label="Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/wonderfulsubs)"/>
-	</category>
-	<category label="MyAnimeList">
-        	<setting id="mal.name" type="text" label="Username:" default=""/>
-        	<setting id="mal.password" type="text" option="hidden" label="Password:" default=""/>
-		<setting id="mal.login" type="action" label="Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/mal)"/>
-		<setting type="lsep" label="Watchlist"/>
-		<setting id="mal.sort" type="labelenum" label="Sort by:" values="Last Updated|Progress|Anime Title" default="Anime Title"/>
-	</category>
-	<category label="Kitsu">
-        	<setting id="kitsu.name" type="text" label="Email:" default=""/>
-        	<setting id="kitsu.password" type="text" option="hidden" label="Password:" default=""/>
-		<setting id="kitsu.login" type="action" label="Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/kitsu)"/>
-		<setting type="lsep" label="Watchlist"/>
-		<setting id="kitsu.sort" type="labelenum" label="Sort by:" values="Date Updated|Progress|Title" default="Title"/>
-		<setting id="kitsu.titles" type="labelenum" label="How titles will be displayed:" values="Canonical|Romanized|English" default="Canonical"/>
-	</category>
-	<category label="AniList">
-        	<setting id="anilist.name" type="text" label="Username:" default=""/>
+	<category label="Watchlist">
+		<setting id="watchlist.percentbool" label="Enable update on watched percent" type="bool" default="false"/>
+		<setting id="watchlist.percent" type="slider" label="- Update when watched percent is..." default="80" range="50, 99" option="int" visible="eq(-1,true)"/>
+		<setting type="lsep" label="Select a watchlist"/>
+
+		<setting id="sep"/>
+		<setting id="anilist.bool" label="AniList" type="bool" default="false"/>
+        	<setting id="anilist.name" type="text" label="- Username:" default="" visible="eq(-1,true)"/>
         	<setting id="anilist.password" type="text" option="hidden" visible="false" label="Password:" default=""/>
-		<setting id="anilist.login" type="action" label="Click to Add..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/anilist)"/>
-		<setting id="anilist.sort" type="labelenum" label="Sort by:" values="Score|Progress|Last Updated|Last Added" default="Progress"/>
+		<setting id="anilist.login" type="action" label="- Click to Add..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/anilist)" visible="eq(-3,true)"/>
+		<setting id="anilist.listsettings" type="action" label="List settings..." option="close" visible="eq(-4,true)"/>
+		<setting id="anilist.sort" type="labelenum" label="- Sort by:" values="Score|Progress|Last Updated|Last Added" default="Progress" visible="eq(-5,true)"/>
+        	
+		<setting id="sep"/>
+		<setting id="kitsu.bool" label="Kitsu" type="bool" default="false"/>
+		<setting id="kitsu.name" type="text" label="- Email:" default="" visible="eq(-1,true)"/>
+        	<setting id="kitsu.password" type="text" option="hidden" label="- Password:" default="" visible="eq(-2,true)"/>
+		<setting id="kitsu.login" type="action" label="- Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/kitsu)" visible="eq(-3,true)"/>
+		<setting id="kitsu.listsettings" type="action" label="List settings..." option="close" visible="eq(-4,true)"/>
+		<setting id="kitsu.sort" type="labelenum" label="- Sort by:" values="Date Updated|Progress|Title" default="Title" visible="eq(-5,true)"/>
+		<setting id="kitsu.titles" type="labelenum" label="- How titles will be displayed:" values="Canonical|Romanized|English" default="Canonical" visible="eq(-6,true)"/>
+
+		<setting id="sep"/>
+		<setting id="mal.bool" label="MyAnimeList" type="bool" default="false"/>
+        	<setting id="mal.name" type="text" label="- Username:" default="" visible="eq(-1,true)"/>
+        	<setting id="mal.password" type="text" option="hidden" label="- Password:" default="" visible="eq(-2,true)"/>
+		<setting id="mal.login" type="action" label="- Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/mal)" visible="eq(-3,true)"/>
+		<setting id="mal.listsettings" type="action" label="List settings..." option="close" visible="eq(-4,true)"/>
+		<setting id="mal.sort" type="labelenum" label="- Sort by:" values="Last Updated|Progress|Anime Title" default="Anime Title" visible="eq(-5,true)"/>
+
+		<setting id="sep"/>
+		<setting id="wonderfulsubs.bool" label="WonderfulSubs" type="bool" default="false"/>
+        	<setting id="wonderfulsubs.name" type="text" label="- Username:" default="" visible="eq(-1,true)"/>
+        	<setting id="wonderfulsubs.password" type="text" option="hidden" label="- Password:" default="" visible="eq(-2,true)"/>
+		<setting id="wonderfulsubs.login" type="action" label="- Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/wonderfulsubs)" visible="eq(-3,true)"/>
 	</category>
 </settings>
