@@ -58,7 +58,7 @@ def sortResultsByRes(fetched_urls):
                   utils.parse_resolution_of_source(x[0]),
                   reverse=True)
 
-#Will be called when player __init__
+#Will be called at handle_player
 def on_percent():
     percent_bool = True if 'true' in control.getSetting('watchlist.percentbool') else False
     if not percent_bool:
