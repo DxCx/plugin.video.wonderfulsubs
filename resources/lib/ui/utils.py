@@ -4,6 +4,11 @@ import re
 
 _numbers_in_parentheses_regex = re.compile(ur'(\d+)\D*')
 
+_res = {
+    'Auto (DASH)': 1081,
+    'Auto (HLS)': 1082,
+    }
+
 def allocate_item(name, url, is_dir=False, image='', plot=''):
     new_res = {}
     new_res['is_dir'] = is_dir
@@ -16,7 +21,7 @@ def allocate_item(name, url, is_dir=False, image='', plot=''):
 def parse_resolution_of_source(data):
     matches = _numbers_in_parentheses_regex.findall(data)
     if len(matches) == 0:
-        return 0
+        return _res[data]
     return int(matches[0])
 
 def _format_source(i, item):

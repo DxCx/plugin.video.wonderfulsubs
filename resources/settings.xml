@@ -7,7 +7,7 @@
 		<setting id="menucontent.type" type="labelenum" label="Set menu content type" values="addons|tvshows" default="tvshows"/>
 	</category>
 	<category label="Servers">
-		<setting id="prefres" label="Prefere Resolution" type="labelenum" values="360p|480p|720p|1080p" default="1080p"/>
+		<setting id="prefres" label="Prefere Resolution" type="labelenum" values="360p|480p|720p|1080p|Auto (DASH)|Auto (HLS)" default="Auto (HLS)"/>
 		<setting id="autoplay" label="Automatically play first result" type="bool" default="false"/>
 	</category>
 	<category label="WonderfulSubs">
