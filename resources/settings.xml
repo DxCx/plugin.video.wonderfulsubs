@@ -14,6 +14,8 @@
         	<setting id="wonderfulsubs.name" type="text" label="Username:" default=""/>
         	<setting id="wonderfulsubs.password" type="text" option="hidden" label="Password:" default=""/>
 		<setting id="wonderfulsubs.login" type="action" label="Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/wonderfulsubs)"/>
+		<setting type="lsep" label="Watchlist"/>
+		<setting id="wonderfulsubs.sort" type="labelenum" label="Filter Watchlist:" values="Subs Only|Dubs Only|None" default="None"/>
 	</category>
 	<category label="MyAnimeList">
         	<setting id="mal.name" type="text" label="Username:" default=""/>
