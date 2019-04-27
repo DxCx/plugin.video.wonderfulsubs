@@ -11,12 +11,12 @@ class WonderfulSubsBrowser(BrowserBase):
 
     def __init__(self, base_flavor):
         super(WonderfulSubsBrowser, self).__init__()
-        self._POP_FLAVOR = self._pop_flavor_key(base_flavor)
+        self._FILTER_FLAVOR = self._filter_flavor_key(base_flavor)
 
-    def _pop_flavor_key(self, base_flavor):
+    def _filter_flavor_key(self, base_flavor):
         flavor_key = {
-            "Subs Only": "is_dubbed",
-            "Dubs Only": "is_subbed",
+            "Subs Only": "is_subbed",
+            "Dubs Only": "is_dubbed",
             "None": None
             }
 
@@ -35,17 +35,17 @@ class WonderfulSubsBrowser(BrowserBase):
             "plot": res["description"],
         }
 
-        if self._POP_FLAVOR:
-            res.pop(self._POP_FLAVOR)
+        if self._FILTER_FLAVOR:
+            return self._parse_filtered_anime_view(res, base)
 
         if res.get("is_dubbed", None):
-            result.append(utils.allocate_item("%s (Dub)" % base["name"] if not self._POP_FLAVOR else base["name"],
+            result.append(utils.allocate_item("%s (Dub)" % base["name"],
                                               "%s/dub" % base["url"],
                                               True,
                                               base["image"],
                                               base["plot"]))
         if res.get("is_subbed", None):
-            result.append(utils.allocate_item("%s (Sub)" % base["name"] if not self._POP_FLAVOR else base["name"],
+            result.append(utils.allocate_item("%s (Sub)" % base["name"],
                                               "%s/sub" % base["url"],
                                               True,
                                               base["image"],
@@ -54,15 +54,21 @@ class WonderfulSubsBrowser(BrowserBase):
 
         return result
 
+    def _parse_filtered_anime_view(self, res, base):
+        result = []
+
+        if res.get(self._FILTER_FLAVOR, None):
+            result.append(utils.allocate_item(base["name"],
+                                              "%s/%s" % (base["url"], self._FILTER_FLAVOR[3:6]),
+                                              True,
+                                              base["image"],
+                                              base["plot"]))
+
+        return result
+
     def _parse_history_view(self, res):
         name = res
         return utils.allocate_item(name, "search/" + name + "/1", True)
-
-    def _parse_watchlist_anime_view(self, res):
-        name = res[1]
-        image = res[2]
-        url = res[0]
-        return utils.allocate_item(name, "animes/" + url, True, image)
 
     def _handle_paging(self, total_results, base_url, page):
         total_pages = int(math.ceil(total_results /
