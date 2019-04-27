@@ -78,7 +78,6 @@ class WatchlistFlavor(object):
         control.setSetting(WatchlistFlavor.__LOGIN_IMAGE_KEY, '')
         control.setSetting(WatchlistFlavor.__LOGIN_TOKEN_KEY, '')
         control.setSetting(WatchlistFlavor.__LOGIN_TS_KEY, '')
-        control.refresh()
         return control.refresh()
 
     @staticmethod
