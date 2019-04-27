@@ -1,3 +1,8 @@
+[B]0.0.10[/B]
+- adds check for token expiration [SwagOtaku]
+- Filter Dub/Sub ignores setting on watchlist from WonderfulSubs [SwagOtaku]
+- adds parse resolution for dash and hls source [SwagOtaku]
+- fix kitsu login error [SwagOtaku]
 [B]0.0.9[/B]
 - Bugfix for watchlist [SwagOtaku]
 [B]0.0.8[/B]
