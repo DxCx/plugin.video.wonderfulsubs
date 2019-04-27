@@ -1,3 +1,6 @@
+[B]0.0.11[/B]
+- Adds clear cache button [SwagOtaku]
+- Bugfix for anilist sort [SwagOtaku]
 [B]0.0.10[/B]
 - adds check for token expiration [SwagOtaku]
 - Filter Dub/Sub ignores setting on watchlist from WonderfulSubs [SwagOtaku]
