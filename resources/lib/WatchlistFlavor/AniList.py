@@ -133,7 +133,7 @@ class AniListWLF(WatchlistFlavorBase):
         sort_types = {
             "Score": "SCORE",
             "Progress": "PROGRESS",
-            "Last Updated": "UPDATE_TIME",
+            "Last Updated": "UPDATED_TIME",
             "Last Added": "ADDED_TIME",
             }
 
