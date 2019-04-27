@@ -60,9 +60,9 @@ def sortResultsByRes(fetched_urls):
 
 #Will be called at handle_player
 def on_percent():
-    percent_bool = True if 'true' in control.getSetting('watchlist.percentbool') else False
-    if not percent_bool:
-        return False
+    percent_bool = control.getSetting('watchlist.percentbool')
+    if percent_bool is "false":
+        return None
 
     return int(control.getSetting('watchlist.percent'))
 
