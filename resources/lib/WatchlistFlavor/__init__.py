@@ -38,7 +38,9 @@ class WatchlistFlavor(object):
         if not login_ts:
             return True
 
-        if int(login_ts) <= int(time()):
+        expires_in = 2591963 # Seconds until the access_token expires (30 days)
+        expires_ts = int(login_ts) + expires_in
+        if expires_ts <= int(time()):
             control.ok_dialog('Login', 'Token expired, relogin to watchlist')
             return True
 
@@ -62,7 +64,7 @@ class WatchlistFlavor(object):
             raise Exception("Invalid flavor %s" % flavor)
 
         flavor_class = WatchlistFlavor.__instance_flavor(flavor)
-        login_ts = int(time()) + 2591963
+        login_ts = int(time())
 
         return WatchlistFlavor.__set_login(flavor,
                                            flavor_class.login(),
