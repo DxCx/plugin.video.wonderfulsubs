@@ -39,6 +39,10 @@ def add_watchlist(items):
     if not flavor:
         return
 
+    token_expired = WatchlistFlavor.check_token_expiration()
+    if token_expired:
+        return
+
     items.insert(0, (
         "%s's %s" % (flavor.login_name, flavor.title),
         "watchlist",

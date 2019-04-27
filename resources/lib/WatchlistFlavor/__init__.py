@@ -1,3 +1,4 @@
+from time import time
 from ..ui import control
 from WatchlistFlavorBase import WatchlistFlavorBase
 
@@ -12,6 +13,7 @@ class WatchlistFlavor(object):
     __LOGIN_NAME_KEY = "%s.name" % __LOGIN_KEY
     __LOGIN_IMAGE_KEY = "%s.image" % __LOGIN_KEY
     __LOGIN_TOKEN_KEY = "%s.token" % __LOGIN_KEY
+    __LOGIN_TS_KEY = "%s.ts" %__LOGIN_KEY
 
     __SELECTED = None
 
@@ -31,6 +33,20 @@ class WatchlistFlavor(object):
         return WatchlistFlavor.__SELECTED
 
     @staticmethod
+    def check_token_expiration():
+        login_ts = control.getSetting(WatchlistFlavor.__LOGIN_TS_KEY)
+        if not login_ts:
+            return True
+
+        expires_in = 2591963 # Seconds until the access_token expires (30 days)
+        expires_ts = int(login_ts) + expires_in
+        if expires_ts <= int(time()):
+            control.ok_dialog('Login', 'Token expired, relogin to watchlist')
+            return True
+
+        return False
+
+    @staticmethod
     def watchlist_request():
         return WatchlistFlavor.get_active_flavor().watchlist()
 
@@ -48,8 +64,12 @@ class WatchlistFlavor(object):
             raise Exception("Invalid flavor %s" % flavor)
 
         flavor_class = WatchlistFlavor.__instance_flavor(flavor)
+        login_ts = int(time())
+
         return WatchlistFlavor.__set_login(flavor,
-                                           flavor_class.login())
+                                           flavor_class.login(),
+                                           str(login_ts)
+                                           )
 
     @staticmethod
     def logout_request():
@@ -57,7 +77,8 @@ class WatchlistFlavor(object):
         control.setSetting(WatchlistFlavor.__LOGIN_NAME_KEY, '')
         control.setSetting(WatchlistFlavor.__LOGIN_IMAGE_KEY, '')
         control.setSetting(WatchlistFlavor.__LOGIN_TOKEN_KEY, '')
-        control.refresh()
+        control.setSetting(WatchlistFlavor.__LOGIN_TS_KEY, '')
+        return control.refresh()
 
     @staticmethod
     def __get_flavor_class(name):
@@ -84,11 +105,12 @@ class WatchlistFlavor(object):
         return flavor_class(login_name, username, password, login_image, login_token, sort, title_lang)
 
     @staticmethod
-    def __set_login(flavor, res):
+    def __set_login(flavor, res, login_ts):
         if not res:
             return control.ok_dialog('Login', 'Incorrect username or password')
 
         control.setSetting(WatchlistFlavor.__LOGIN_FLAVOR_KEY, flavor)
+        control.setSetting(WatchlistFlavor.__LOGIN_TS_KEY, login_ts)
         control.setSetting(WatchlistFlavor.__LOGIN_TOKEN_KEY, res['token'])
         control.setSetting(WatchlistFlavor.__LOGIN_IMAGE_KEY, res['image'])
         control.setSetting(WatchlistFlavor.__LOGIN_NAME_KEY, res['name'])

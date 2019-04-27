@@ -54,6 +54,9 @@ def sortResultsByRes(fetched_urls):
     filtered_urls = filter(lambda x: utils.parse_resolution_of_source(x[0]) <=
                            prefereResSetting, fetched_urls)
 
+    if not filtered_urls:
+        return sorted(fetched_urls)
+
     return sorted(filtered_urls, key=lambda x:
                   utils.parse_resolution_of_source(x[0]),
                   reverse=True)
