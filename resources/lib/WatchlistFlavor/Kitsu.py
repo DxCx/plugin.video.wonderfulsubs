@@ -20,7 +20,8 @@ class KitsuWLF(WatchlistFlavorBase):
             return
 
         data = json.loads(resp.text)
-        data2 = json.loads(self._send_request(self._to_url("edge/users?filter[self]=true"), headers=self.__header(data['access_token'])))["data"][0]
+        resp2 = self._send_request(self._to_url("edge/users"), headers=self.__header(data['access_token']), params={'filter[self]': True})
+        data2 = json.loads(resp2)["data"][0]
 
         return self._format_login_data((data2["attributes"]["name"]),
                                        '',

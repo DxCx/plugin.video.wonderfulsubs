@@ -46,14 +46,18 @@ class WonderfulSubsWLF(WatchlistFlavorBase):
             "plot": '',
         }
 
-        if res["is_dubbed"]:
-            result.append(utils.allocate_item("%s (Dub)" % base["name"],
+        POP_FLAVOR = self.__get_sort()
+        if POP_FLAVOR:
+            res.pop(POP_FLAVOR)
+
+        if res.get("is_dubbed", None):
+            result.append(utils.allocate_item("%s (Dub)" % base["name"] if not POP_FLAVOR else base["name"],
                                               "%s/dub" % base["url"],
                                               True,
                                               base["image"],
                                               base["plot"]))
-        if res["is_subbed"]:
-            result.append(utils.allocate_item("%s (Sub)" % base["name"],
+        if res.get("is_subbed", None):
+            result.append(utils.allocate_item("%s (Sub)" % base["name"] if not POP_FLAVOR else base["name"],
                                               "%s/sub" % base["url"],
                                               True,
                                               base["image"],
@@ -69,3 +73,12 @@ class WonderfulSubsWLF(WatchlistFlavorBase):
 
     def watchlist_update(self, episode, kitsu_id):
         return False
+
+    def __get_sort(self):
+        sort_types = {
+            "Subs Only": "is_dubbed",
+            "Dubs Only": "is_subbed",
+            "None": None
+            }
+
+        return sort_types[self._sort]
