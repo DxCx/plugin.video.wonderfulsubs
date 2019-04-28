@@ -96,16 +96,16 @@ class MyAnimeListWLF(WatchlistFlavorBase):
 
         return self._parse_view(base)
 
-    def __cookies(self):
+    def __headers(self):
         logsess_id, sess_id = self._login_token.rsplit("/", 1)
 
-        cookies = {
-            'MALHLOGSESSID': logsess_id,
-            'MALSESSIONID': sess_id,
-            'is_logged_in': '1'
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'Accept': '*/*',
+            'Cookie': 'MALHLOGSESSID=%s; MALSESSIONID=%s; is_logged_in=1; anime_update_advanced=1' %(logsess_id, sess_id),
             }
 
-        return cookies
+        return headers
 
     def _kitsu_to_mal_id(self, kitsu_id):
         arm_resp = requests.get("https://arm.now.sh/api/v1/search?type=kitsu&id=" + kitsu_id)
@@ -117,7 +117,7 @@ class MyAnimeListWLF(WatchlistFlavorBase):
 
     def watchlist_update(self, episode, kitsu_id):
         mal_id = self._kitsu_to_mal_id(kitsu_id)
-        result = self._send_request(self._to_url("anime/%s" % (mal_id)), cookies=self.__cookies())
+        result = self._send_request(self._to_url("anime/%s" % (mal_id)), headers=self.__headers())
         soup = bs.BeautifulSoup(result, 'html.parser')
         csrf = soup.find("meta",  {"name":"csrf_token"})["content"]
         match = soup.find('h2', {'class' : 'mt8'})
@@ -136,7 +136,7 @@ class MyAnimeListWLF(WatchlistFlavorBase):
             "csrf_token": csrf
             }
 
-        self._post_request(url, cookies=self.__cookies(), json=payload)
+        self._post_request(url, headers=self.__headers(), json=payload)
 
     def __get_sort(self):
         sort_types = {
