@@ -61,6 +61,10 @@ def sortResultsByRes(fetched_urls):
                   utils.parse_resolution_of_source(x[0]),
                   reverse=True)
 
+#Will be called at handle_player
+def on_percent():
+    return int(control.getSetting('watchlist.percent'))
+
 #Will be called when player is stopped in the middle of the episode
 def on_stopped():
     return control.yesno_dialog(control.lang(30200), control.lang(30201), control.lang(30202))
@@ -211,7 +215,11 @@ def PLAY(payload, params):
     })
 
     __set_last_watched(anime_url, is_dubbed, name, image)
-    control.play_source(s.get_video_link(), watchlist_update(episode, kitsu_id), on_stopped)
+    control.play_source(s.get_video_link(),
+                        watchlist_update(episode, kitsu_id),
+                        on_stopped,
+                        on_percent if 'true' in control.getSetting('watchlist.percentbool') else None
+                        )
 
 @route('')
 def LIST_MENU(payload, params):
