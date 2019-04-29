@@ -1,3 +1,6 @@
+[B]0.0.13[/B]
+- re-add filter in setting for wonderfulsubs watchlist [SwagOtaku]
+- fixes on precentage update [SwagOtaku]
 [B]0.0.12[/B]
 - update watchlist when set watched percentage is reached [SwagOtaku]
 - removes the (Sub)/(Dub) part of the title, when anime flavor is filtered [SwagOtaku]
