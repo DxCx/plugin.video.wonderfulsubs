@@ -102,7 +102,7 @@ class MyAnimeListWLF(WatchlistFlavorBase):
         headers = {
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
             'Accept': '*/*',
-            'Cookie': 'MALHLOGSESSID=%s; MALSESSIONID=%s; is_logged_in=1; anime_update_advanced=1' %(logsess_id, sess_id),
+            'Cookie': 'MALHLOGSESSID=%s; MALSESSIONID=%s; is_logged_in=1; anime_update_advanced=1' % (logsess_id, sess_id),
             }
 
         return headers
