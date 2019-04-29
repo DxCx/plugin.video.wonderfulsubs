@@ -47,5 +47,7 @@
     		<setting id="wonderfulsubs.name" type="text" label="- Username:" default="" visible="eq(-1,true)"/>
     		<setting id="wonderfulsubs.password" type="text" option="hidden" label="- Password:" default="" visible="eq(-2,true)"/>
 		<setting id="wonderfulsubs.login" type="action" label="- Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/wonderfulsubs)" visible="eq(-3,true)"/>
+		<setting id="wonderfulsubs.listsettings" type="action" label="List settings..." option="close" visible="eq(-4,true)"/>
+		<setting id="wonderfulsubs.sort" type="labelenum" label="Filter Anime" values="Subs Only|Dubs Only|None" default="None" visible="eq(-5,true)"/>
 	</category>
 </settings>
