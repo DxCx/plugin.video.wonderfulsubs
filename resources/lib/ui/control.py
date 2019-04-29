@@ -78,10 +78,11 @@ class watchlistPlayer(xbmc.Player):
 
     def onWatchedPercent(self):
         while self.isPlaying():
-            xbmc.sleep(5000)
             if self.getWatchedPercent() > self._on_percent():
                 self._on_playback_done()
                 break
+
+            xbmc.sleep(5000)
 
     def keepAlive(self):
         for i in range(0, 240):
