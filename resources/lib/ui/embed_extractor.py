@@ -101,6 +101,7 @@ def __extract_rapidvideo(url, page_content, referer=None):
     #TODO: refactor for other qualities besides 720p and 1080p
     #SOURCES_RE = re.compile("\<a\shref=\".+&q=(.+?)\"\>")
     #source_labels = SOURCES_RE.findall(page_content)
+ 
     source_labels = ['720p', '1080p']
     sources = [
         (label, __final_resolve_rapidvideo(url, label, referer))
