@@ -1,3 +1,5 @@
+[B]0.0.15[/B]
+- Fixes missing sources [SwagOtaku]
 [B]0.0.14[/B]
 - fixes update on MAL after watched doesn't work (issue #55) [SwagOtaku]
 [B]0.0.13[/B]
