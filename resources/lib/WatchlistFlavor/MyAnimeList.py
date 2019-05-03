@@ -103,6 +103,7 @@ class MyAnimeListWLF(WatchlistFlavorBase):
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
             'Accept': '*/*',
             'Cookie': 'MALHLOGSESSID=%s; MALSESSIONID=%s; is_logged_in=1; anime_update_advanced=1' % (logsess_id, sess_id),
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Gecko/20100101 \Firefox/56.0',
             }
 
         return headers
