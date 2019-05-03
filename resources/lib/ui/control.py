@@ -145,6 +145,40 @@ def multiselect_dialog(title, _list):
         return xbmcgui.Dialog().multiselect(title, _list)
     return None
 
+def clear_settings(dialog):
+    confirm = dialog
+    if confirm == 0:
+        return
+
+    addonInfo = __settings__.getAddonInfo
+    try:
+        dataPath = xbmc.translatePath(addonInfo('profile')).decode('utf-8')
+    except:
+        dataPath = xbmc.translatePath(addonInfo('profile'))
+
+    import shutil
+    import os
+
+    if os.path.exists(dataPath):
+        shutil.rmtree(dataPath)
+
+    os.mkdir(dataPath)
+    refresh()
+
+def _get_view_type(viewType):
+    viewTypes = {
+        'Default': 50,
+        'Poster': 51,
+        'Icon Wall': 52,
+        'Shift': 53,
+        'Info Wall': 54,
+        'Wide List': 55,
+        'Wall': 500,
+        'Banner': 501,
+        'Fanart': 502,
+    }
+    return viewTypes[viewType]
+
 def xbmc_add_player_item(name, url, iconimage='', description='', draw_cm=None):
     ok=True
     u=addon_url(url)
@@ -202,7 +236,7 @@ def play_source(link, on_episode_done=None, on_stopped=None, on_percent=None):
     xbmcplugin.setResolvedUrl(HANDLE, True, item)
     watchlistPlayer().handle_player(on_episode_done, on_stopped, on_percent)
 
-def draw_items(video_data, contentType="tvshows", draw_cm=None):
+def draw_items(video_data, contentType="tvshows", viewType='', draw_cm=None):
     for vid in video_data:
         if vid['is_dir']:
             xbmc_add_dir(vid['name'], vid['url'], vid['image'], vid['plot'], draw_cm)
@@ -211,6 +245,10 @@ def draw_items(video_data, contentType="tvshows", draw_cm=None):
                                  vid['plot'], draw_cm)
     xbmcplugin.setContent(HANDLE, contentType)
     xbmcplugin.endOfDirectory(HANDLE, succeeded=True, updateListing=False, cacheToDisc=True)
+
+    if viewType:
+        xbmc.executebuiltin('Container.SetViewMode(%d)' % _get_view_type(viewType))
+
     return True
 
 @hook_mimetype('application/dash+xml')

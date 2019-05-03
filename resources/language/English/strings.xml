@@ -20,4 +20,7 @@
 	<string id="30200">Watchlist</string>
 	<string id="30201">Update Watchlist Episode Progress</string>
 	<string id="30202">Not Yet</string>
+
+	<string id="30300">Tools</string>
+	<string id="30301">This will completely clear your addon settings.Are you sure you want to do this?</string>
 </strings>

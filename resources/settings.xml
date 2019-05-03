@@ -4,13 +4,19 @@
 		<setting id="baseflavor" type="labelenum" label="Filter Anime" values="Subs Only|Dubs Only|None" default="None"/>
 		<setting id="reverseorder" type="labelenum" label="Episode order" values="Ascending|Descending" default="Descending"/>
 		<setting id="searchhistory" type="labelenum" label="Enable search history" values="Yes|No" default="Yes"/>
-		<setting id="menucontent.type" type="labelenum" label="Set menu content type" values="addons|tvshows" default="tvshows"/>
-		<setting type="lsep" label="Tools"/>
-		<setting id="cache.clear" type="action" label="Click to Clear Cache" option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/clear_cache)"/>
+		<setting type="lsep" label="UI"/>
+		<setting type="sep"/>
+		<setting id="contenttype.menu" type="labelenum" label="Set menu content type" values="addons|tvshows" default="tvshows"/>
+		<setting id="viewtype.bool" label="Force view types" type="bool" default="false"/>
+		<setting id="viewtype.episode" type="select" label="- Episode view" values='Default|Poster|Icon Wall|Shift|Info Wall|Wide List|Wall|Banner|Fanart' default="Default" visible="eq(-1,true)"/>
 	</category>
 	<category label="Servers">
 		<setting id="prefres" label="Prefere Resolution" type="labelenum" values="360p|480p|720p|1080p|Auto (DASH)|Auto (HLS)" default="Auto (HLS)"/>
 		<setting id="autoplay" label="Automatically play first result" type="bool" default="false"/>
+	</category>
+	<category label="Tools">
+		<setting id="tools.clear.cache" type="action" label="Click to Clear Cache..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/clear_cache)"/>
+		<setting id="tools.clear.settings" type="action" label="Click to Clear Settings..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/clear_settings)"/>
 	</category>
 	<category label="Watchlist">
 		<setting id="watchlist.percentbool" label="Enable update on watched percent" type="bool" default="false"/>
