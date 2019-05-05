@@ -236,7 +236,7 @@ def play_source(link, on_episode_done=None, on_stopped=None, on_percent=None):
     xbmcplugin.setResolvedUrl(HANDLE, True, item)
     watchlistPlayer().handle_player(on_episode_done, on_stopped, on_percent)
 
-def draw_items(video_data, contentType="tvshows", viewType='', draw_cm=None):
+def draw_items(video_data, contentType="tvshows", viewType=None, draw_cm=None):
     for vid in video_data:
         if vid['is_dir']:
             xbmc_add_dir(vid['name'], vid['url'], vid['image'], vid['plot'], draw_cm)
