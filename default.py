@@ -81,22 +81,28 @@ def SETTINGS(payload, params):
 def CLEAR_CACHE(payload, params):
     return control.clear_cache();
 
+@route('clear_settings')
+def CLEAR_SETTINGS(payload, params):
+    dialog = control.yesno_dialog(control.lang(30300), control.lang(30301))
+    return control.clear_settings(dialog);
+
 @route('animes/*')
 def ANIMES_PAGE(payload, params):
     anime_url, flavor_or_season = payload.rsplit("/", 1)
     desc_order = False if "Ascending" in control.getSetting('reverseorder') else True
+    view_type = control.getSetting('viewtype.episode')
     if anime_url.find("/") == -1:
         # Seasons
         is_dubbed = True if "dub" == flavor_or_season else False
         seasons = _BROWSER.get_anime_seasons(anime_url, is_dubbed, desc_order)
-        return control.draw_items(seasons)
+        return control.draw_items(seasons, viewType=view_type)
 
     season = flavor_or_season
     anime_url, flavor = anime_url.rsplit("/", 1)
     is_dubbed = True if "dub" == flavor else False
 
     episodes = _BROWSER.get_anime_episodes(anime_url, is_dubbed, season, desc_order)
-    return control.draw_items(episodes)
+    return control.draw_items(episodes, viewType=view_type)
 
 @route('letter')
 def LIST_ALL_AB(payload, params):
@@ -225,7 +231,7 @@ def PLAY(payload, params):
 def LIST_MENU(payload, params):
     return control.draw_items(
         [utils.allocate_item(name, url, True, image) for name, url, image in MENU_ITEMS],
-        control.getSetting("menucontent.type"),
+        contentType=control.getSetting("contenttype.menu"),
     )
 
 set_browser(_BROWSER)
