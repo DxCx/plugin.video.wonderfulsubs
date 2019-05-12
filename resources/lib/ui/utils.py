@@ -9,20 +9,24 @@ _res = {
     'Auto (HLS)': 1082,
     }
 
-def allocate_item(name, url, is_dir=False, image='', plot=''):
+def allocate_item(name, url, is_dir=False, image='', plot='', draw_cm=None):
     new_res = {}
     new_res['is_dir'] = is_dir
     new_res['image'] = image
     new_res['name'] = name
     new_res['url'] = url
     new_res['plot'] = plot
+    new_res['draw_cm'] = draw_cm
     return new_res
 
 def parse_resolution_of_source(data):
     matches = _numbers_in_parentheses_regex.findall(data)
     if len(matches) == 0:
-        return _res[data]
+        return _res.get(data, 0)
     return int(matches[0])
+
+def remove_flavor_from_name(name):
+    return re.sub(r'\s\(.*\)', '', name)
 
 def _format_source(i, item):
     label, fetched_url, subtitles, name = item

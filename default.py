@@ -3,6 +3,7 @@ from resources.lib.ui import utils
 from resources.lib.ui.SourcesList import SourcesList
 from resources.lib.ui.router import on_param, route, router_process
 from resources.lib.WonderfulSubsBrowser import WonderfulSubsBrowser
+from resources.lib.GogoAnimeBrowser import GogoAnimeBrowser
 from resources.lib.AniListBrowser import AniListBrowser
 from resources.lib.WatchlistIntegration import set_browser, add_watchlist, watchlist_update
 import urlparse
@@ -80,6 +81,12 @@ def on_stopped():
 def genre_dialog(genre_display_list):
     return control.multiselect_dialog(control.lang(30004), genre_display_list)
 
+@on_param('action', 'search_alt')
+def SEARCH_ALT(payload, params):
+    name = utils.remove_flavor_from_name(params['name'])
+    romaji_title = AniListBrowser().get_romaji_title(name)
+    return control.draw_items(GogoAnimeBrowser().search_site(romaji_title))
+
 @route('settings')
 def SETTINGS(payload, params):
     return control.settingsMenu();
@@ -112,6 +119,11 @@ def ANIMES_PAGE(payload, params):
 
     episodes = _BROWSER.get_anime_episodes(anime_url, is_dubbed, season, desc_order)
     return control.draw_items(episodes, content_type, view_type)
+
+@route('gogo_animes/*')
+def GOGO_ANIMES_PAGE(payload, params):
+    episodes = GogoAnimeBrowser().get_anime_episodes(payload)
+    return control.draw_items(episodes)
 
 @route('letter')
 def LIST_ALL_AB(payload, params):
@@ -235,6 +247,20 @@ def PLAY(payload, params):
                         on_stopped,
                         on_percent if 'true' in control.getSetting('watchlist.percentbool') else None
                         )
+
+@route('gogo_play/*')
+def GOGO_PLAY(payload, params):
+    sources = GogoAnimeBrowser().get_episode_sources(payload)
+    autoplay = True if 'true' in control.getSetting('autoplay') else False
+
+    s = SourcesList(sorted(sources.items()), autoplay, sortResultsByRes, {
+        'title': control.lang(30100),
+        'processing': control.lang(30101),
+        'choose': control.lang(30102),
+        'notfound': control.lang(30103),
+    })
+
+    control.play_source(s.get_video_link())
 
 @route('')
 def LIST_MENU(payload, params):

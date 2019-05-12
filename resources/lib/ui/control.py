@@ -180,7 +180,7 @@ def _get_view_type(viewType):
 def xbmc_add_player_item(name, url, iconimage='', description='', draw_cm=None):
     ok=True
     u=addon_url(url)
-    cm = draw_cm(u) if draw_cm is not None else []
+    cm = draw_cm(sys.argv[0], name) if draw_cm is not None else []
 
     liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
     liz.setInfo('video', infoLabels={ "Title": name, "Plot": description })
@@ -194,7 +194,7 @@ def xbmc_add_player_item(name, url, iconimage='', description='', draw_cm=None):
 def xbmc_add_dir(name, url, iconimage='', description='', draw_cm=None):
     ok=True
     u=addon_url(url)
-    cm = draw_cm(u) if draw_cm is not None else []
+    cm = draw_cm(sys.argv[0], name) if draw_cm is not None else []
 
     liz=xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
     liz.setInfo('video', infoLabels={ "Title": name, "Plot": description })
@@ -240,13 +240,13 @@ def play_source(link, on_episode_done=None, on_stopped=None, on_percent=None):
     xbmcplugin.setResolvedUrl(HANDLE, True, item)
     watchlistPlayer().handle_player(on_episode_done, on_stopped, on_percent)
 
-def draw_items(video_data, contentType="tvshows", viewType=None, draw_cm=None):
+def draw_items(video_data, contentType="tvshows", viewType=None):
     for vid in video_data:
         if vid['is_dir']:
-            xbmc_add_dir(vid['name'], vid['url'], vid['image'], vid['plot'], draw_cm)
+            xbmc_add_dir(vid['name'], vid['url'], vid['image'], vid['plot'], vid['draw_cm'])
         else:
             xbmc_add_player_item(vid['name'], vid['url'], vid['image'],
-                                 vid['plot'], draw_cm)
+                                 vid['plot'], vid['draw_cm'])
     xbmcplugin.setContent(HANDLE, contentType)
     xbmcplugin.endOfDirectory(HANDLE, succeeded=True, updateListing=False, cacheToDisc=True)
 

@@ -233,3 +233,42 @@ class AniListBrowser():
 
     def get_genres_page(self, genre_string, tag_string, page):
         return self._genres_payload(ast.literal_eval(genre_string), ast.literal_eval(tag_string), page)
+
+    def get_romaji_title(self, title):
+        query = '''
+        query (
+            $page: Int = 1,
+            $type: MediaType,
+            $isAdult: Boolean = false,
+            $search: String,
+            $sort: [MediaSort] = [SCORE_DESC, POPULARITY_DESC]
+        ) {
+            Page (page: $page, perPage: 20) {
+                pageInfo {
+                    perPage
+                }
+                ANIME: media (
+                    type: $type,
+                    search: $search,
+                    sort: $sort,
+                    isAdult: $isAdult
+                ) {
+                    title {
+                        userPreferred
+                    }
+                }
+            }
+        }
+        '''
+
+        variables = {
+            'page': 1,
+            'search': title,
+            'sort': "SEARCH_MATCH",
+            'type': "ANIME"
+            }
+
+        result = requests.post(self._URL, json={'query': query, 'variables': variables})
+        data = result.json()['data']['Page']['ANIME']
+        romaji_title = data[0]['title']['userPreferred']
+        return romaji_title

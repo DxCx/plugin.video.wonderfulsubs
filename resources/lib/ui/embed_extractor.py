@@ -3,6 +3,7 @@ import urllib
 import urlparse
 import utils
 import http
+import requests
 import json
 import time
 from bs4 import BeautifulSoup
@@ -25,6 +26,11 @@ def load_video_from_url(in_url):
         if found_extractor['preloader'] is not None:
             print "Modifying Url: %s" % in_url
             in_url = found_extractor['preloader'](in_url)
+
+        data = found_extractor['data']
+        if data is not None:
+            return found_extractor['parser'](in_url,
+                                             data)
 
         print "Probing source: %s" % in_url
         reqObj = http.send_request(in_url)
@@ -86,7 +92,25 @@ def __extract_rapidvideo(url, page_content, referer=None):
                   soup.select('source'))
     return results
 
-def __register_extractor(urls, function, url_preloader=None):
+def __extract_mp4upload(url, page_content, referer=None):
+    SOURCE_RE_1 = re.compile(r'.*?\|IFRAME\|(\d+)\|.*?\|\d+\|.*?\|(.*?)\|.*?',
+                             re.DOTALL)
+    SOURCE_RE_2 = re.compile(r'.*?\|video\|(.*?)\|(\d+)\|.*?',
+                             re.DOTALL)
+    label, domain = SOURCE_RE_1.match(page_content).groups()
+    video_id, protocol = SOURCE_RE_2.match(page_content).groups()
+    stream_url = 'https://{}.mp4upload.com:{}/d/{}/video.mp4'
+    stream_url = stream_url.format(domain, protocol, video_id)
+    stream = [(label, stream_url)]
+    return stream
+
+def __extract_xstreamcdn(url, data):
+    res = requests.post(url, data=data)
+    res = res.json()['data']
+    results = map(lambda x: (x['label'], x['file']), res)
+    return results
+
+def __register_extractor(urls, function, url_preloader=None, data=None):
     if type(urls) is not list:
         urls = [urls]
 
@@ -94,6 +118,7 @@ def __register_extractor(urls, function, url_preloader=None):
         _EMBED_EXTRACTORS[url] = {
             "preloader": url_preloader,
             "parser": function,
+            "data": data
         }
 
 def __ignore_extractor(url, content, referer=None):
@@ -133,6 +158,18 @@ def __extractor_factory(regex, double_ref=False, match=0, debug=False):
 
 __register_extractor(["https://www.wonderfulsubs.com/api/media/stream"],
                      __extract_wonderfulsubs)
+
 __register_extractor(["https://www.rapidvideo.com/e/"],
                      __extract_rapidvideo,
                      lambda x: x.replace('/e/', '/v/'))
+
+__register_extractor(["http://mp4upload.com/",
+                      "http://www.mp4upload.com/",
+                      "https://www.mp4upload.com/",
+                      "https://mp4upload.com/"],
+                     __extract_mp4upload)
+
+__register_extractor(["https://www.xstreamcdn.com/v/"],
+                     __extract_xstreamcdn,
+                     lambda x: x.replace('/v/', '/api/source/'),
+                     {'d': 'www.xstreamcdn.com'})
