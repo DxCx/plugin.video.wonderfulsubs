@@ -32,7 +32,7 @@
 		<setting id="sep"/>
 		<setting id="anilist.bool" label="AniList" type="bool" default="false"/>
 		<setting id="anilist.name" type="text" label="- Username:" default="" visible="eq(-1,true)"/>
-    		<setting id="anilist.password" type="text" option="hidden" visible="false" label="Password:" default=""/>
+    		<setting id="anilist.password" type="text" option="hidden" label="- Access Token:" default="" visible="eq(-2,true)"/>
 		<setting id="anilist.login" type="action" label="- Click to Add..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/anilist)" visible="eq(-3,true)"/>
 		<setting id="anilist.listsettings" type="action" label="List settings..." option="close" visible="eq(-4,true)"/>
 		<setting id="anilist.sort" type="labelenum" label="- Sort by:" values="Score|Progress|Last Updated|Last Added" default="Progress" visible="eq(-5,true)"/>

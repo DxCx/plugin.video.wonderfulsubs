@@ -19,9 +19,9 @@ class KitsuWLF(WatchlistFlavorBase):
         if resp.status_code != 200:
             return
 
-        data = json.loads(resp.text)
-        resp2 = self._send_request(self._to_url("edge/users"), headers=self.__header(data['access_token']), params={'filter[self]': True})
-        data2 = json.loads(resp2)["data"][0]
+        data = resp.json()
+        resp2 = self._get_request(self._to_url("edge/users"), headers=self.__header(data['access_token']), params={'filter[self]': True})
+        data2 = resp2.json()["data"][0]
 
         return self._format_login_data((data2["attributes"]["name"]),
                                        '',
@@ -54,8 +54,8 @@ class KitsuWLF(WatchlistFlavorBase):
         return self._parse_view(base)
 
     def _process_watchlist_status_view(self, url, params, headers, base_plugin_url, page):
-        result = self._send_request(url, headers=headers, params=params)
-        results = json.loads(result)["meta"]["statusCounts"]
+        result = self._get_request(url, headers=headers, params=params)
+        results = result.json()["meta"]["statusCounts"]
         all_results = map(self._base_watchlist_status_view, results)
         all_results = list(itertools.chain(*all_results))
         return all_results
@@ -83,7 +83,7 @@ class KitsuWLF(WatchlistFlavorBase):
         return self._process_watchlist_view(url, params, headers, "watchlist/%d", page=1)
 
     def _process_watchlist_view(self, url, params, headers, base_plugin_url, page):
-        result = json.loads(self._send_request(url, headers=headers, params=params))
+        result = (self._get_request(url, headers=headers, params=params)).json()
         results = result["included"][1:]
         results2 = result["data"]
         all_results = map(self._base_watchlist_view, results, results2)
@@ -109,8 +109,8 @@ class KitsuWLF(WatchlistFlavorBase):
             "filter[user_id]": uid,
             "filter[anime_id]": kitsu_id
             }
-        scrobble = self._send_request(url, headers=self.__header(token), params=params)
-        item_dict = json.loads(scrobble)
+        scrobble = self._get_request(url, headers=self.__header(token), params=params)
+        item_dict = scrobble.json()
         if len(item_dict['data']) == 0:
             return lambda: self.__post_params(url, episode, kitsu_id, token, uid)
 

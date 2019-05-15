@@ -139,5 +139,43 @@ class AniListWLF(WatchlistFlavorBase):
 
         return sort_types[self._sort]
 
+    def __headers(self):
+        token = self._password
+        headers = {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            }
+
+        return headers
+
+    def _kitsu_to_anilist_id(self, kitsu_id):
+        arm_resp = self._get_request("https://arm.now.sh/api/v1/search?type=kitsu&id=" + kitsu_id)
+        if arm_resp.status_code != 200:
+            raise Exception("AnimeID not found")
+
+        anilist_id = arm_resp.json()["services"]["anilist"]
+        return anilist_id
+
     def watchlist_update(self, episode, kitsu_id):
-        return False
+        anilist_id = self._kitsu_to_anilist_id(kitsu_id)
+        return lambda: self.__update_library(episode, anilist_id)
+
+    def __update_library(self, episode, anilist_id):
+        query = '''
+        mutation ($mediaId: Int, $progress : Int, $status: MediaListStatus) {
+            SaveMediaListEntry (mediaId: $mediaId, progress: $progress, status: $status) {
+                id
+                progress
+                status
+                }
+            }
+        '''
+
+        variables = {
+            'mediaId': int(anilist_id),
+            'progress': int(episode),
+            'status': 'CURRENT'
+            }
+
+        self._post_request(self._URL, headers=self.__headers(), json={'query': query, 'variables': variables})
