@@ -14,7 +14,7 @@ class WonderfulSubsWLF(WatchlistFlavorBase):
 
     def login(self):
         url = self._to_url("api/users/login")
-        data = json.loads(self._post_request(url, json={"username": self._username, "password": self._password}).text)
+        data = (self._post_request(url, json={"username": self._username, "password": self._password})).json()
 
         if data['success'] is not True:
             return
@@ -65,8 +65,9 @@ class WonderfulSubsWLF(WatchlistFlavorBase):
 
         return result
 
-    def _process_watchlist_view(self, url, base_plugin_url, page):        
-        results = json.loads(self._send_request(url, headers=self.__header()))['data']['watch_list']
+    def _process_watchlist_view(self, url, base_plugin_url, page):
+        resp = self._get_request(url, headers=self.__header())
+        results = resp.json()['data']['watch_list']
         all_results = map(self._base_watchlist_view, results)
         all_results = list(itertools.chain(*all_results))
         return all_results

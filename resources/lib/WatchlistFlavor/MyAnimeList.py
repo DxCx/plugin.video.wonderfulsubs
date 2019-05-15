@@ -78,7 +78,7 @@ class MyAnimeListWLF(WatchlistFlavorBase):
         return self._process_status_view(url, params, "watchlist/%d", page=1)
 
     def _process_status_view(self, url, params, base_plugin_url, page):
-        results = json.loads(self._send_request(url, params=params))
+        results = (self._get_request(url, params=params)).json()
         all_results = map(self._base_watchlist_status_view, results)
         all_results = list(itertools.chain(*all_results))
         return all_results
@@ -109,17 +109,17 @@ class MyAnimeListWLF(WatchlistFlavorBase):
         return headers
 
     def _kitsu_to_mal_id(self, kitsu_id):
-        arm_resp = requests.get("https://arm.now.sh/api/v1/search?type=kitsu&id=" + kitsu_id)
+        arm_resp = self._get_request("https://arm.now.sh/api/v1/search?type=kitsu&id=" + kitsu_id)
         if arm_resp.status_code != 200:
             raise Exception("AnimeID not found")
 
-        mal_id = json.loads(arm_resp.text)["services"]["mal"]
+        mal_id = arm_resp.json()["services"]["mal"]
         return mal_id
 
     def watchlist_update(self, episode, kitsu_id):
         mal_id = self._kitsu_to_mal_id(kitsu_id)
-        result = self._send_request(self._to_url("anime/%s" % (mal_id)), headers=self.__headers())
-        soup = bs.BeautifulSoup(result, 'html.parser')
+        result = self._get_request(self._to_url("anime/%s" % (mal_id)), headers=self.__headers())
+        soup = bs.BeautifulSoup(result.text, 'html.parser')
         csrf = soup.find("meta",  {"name":"csrf_token"})["content"]
         match = soup.find('h2', {'class' : 'mt8'})
         if match:
