@@ -88,6 +88,10 @@ def __extract_wonderfulsubs(url, content, referer=None):
     if res["status"] != 200:
         raise Exception("Failed with error code of %d" % res["status"])
 
+    if res.has_key("embed"):
+        embed_url = res["embed"].rsplit("/", 1)[0]
+        return load_video_from_url(embed_url)
+
     results = __check_video_list(url,
                                  map(lambda x: (x['label'], x['src']),
                                      res["urls"]))
