@@ -4,9 +4,15 @@
 		<setting id="baseflavor" type="labelenum" label="Filter Anime" values="Subs Only|Dubs Only|None" default="None"/>
 		<setting id="reverseorder" type="labelenum" label="Episode order" values="Ascending|Descending" default="Descending"/>
 		<setting id="searchhistory" type="labelenum" label="Enable search history" values="Yes|No" default="Yes"/>
+
 		<setting type="lsep" label="UI"/>
-		<setting type="sep"/>
-		<setting id="contenttype.menu" type="labelenum" label="Set menu content type" values="addons|tvshows" default="tvshows"/>
+		<setting id="sep"/>
+		<setting id="contenttype.bool" label="Set content types" type="bool" default="false"/>
+		<setting id="contenttype.menu" type="labelenum" label="- Menu content type" values="addons|tvshows" default="tvshows" visible="eq(-1,true)"/>
+		<setting id="contenttype.seasons" type="labelenum" label="- Seasons content type" values="seasons|tvshows" default="tvshows" visible="eq(-2,true)"/>
+		<setting id="contenttype.episodes" type="labelenum" label="- Episodes content type" values="episodes|tvshows" default="tvshows" visible="eq(-3,true)"/>
+
+		<setting id="sep"/>
 		<setting id="viewtype.bool" label="Force view types" type="bool" default="false"/>
 		<setting id="viewtype.episode" type="select" label="- Episode view" values='Default|Poster|Icon Wall|Shift|Info Wall|Wide List|Wall|Banner|Fanart' default="Default" visible="eq(-1,true)"/>
 	</category>

@@ -61,6 +61,13 @@ def sortResultsByRes(fetched_urls):
                   utils.parse_resolution_of_source(x[0]),
                   reverse=True)
 
+def get_animes_contentType(seasons=None):
+    contentType = control.getSetting("contenttype.episodes")
+    if seasons and seasons[0]['is_dir']:
+        contentType = control.getSetting("contenttype.seasons")
+
+    return contentType
+
 #Will be called at handle_player
 def on_percent():
     return int(control.getSetting('watchlist.percent'))
@@ -90,19 +97,21 @@ def CLEAR_SETTINGS(payload, params):
 def ANIMES_PAGE(payload, params):
     anime_url, flavor_or_season = payload.rsplit("/", 1)
     desc_order = False if "Ascending" in control.getSetting('reverseorder') else True
+    content_type = get_animes_contentType()
     view_type = control.getSetting('viewtype.episode')
     if anime_url.find("/") == -1:
         # Seasons
         is_dubbed = True if "dub" == flavor_or_season else False
         seasons = _BROWSER.get_anime_seasons(anime_url, is_dubbed, desc_order)
-        return control.draw_items(seasons, viewType=view_type)
+        content_type = get_animes_contentType(seasons)
+        return control.draw_items(seasons, content_type, view_type)
 
     season = flavor_or_season
     anime_url, flavor = anime_url.rsplit("/", 1)
     is_dubbed = True if "dub" == flavor else False
 
     episodes = _BROWSER.get_anime_episodes(anime_url, is_dubbed, season, desc_order)
-    return control.draw_items(episodes, viewType=view_type)
+    return control.draw_items(episodes, content_type, view_type)
 
 @route('letter')
 def LIST_ALL_AB(payload, params):
