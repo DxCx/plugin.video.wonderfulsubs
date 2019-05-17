@@ -93,7 +93,7 @@ def __extract_rapidvideo(url, page_content, referer=None):
     return results
 
 def __extract_mp4upload(url, page_content, referer=None):
-    SOURCE_RE_1 = re.compile(r'.*?\|IFRAME\|(\d+)\|.*?\|\d+\|.*?\|(.*?)\|.*?',
+    SOURCE_RE_1 = re.compile(r'.*?\|IFRAME\|(\d+)\|.*?\|\d+\|false\|vjs\|h1\|w1\|(.*?)\|.*?',
                              re.DOTALL)
     SOURCE_RE_2 = re.compile(r'.*?\|video\|(.*?)\|(\d+)\|.*?',
                              re.DOTALL)

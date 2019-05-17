@@ -122,8 +122,10 @@ def ANIMES_PAGE(payload, params):
 
 @route('gogo_animes/*')
 def GOGO_ANIMES_PAGE(payload, params):
+    content_type = get_animes_contentType()
+    view_type = control.getSetting('viewtype.episode')
     episodes = GogoAnimeBrowser().get_anime_episodes(payload)
-    return control.draw_items(episodes)
+    return control.draw_items(episodes, content_type, view_type)
 
 @route('letter')
 def LIST_ALL_AB(payload, params):
