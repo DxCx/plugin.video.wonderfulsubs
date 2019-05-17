@@ -1,3 +1,6 @@
+[B]0.0.17[/B]
+- Update Icon [RedNinjaX]
+- Reenable rapidvideo [SwagOtaku]
 [B]0.0.16[/B]
 - adds ability to "globally" change viewtype [SwagOtaku]
 [B]0.0.15[/B]
