@@ -1,3 +1,6 @@
+[B]0.0.18[/B]
+- adds ability to set seasons and episodes content type [SwagOtaku]
+- adds anilist watchlist updating [SwagOtaku]
 [B]0.0.17[/B]
 - Update Icon [RedNinjaX]
 - Reenable rapidvideo [SwagOtaku]
