@@ -1,3 +1,5 @@
+[B]0.0.19[/B]
+- Bugfix for RapidVideo [SwagOtaku]
 [B]0.0.18[/B]
 - adds ability to set seasons and episodes content type [SwagOtaku]
 - adds anilist watchlist updating [SwagOtaku]
