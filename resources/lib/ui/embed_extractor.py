@@ -5,6 +5,7 @@ import utils
 import http
 import json
 import time
+from bs4 import BeautifulSoup
 
 _EMBED_EXTRACTORS = {}
 
@@ -63,26 +64,6 @@ def __check_video_list(refer_url, vidlist, add_referer=False,
 
     return nlist
 
-def __final_resolve_rapidvideo(url, label, referer=None):
-    VIDEO_RE = re.compile("\<source\ssrc=\"([^\"]+?)\"")
-    VIDEO_RE_NEW = re.compile(",\ssrc: \"([^\"]+?)\"")
-    raw_url = "%s&q=%s" % (url, label)
-
-    def playSource():
-        reqObj = http.send_request(http.add_referer_url(raw_url, ""))
-        if reqObj.status_code != 200:
-            raise Exception("Error from server %d" % reqObj.status_code)
-
-        results = VIDEO_RE.findall(reqObj.text)
-        if not results:
-            results = VIDEO_RE_NEW.findall(reqObj.text)
-        if not results:
-            raise Exception("Unable to find source")
-
-        return results[0]
-
-    return playSource
-
 def __extract_wonderfulsubs(url, content, referer=None):
     res = json.loads(content)
     if res["status"] != 200:
@@ -98,13 +79,10 @@ def __extract_wonderfulsubs(url, content, referer=None):
     return results
 
 def __extract_rapidvideo(url, page_content, referer=None):
-    SOURCES_RE = re.compile("\<a\shref=\".+&q=(.+?)\"\>")
-    source_labels = SOURCES_RE.findall(page_content)
-    sources = [
-        (label, __final_resolve_rapidvideo(url, label, referer))
-        for label in source_labels]
-
-    return sources
+    soup = BeautifulSoup(page_content, 'html.parser')
+    results = map(lambda x: (x['label'], x['src']),
+                  soup.select('source'))
+    return results
 
 def __register_extractor(urls, function, url_preloader=None):
     if type(urls) is not list:
