@@ -23,14 +23,10 @@ class hook_mimetype(object):
 
     @classmethod
     def trigger(cls, mimetype, item):
-
-        if mimetype in cls.__MIME_HOOKS.keys():
-            return cls.__MIME_HOOKS[mimetype](item)
-
-        return item
+        return cls.__MIME_HOOKS.get(mimetype.lower(), item)
 
     def __init__(self, mimetype):
-        self._type = mimetype
+        self._type = mimetype.lower()
 
     def __call__(self, func):
         assert self._type not in self.__MIME_HOOKS.keys()
@@ -266,6 +262,7 @@ def _DASH_HOOK(item):
     return item
 
 @hook_mimetype('application/vnd.apple.mpegurl')
+@hook_mimetype('application/x-mpegURL')
 def _HLS_HOOK(item):
     import inputstreamhelper
     is_helper = inputstreamhelper.Helper('hls')
