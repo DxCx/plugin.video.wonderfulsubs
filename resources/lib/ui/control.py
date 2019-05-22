@@ -23,7 +23,9 @@ class hook_mimetype(object):
 
     @classmethod
     def trigger(cls, mimetype, item):
-        return cls.__MIME_HOOKS.get(mimetype.lower(), item)
+        if mimetype.lower() in cls.__MIME_HOOKS:
+            return cls.__MIME_HOOKS[mimetype.lower()](item)        
+        return item
 
     def __init__(self, mimetype):
         self._type = mimetype.lower()
