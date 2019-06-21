@@ -222,6 +222,7 @@ def _prefetch_play_link(link):
     }
 
 def play_source(link, on_episode_done=None, on_stopped=None, on_percent=None):
+    link, subtitles = link
     linkInfo = _prefetch_play_link(link)
     if not linkInfo:
         xbmcplugin.setResolvedUrl(HANDLE, False, xbmcgui.ListItem())
@@ -230,6 +231,9 @@ def play_source(link, on_episode_done=None, on_stopped=None, on_percent=None):
     item = xbmcgui.ListItem(path=linkInfo['url'])
     if 'Content-Type' in linkInfo['headers']:
         item.setProperty('mimetype', linkInfo['headers']['Content-Type'])
+
+    if subtitles:
+        item.setSubtitles([subtitles])
 
     # Run any mimetype hook
     item = hook_mimetype.trigger(linkInfo['headers']['Content-Type'], item)

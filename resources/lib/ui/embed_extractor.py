@@ -57,7 +57,7 @@ def __check_video_list(refer_url, vidlist, add_referer=False,
             if ignore_cookie:
                 out_url = http.strip_cookie_url(out_url)
 
-            nlist.append((item[0], out_url))
+            nlist.append((item[0], out_url, item[2]))
         except Exception, e:
             # Just don't add source.
             pass
@@ -74,8 +74,10 @@ def __extract_wonderfulsubs(url, content, referer=None):
         return load_video_from_url(embed_url)
 
     results = __check_video_list(url,
-                                 map(lambda x: (x['label'], x['src']),
-                                     res["urls"]))
+                                 map(lambda x: (x['label'],
+                                                x['src'],
+                                                x['captions']['src'] if x.has_key('captions') else None), res["urls"]))
+
     return results
 
 def __extract_rapidvideo(url, page_content, referer=None):

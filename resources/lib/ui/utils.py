@@ -25,9 +25,9 @@ def parse_resolution_of_source(data):
     return int(matches[0])
 
 def _format_source(i, item):
-    label, fetched_url, name = item
+    label, fetched_url, subtitles, name = item
     label = " (%s)" % label if len(label) else ''
-    return ("%02d | %s%s" % (i, name, label), fetched_url)
+    return ("%02d | %s%s" % (i, name, label), [fetched_url, subtitles])
 
 def fetch_sources(sources, dialog, raise_exceptions=False, autoplay=False,
                   sortBy=None):
@@ -52,13 +52,13 @@ def fetch_sources(sources, dialog, raise_exceptions=False, autoplay=False,
             if autoplay and sortBy is not None:
                 fetched_urls = sortBy(fetched_urls)
                 item = fetched_urls[0]
-                item = (item[0], item[1], name)
+                item = (item[0], item[1], item[2], name)
                 if len(fetched_urls):
                     return dict([_format_source(0, item)])
 
             # X[0] => Label, X[1] => Url
             valid_urls = filter(lambda x: x[1] != None, fetched_urls)
-            total_urls += map(lambda x: (x[0], x[1], name), valid_urls)
+            total_urls += map(lambda x: (x[0], x[1], x[2], name), valid_urls)
             dialog.update(int(i * factor))
         except Exception, e:
             print "[*E*] Skiping %s because Exception at parsing" % name
