@@ -1,3 +1,6 @@
+[B]0.0.20[/B]
+- Fix for HLS [doko-desuka]
+- Add subtitles from server [SwagOtaku]
 [B]0.0.19[/B]
 - Bugfix for RapidVideo [SwagOtaku]
 [B]0.0.18[/B]
