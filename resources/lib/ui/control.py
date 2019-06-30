@@ -204,6 +204,9 @@ def xbmc_add_dir(name, url, iconimage='', description='', draw_cm=None):
     return ok
 
 def _prefetch_play_link(link):
+    if isinstance(link, list):
+        link, subtitles = link
+
     if callable(link):
         link = link()
 
@@ -217,10 +220,10 @@ def _prefetch_play_link(link):
     return {
         "url": linkInfo.url,
         "headers": linkInfo.headers,
+        "subtitles": subtitles
     }
 
 def play_source(link, on_episode_done=None, on_stopped=None, on_percent=None):
-    link, subtitles = link
     linkInfo = _prefetch_play_link(link)
     if not linkInfo:
         xbmcplugin.setResolvedUrl(HANDLE, False, xbmcgui.ListItem())
@@ -230,8 +233,7 @@ def play_source(link, on_episode_done=None, on_stopped=None, on_percent=None):
     if 'Content-Type' in linkInfo['headers']:
         item.setProperty('mimetype', linkInfo['headers']['Content-Type'])
 
-    if subtitles:
-        item.setSubtitles([subtitles])
+    item.setSubtitles([linkInfo.get('subtitles')])
 
     # Run any mimetype hook
     item = hook_mimetype.trigger(linkInfo['headers']['Content-Type'], item)
