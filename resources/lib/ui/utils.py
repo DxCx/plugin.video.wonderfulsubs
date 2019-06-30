@@ -52,13 +52,19 @@ def fetch_sources(sources, dialog, raise_exceptions=False, autoplay=False,
             if autoplay and sortBy is not None:
                 fetched_urls = sortBy(fetched_urls)
                 item = fetched_urls[0]
-                item = (item[0], item[1], item[2], name)
+                item = (item[0],
+                        item[1],
+                        item[2] if item[2:] else None,
+                        name)
                 if len(fetched_urls):
                     return dict([_format_source(0, item)])
 
             # X[0] => Label, X[1] => Url
             valid_urls = filter(lambda x: x[1] != None, fetched_urls)
-            total_urls += map(lambda x: (x[0], x[1], x[2], name), valid_urls)
+            total_urls += map(lambda x: (x[0],
+                                         x[1],
+                                         x[2] if x[2:] else None,
+                                         name), valid_urls)
             dialog.update(int(i * factor))
         except Exception, e:
             print "[*E*] Skiping %s because Exception at parsing" % name

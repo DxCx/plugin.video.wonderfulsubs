@@ -82,7 +82,7 @@ def __extract_wonderfulsubs(url, content, referer=None):
 
 def __extract_rapidvideo(url, page_content, referer=None):
     soup = BeautifulSoup(page_content, 'html.parser')
-    results = map(lambda x: (x['label'], x['src'], None),
+    results = map(lambda x: (x['label'], x['src']),
                   soup.select('source'))
     return results
 
