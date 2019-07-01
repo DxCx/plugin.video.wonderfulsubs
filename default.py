@@ -114,7 +114,7 @@ def ANIMES_PAGE(payload, params):
         is_dubbed = True if "dub" == flavor_or_season else False
         seasons = _BROWSER.get_anime_seasons(anime_url, is_dubbed, desc_order)
         content_type = get_animes_contentType(seasons)
-        return control.draw_items(seasons, content_type, view_type)
+        return control.draw_items(seasons, content_type, view_type, draw_cm)
 
     season = flavor_or_season
     anime_url, flavor = anime_url.rsplit("/", 1)
@@ -140,7 +140,7 @@ def LIST_ALL_AB(payload, params):
 def SHOW_AB_LISTING(payload, params):
     letter, page = payload.rsplit("/", 1)
     assert letter in AB_LIST, "Bad Param"
-    return control.draw_items(_BROWSER.get_by_letter(letter, int(page)))
+    return control.draw_items(_BROWSER.get_by_letter(letter, int(page)), draw_cm=draw_cm)
 
 @route('all')
 def ALL(payload, params):
