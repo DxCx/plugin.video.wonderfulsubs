@@ -43,15 +43,13 @@ class WonderfulSubsBrowser(BrowserBase):
                                               "%s/dub" % base["url"],
                                               True,
                                               base["image"],
-                                              base["plot"],
-                                              self._draw_cm))
+                                              base["plot"]))
         if res.get("is_subbed", None):
             result.append(utils.allocate_item("%s (Sub)" % base["name"],
                                               "%s/sub" % base["url"],
                                               True,
                                               base["image"],
-                                              base["plot"],
-                                              self._draw_cm))
+                                              base["plot"]))
 
 
         return result
@@ -64,22 +62,13 @@ class WonderfulSubsBrowser(BrowserBase):
                                               "%s/%s" % (base["url"], self._FILTER_FLAVOR[3:6]),
                                               True,
                                               base["image"],
-                                              base["plot"],
-                                              self._draw_cm))
+                                              base["plot"]))
 
         return result
 
     def _parse_history_view(self, res):
         name = res
         return utils.allocate_item(name, "search/" + name + "/1", True)
-
-    def _draw_cm(self, sysaddon, name):
-        cm = [
-            ('Search alt',
-             'XBMC.Container.Update(%s?action=search_alt&name=%s)' % (sysaddon, name))
-            ]
-
-        return cm
 
     def _handle_paging(self, total_results, base_url, page):
         total_pages = int(math.ceil(total_results /
@@ -360,8 +349,7 @@ class WonderfulSubsBrowser(BrowserBase):
                                                  x['url'],
                                                  True,
                                                  x["image"],
-                                                 x["plot"],
-                                                 self._draw_cm), seasons)
+                                                 x["plot"]), seasons)
 
     def get_anime_episodes(self, anime_url, is_dubbed, season, desc_order):
         info = self._get_anime_info(anime_url, is_dubbed)

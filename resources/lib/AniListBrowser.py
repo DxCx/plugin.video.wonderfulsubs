@@ -234,6 +234,13 @@ class AniListBrowser():
     def get_genres_page(self, genre_string, tag_string, page):
         return self._genres_payload(ast.literal_eval(genre_string), ast.literal_eval(tag_string), page)
 
+    def get_title(self, title):
+        from bs4 import BeautifulSoup
+        result = requests.get("https://notify.moe/_/anime-search/%s" % title)
+        soup = BeautifulSoup(result.text, 'html.parser')
+        title = soup.select_one('.profile-watching-list.anime-search a')['aria-label']
+        return title
+
     def get_romaji_title(self, title):
         query = '''
         query (

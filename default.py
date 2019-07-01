@@ -69,6 +69,15 @@ def get_animes_contentType(seasons=None):
 
     return contentType
 
+#Will be called at xbmc_add_*
+def draw_cm(addon_url, name):
+    cm = [
+        ('Search alt',
+         'XBMC.Container.Update("%s/%s")' % (addon_url('search_alt'), name)),
+        ]
+
+    return cm
+
 #Will be called at handle_player
 def on_percent():
     return int(control.getSetting('watchlist.percent'))
@@ -80,12 +89,6 @@ def on_stopped():
 #Will be called on genre page
 def genre_dialog(genre_display_list):
     return control.multiselect_dialog(control.lang(30004), genre_display_list)
-
-@on_param('action', 'search_alt')
-def SEARCH_ALT(payload, params):
-    name = utils.remove_flavor_from_name(params['name'])
-    romaji_title = AniListBrowser().get_romaji_title(name)
-    return control.draw_items(GogoAnimeBrowser().search_site(romaji_title))
 
 @route('settings')
 def SETTINGS(payload, params):
@@ -141,59 +144,59 @@ def SHOW_AB_LISTING(payload, params):
 
 @route('all')
 def ALL(payload, params):
-    return control.draw_items(_BROWSER.get_all())
+    return control.draw_items(_BROWSER.get_all(), draw_cm=draw_cm)
 
 @route('all/*')
 def ALL_PAGES(payload, params):
-    return control.draw_items(_BROWSER.get_all(int(payload)))
+    return control.draw_items(_BROWSER.get_all(int(payload)), draw_cm=draw_cm)
 
 @route('latest')
 def LATEST(payload, params):
-    return control.draw_items(_BROWSER.get_latest())
+    return control.draw_items(_BROWSER.get_latest(), draw_cm=draw_cm)
 
 @route('latest/*')
 def LATEST_PAGES(payload, params):
-    return control.draw_items(_BROWSER.get_latest(int(payload)))
+    return control.draw_items(_BROWSER.get_latest(int(payload)), draw_cm=draw_cm)
 
 @route('popular')
 def POPSUBBED(payload, params):
-    return control.draw_items(_BROWSER.get_popular())
+    return control.draw_items(_BROWSER.get_popular(), draw_cm=draw_cm)
 
 @route('popular/*')
 def POPSUBBED_PAGES(payload, params):
-    return control.draw_items(_BROWSER.get_popular(int(payload)))
+    return control.draw_items(_BROWSER.get_popular(int(payload)), draw_cm=draw_cm)
 
 @route('random')
 def RANDOM(payload, params):
-    return control.draw_items(_BROWSER.get_random())
+    return control.draw_items(_BROWSER.get_random(), draw_cm=draw_cm)
 
 @route('random/*')
 def RANDOM_PAGES(payload, params):
-    return control.draw_items(_BROWSER.get_random(int(payload)))
+    return control.draw_items(_BROWSER.get_random(int(payload)), draw_cm=draw_cm)
 
 @route('anichart_airing')
 def ANICHART_AIRING(payload, params):
-    return control.draw_items(AniListBrowser().get_airing())
+    return control.draw_items(AniListBrowser().get_airing(), draw_cm=draw_cm)
 
 @route('anichart_airing/*')
 def ANICHART_AIRING_PAGES(payload, params):
-    return control.draw_items(AniListBrowser().get_airing(int(payload)))
+    return control.draw_items(AniListBrowser().get_airing(int(payload)), draw_cm=draw_cm)
 
 @route('anilist_genres')
 def ANILIST_GENRES(payload, params):
-    return control.draw_items(AniListBrowser().get_genres(genre_dialog))
+    return control.draw_items(AniListBrowser().get_genres(genre_dialog), draw_cm=draw_cm)
 
 @route('anilist_genres/*')
 def ANILIST_GENRES_PAGES(payload, params):
     genres, tags, page = payload.split("/")[-3:]
-    return control.draw_items(AniListBrowser().get_genres_page(genres, tags, int(page)))
+    return control.draw_items(AniListBrowser().get_genres_page(genres, tags, int(page)), draw_cm=draw_cm)
 
 @route('search_history')
 def SEARCH_HISTORY(payload, params):
     history = control.getSetting(HISTORY_KEY)
     history_array = history.split(HISTORY_DELIM)
     if history != "" and "Yes" in control.getSetting('searchhistory') :
-        return control.draw_items(_BROWSER.search_history(history_array))
+        return control.draw_items(_BROWSER.search_history(history_array), draw_cm=draw_cm)
     else :
         return SEARCH(payload,params)
 
@@ -218,12 +221,23 @@ def SEARCH(payload, params):
             history=history.rsplit(HISTORY_DELIM, 1)[0]
         control.setSetting(HISTORY_KEY, history)
 
-    return control.draw_items(_BROWSER.search_site(query))
+    return control.draw_items(_BROWSER.search_site(query), draw_cm=draw_cm)
 
 @route('search/*')
 def SEARCH_PAGES(payload, params):
     query, page = payload.rsplit("/", 1)
-    return control.draw_items(_BROWSER.search_site(query, int(page)))
+    return control.draw_items(_BROWSER.search_site(query, int(page)), draw_cm=draw_cm)
+
+@route('search_alt/*')
+def SEARCH_ALT(payload, params):
+    name = utils.remove_flavor_from_name(payload)
+    title = AniListBrowser().get_title(name)
+    search_res = GogoAnimeBrowser().search_site(title)
+    if not search_res:
+        romaji_title = AniListBrowser().get_romaji_title(name)
+        search_res = GogoAnimeBrowser().search_site(romaji_title)
+
+    return control.draw_items(search_res)
 
 @route('play/*')
 def PLAY(payload, params):
@@ -271,7 +285,7 @@ def LIST_MENU(payload, params):
         contentType=control.getSetting("contenttype.menu"),
     )
 
-set_browser(_BROWSER)
+set_browser(_BROWSER, draw_cm)
 add_watchlist(MENU_ITEMS)
 _add_last_watched()
 router_process(control.get_plugin_url(), control.get_plugin_params())
