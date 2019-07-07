@@ -180,7 +180,7 @@ def _get_view_type(viewType):
 def xbmc_add_player_item(name, url, iconimage='', description='', draw_cm=None):
     ok=True
     u=addon_url(url)
-    cm = draw_cm(u) if draw_cm is not None else []
+    cm = draw_cm(addon_url, name) if draw_cm is not None else []
 
     liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
     liz.setInfo('video', infoLabels={ "Title": name, "Plot": description })
@@ -194,7 +194,7 @@ def xbmc_add_player_item(name, url, iconimage='', description='', draw_cm=None):
 def xbmc_add_dir(name, url, iconimage='', description='', draw_cm=None):
     ok=True
     u=addon_url(url)
-    cm = draw_cm(u) if draw_cm is not None else []
+    cm = draw_cm(addon_url, name) if draw_cm is not None else []
 
     liz=xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
     liz.setInfo('video', infoLabels={ "Title": name, "Plot": description })

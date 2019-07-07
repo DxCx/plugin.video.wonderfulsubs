@@ -21,8 +21,13 @@ def allocate_item(name, url, is_dir=False, image='', plot=''):
 def parse_resolution_of_source(data):
     matches = _numbers_in_parentheses_regex.findall(data)
     if len(matches) == 0:
-        return _res[data]
+        return _res.get(data, 0)
     return int(matches[0])
+
+def remove_flavor_from_name(name):
+    name = re.sub(r'\s\(.*\)', '', name)
+    name = name.rsplit(' - ', 1)[0]
+    return name
 
 def _format_source(i, item):
     label, fetched_url, subtitles, name = item
