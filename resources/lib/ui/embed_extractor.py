@@ -173,3 +173,13 @@ __register_extractor(["https://www.xstreamcdn.com/v/"],
                      __extract_xstreamcdn,
                      lambda x: x.replace('/v/', '/api/source/'),
                      {'d': 'www.xstreamcdn.com'})
+
+__register_extractor(["https://gcloud.live/v/"],
+                     __extract_xstreamcdn,
+                     lambda x: x.replace('/v/', '/api/source/'),
+                     {'d': 'gcloud.live'})
+
+__register_extractor(["https://www.fembed.com/v/"],
+                     __extract_xstreamcdn,
+                     lambda x: x.replace('/v/', '/api/source/'),
+                     {'d': 'www.fembed.com'})
