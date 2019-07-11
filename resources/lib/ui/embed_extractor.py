@@ -76,7 +76,7 @@ def __extract_wonderfulsubs(url, content, referer=None):
         raise Exception("Failed with error code of %d" % res["status"])
 
     if res.has_key("embed"):
-        embed_url = res["embed"].rsplit("/", 1)[0]
+        embed_url = res["embed"]
         return load_video_from_url(embed_url)
 
     results = __check_video_list(url,
@@ -159,7 +159,8 @@ def __extractor_factory(regex, double_ref=False, match=0, debug=False):
 __register_extractor(["https://www.wonderfulsubs.com/api/media/stream"],
                      __extract_wonderfulsubs)
 
-__register_extractor(["https://www.rapidvideo.com/e/"],
+__register_extractor(["https://www.rapidvideo.com/e/",
+                      "https://www.rapidvid.to/e/"],
                      __extract_rapidvideo,
                      lambda x: x.replace('/e/', '/v/'))
 
