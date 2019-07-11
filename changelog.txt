@@ -1,3 +1,5 @@
+[B]0.0.23[/B]
+- Bugfixes for Alt Search and normal extractor [SwagOtaku]
 [B]0.0.22[/B]
 - Alternative Anime Search [SwagOtaku]
 [B]0.0.21[/B]
