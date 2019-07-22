@@ -64,9 +64,12 @@ class GogoAnimeBrowser(BrowserBase):
         image = ''
         return utils.allocate_item(name, "gogo_play/" + url, False, image)
 
-    def get_anime_episodes(self, anime_url):
+    def get_anime_episodes(self, anime_url, desc_order):
         episodes = self._get_anime_info(anime_url)
         results = map(self._parse_ep_view, episodes)
+        if not desc_order:
+            results = reversed(results)
+
         return results
 
     def search_site(self, search_string, page=1):
