@@ -1,3 +1,5 @@
+[B]0.0.24[/B]
+- add ascending/descending episode order to search alt [SwagOtaku]
 [B]0.0.23[/B]
 - Bugfixes for Alt Search and normal extractor [SwagOtaku]
 [B]0.0.22[/B]
