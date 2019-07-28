@@ -125,9 +125,10 @@ def ANIMES_PAGE(payload, params):
 
 @route('gogo_animes/*')
 def GOGO_ANIMES_PAGE(payload, params):
+    desc_order = False if "Ascending" in control.getSetting('reverseorder') else True
     content_type = get_animes_contentType()
     view_type = control.getSetting('viewtype.episode')
-    episodes = GogoAnimeBrowser().get_anime_episodes(payload)
+    episodes = GogoAnimeBrowser().get_anime_episodes(payload, desc_order)
     return control.draw_items(episodes, content_type, view_type)
 
 @route('letter')
