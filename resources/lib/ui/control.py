@@ -183,7 +183,7 @@ def xbmc_add_player_item(name, url, iconimage='', description='', draw_cm=None):
     cm = draw_cm(addon_url, name) if draw_cm is not None else []
 
     liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
-    liz.setInfo('video', infoLabels={ "Title": name, "Plot": description })
+    liz.setInfo('video', infoLabels={ "Title": name, "Plot": description, "Mediatype": "episode" })
     liz.setProperty("fanart_image", __settings__.getAddonInfo('path') + "/fanart.jpg")
     liz.setProperty("Video", "true")
     liz.setProperty("IsPlayable", "true")
