@@ -41,7 +41,7 @@ class WatchlistFlavor(object):
         expires_in = 2591963 # Seconds until the access_token expires (30 days)
         expires_ts = int(login_ts) + expires_in
         if expires_ts <= int(time()):
-            control.ok_dialog('Login', 'Token expired, relogin to watchlist')
+            control.ok_dialog(control.lang(30400), control.lang(30403))
             return True
 
         return False
@@ -107,7 +107,7 @@ class WatchlistFlavor(object):
     @staticmethod
     def __set_login(flavor, res, login_ts):
         if not res:
-            return control.ok_dialog('Login', 'Incorrect username or password')
+            return control.ok_dialog(control.lang(30400), control.lang(30401))
 
         control.setSetting(WatchlistFlavor.__LOGIN_FLAVOR_KEY, flavor)
         control.setSetting(WatchlistFlavor.__LOGIN_TS_KEY, login_ts)
@@ -115,4 +115,4 @@ class WatchlistFlavor(object):
         control.setSetting(WatchlistFlavor.__LOGIN_IMAGE_KEY, res['image'])
         control.setSetting(WatchlistFlavor.__LOGIN_NAME_KEY, res['name'])
         control.refresh()
-        return control.ok_dialog('Login', 'Success')
+        return control.ok_dialog(control.lang(30400), control.lang(30402))
