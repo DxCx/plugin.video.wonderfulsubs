@@ -120,15 +120,15 @@ msgid "Set content types"
 msgstr ""
 
 msgctxt "#40005"
-msgid "    Menu content type"
+msgid "- Menu content type"
 msgstr ""
 
 msgctxt "#40006"
-msgid "    Seasons content type"
+msgid "- Seasons content type"
 msgstr ""
 
 msgctxt "#40007"
-msgid "    Episodes content type"
+msgid "- Episodes content type"
 msgstr ""
 
 msgctxt "#40008"
@@ -136,7 +136,7 @@ msgid "Force view types"
 msgstr ""
 
 msgctxt "#40009"
-msgid "    Episode view"
+msgid "- Episode view"
 msgstr ""
 
 msgctxt "#40010"
@@ -160,7 +160,7 @@ msgid "Enable update on watched percent"
 msgstr ""
 
 msgctxt "#40015"
-msgid "    Update when watched percent is..."
+msgid "- Update when watched percent is..."
 msgstr ""
 
 msgctxt "#40016"
@@ -172,23 +172,23 @@ msgid "AniList"
 msgstr ""
 
 msgctxt "#40018"
-msgid "    Username:"
+msgid "- Username:"
 msgstr ""
 
 msgctxt "#40019"
-msgid "    Access Token:"
+msgid "- Access Token:"
 msgstr ""
 
 msgctxt "#40020"
-msgid "    Click to Add..."
+msgid "- Click to Add..."
 msgstr ""
 
 msgctxt "#40021"
-msgid "- List settings..."
+msgid "List settings..."
 msgstr ""
 
 msgctxt "#40022"
-msgid "    Sort by:"
+msgid "- Sort by:"
 msgstr ""
 
 msgctxt "#40023"
@@ -196,19 +196,19 @@ msgid "Kitsu"
 msgstr ""
 
 msgctxt "#40024"
-msgid "    Email:"
+msgid "- Email:"
 msgstr ""
 
 msgctxt "#40025"
-msgid "    Password:"
+msgid "- Password:"
 msgstr ""
 
 msgctxt "#40026"
-msgid "    Click to Login..."
+msgid "- Click to Login..."
 msgstr ""
 
 msgctxt "#40027"
-msgid "    How titles will be displayed:"
+msgid "- How titles will be displayed:"
 msgstr ""
 
 msgctxt "#40028"
@@ -220,5 +220,5 @@ msgid "WonderfulSubs"
 msgstr ""
 
 msgctxt "#40030"
-msgid "    Filter anime"
+msgid "- Filter anime"
 msgstr ""
