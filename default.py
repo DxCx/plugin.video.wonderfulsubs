@@ -248,7 +248,7 @@ def PLAY(payload, params):
     anime_url, flavor = anime_url.rsplit("/", 1)
     is_dubbed = True if "dub" == flavor else False
     name, image = _BROWSER.get_anime_metadata(anime_url, is_dubbed)
-    sources = _BROWSER.get_episode_sources(anime_url, is_dubbed, season, episode)    
+    sources = _BROWSER.get_episode_sources(anime_url, is_dubbed, season, episode)
     force_list_sources = ('sources' in params)
     autoplay = control.getSetting('autoplay') == 'true' and not force_list_sources
 
@@ -269,7 +269,7 @@ def PLAY(payload, params):
 
 @route('gogo_play/*')
 def GOGO_PLAY(payload, params):
-    sources = GogoAnimeBrowser().get_episode_sources(payload)    
+    sources = GogoAnimeBrowser().get_episode_sources(payload)
     force_list_sources = ('sources' in params)
     autoplay = control.getSetting('autoplay') == 'true' and not force_list_sources
 
