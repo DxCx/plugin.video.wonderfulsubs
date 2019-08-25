@@ -181,6 +181,7 @@ def xbmc_add_player_item(name, url, iconimage='', description='', draw_cm=None):
     ok=True
     u=addon_url(url)
     cm = draw_cm(addon_url, name) if draw_cm is not None else []
+    cm.append(("List Sources", "PlayMedia("+u+"?sources=1)"))
 
     liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
     liz.setInfo('video', infoLabels={ "Title": name, "Plot": description, "Mediatype": "episode" })
@@ -223,7 +224,7 @@ def _prefetch_play_link(link):
         "subtitles": subtitles
     }
 
-def play_source(link, on_episode_done=None, on_stopped=None, on_percent=None):
+def play_source(link, on_episode_done=None, on_stopped=None, on_percent=None, force_list_sources=False):
     linkInfo = _prefetch_play_link(link)
     if not linkInfo:
         xbmcplugin.setResolvedUrl(HANDLE, False, xbmcgui.ListItem())
@@ -232,6 +233,16 @@ def play_source(link, on_episode_done=None, on_stopped=None, on_percent=None):
     item = xbmcgui.ListItem(path=linkInfo['url'])
     if 'Content-Type' in linkInfo['headers']:
         item.setProperty('mimetype', linkInfo['headers']['Content-Type'])
+        
+    if force_list_sources:
+        item.setInfo(
+            "video",
+            {
+                "Title": xbmc.getInfoLabel("ListItem.Title"),
+                "Plot": xbmc.getInfoLabel("ListItem.Plot"),
+                "Mediatype": "episode"
+            }
+        )
 
     item.setSubtitles([linkInfo.get('subtitles')])
 
