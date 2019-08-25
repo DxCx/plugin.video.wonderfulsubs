@@ -248,8 +248,9 @@ def PLAY(payload, params):
     anime_url, flavor = anime_url.rsplit("/", 1)
     is_dubbed = True if "dub" == flavor else False
     name, image = _BROWSER.get_anime_metadata(anime_url, is_dubbed)
-    sources = _BROWSER.get_episode_sources(anime_url, is_dubbed, season, episode)
-    autoplay = True if 'true' in control.getSetting('autoplay') else False
+    sources = _BROWSER.get_episode_sources(anime_url, is_dubbed, season, episode)    
+    force_list_sources = ('sources' in params)
+    autoplay = control.getSetting('autoplay') == 'true' and not force_list_sources
 
     s = SourcesList(sorted(sources.items()), autoplay, sortResultsByRes, {
         'title': control.lang(30100),
@@ -262,13 +263,15 @@ def PLAY(payload, params):
     control.play_source(s.get_video_link(),
                         watchlist_update(episode, kitsu_id),
                         on_stopped,
-                        on_percent if 'true' in control.getSetting('watchlist.percentbool') else None
+                        on_percent if 'true' in control.getSetting('watchlist.percentbool') else None,
+                        force_list_sources
                         )
 
 @route('gogo_play/*')
 def GOGO_PLAY(payload, params):
-    sources = GogoAnimeBrowser().get_episode_sources(payload)
-    autoplay = True if 'true' in control.getSetting('autoplay') else False
+    sources = GogoAnimeBrowser().get_episode_sources(payload)    
+    force_list_sources = ('sources' in params)
+    autoplay = control.getSetting('autoplay') == 'true' and not force_list_sources
 
     s = SourcesList(sorted(sources.items()), autoplay, sortResultsByRes, {
         'title': control.lang(30100),
@@ -277,7 +280,7 @@ def GOGO_PLAY(payload, params):
         'notfound': control.lang(30103),
     })
 
-    control.play_source(s.get_video_link())
+    control.play_source(s.get_video_link(), None, None, None, force_list_sources)
 
 @route('')
 def LIST_MENU(payload, params):
