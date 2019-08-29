@@ -1,4 +1,3 @@
-import re
 import sys
 import xbmc
 import xbmcaddon
@@ -12,10 +11,11 @@ try:
 except:
     import storageserverdummy as StorageServer
 
-HANDLE=int(sys.argv[1])
-ADDON_NAME = re.findall('plugin:\/\/([\w\d\.]+)\/', sys.argv[0])[0]
 __settings__ = xbmcaddon.Addon(ADDON_NAME)
 __language__ = __settings__.getLocalizedString
+
+HANDLE=int(sys.argv[1])
+ADDON_NAME = __settings__.getAddonInfo('id')
 CACHE = StorageServer.StorageServer("%s.animeinfo" % ADDON_NAME, 24)
 
 class hook_mimetype(object):
@@ -143,6 +143,14 @@ def multiselect_dialog(title, _list):
         return xbmcgui.Dialog().multiselect(title, _list)
     return None
 
+def set_property(name, value):
+    window = xbmcgui.Window(xbmcgui.getCurrentWindowId())
+    return window.setProperty(name, value)
+
+def get_property(name):
+    window = xbmcgui.Window(xbmcgui.getCurrentWindowId())
+    return window.getProperty(name)
+
 def clear_settings(dialog):
     confirm = dialog
     if confirm == 0:
@@ -181,7 +189,7 @@ def xbmc_add_player_item(name, url, iconimage='', description='', draw_cm=None):
     ok=True
     u=addon_url(url)
     cm = draw_cm(addon_url, name) if draw_cm is not None else []
-    cm.append(("List Sources", "PlayMedia("+u+"?sources=1)"))
+    cm.append(("List Sources", "RunPlugin(%s)" % addon_url("list_sources/" + url)))
 
     liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
     liz.setInfo('video', infoLabels={ "Title": name, "Plot": description, "Mediatype": "episode" })
@@ -235,14 +243,8 @@ def play_source(link, on_episode_done=None, on_stopped=None, on_percent=None, fo
         item.setProperty('mimetype', linkInfo['headers']['Content-Type'])
         
     if force_list_sources:
-        item.setInfo(
-            "video",
-            {
-                "Title": xbmc.getInfoLabel("ListItem.Title"),
-                "Plot": xbmc.getInfoLabel("ListItem.Plot"),
-                "Mediatype": "episode"
-            }
-        )
+        item.setInfo("video", {"Title": xbmc.getInfoLabel("ListItem.Title"),
+            "Plot": xbmc.getInfoLabel("ListItem.Plot"), "Mediatype": "episode"})
 
     item.setSubtitles([linkInfo.get('subtitles')])
 
