@@ -242,8 +242,12 @@ def SEARCH_ALT(payload, params):
 
 @route('list_sources/*')
 def LIST_SOURCES(payload, params):
-    control.set_property('list_sources', '1')
-    control.xbmc.executebuiltin('PlayMedia('+payload+')')
+    control.set_property('list_sources', '1')   
+    xbmc = control.xbmc
+    title = xbmc.getInfoLabel('ListItem.Title')
+    item = control.xbmcgui.ListItem(title)
+    item.setInfo("video", {"Title": title, "Plot": xbmc.getInfoLabel('ListItem.Plot'), "Mediatype": "episode"})    
+    xbmc.Player().play(item=payload, listitem=item)
 
 @route('play/*')
 def PLAY(payload, params):
@@ -255,8 +259,7 @@ def PLAY(payload, params):
     name, image = _BROWSER.get_anime_metadata(anime_url, is_dubbed)
     sources = _BROWSER.get_episode_sources(anime_url, is_dubbed, season, episode)
 
-    force_list_sources = (control.get_property('list_sources') is not None)
-    if force_list_sources:
+    if control.get_property('list_sources'):
         control.set_property('list_sources', '')
         autoplay = False
     else:
@@ -273,16 +276,14 @@ def PLAY(payload, params):
     control.play_source(s.get_video_link(),
                         watchlist_update(episode, kitsu_id),
                         on_stopped,
-                        on_percent if 'true' in control.getSetting('watchlist.percentbool') else None,
-                        force_list_sources
+                        on_percent if 'true' in control.getSetting('watchlist.percentbool') else None
                         )
 
 @route('gogo_play/*')
 def GOGO_PLAY(payload, params):
     sources = GogoAnimeBrowser().get_episode_sources(payload)
     
-    force_list_sources = (control.get_property('list_sources') is not None)
-    if force_list_sources:
+    if control.get_property('list_sources'):
         control.set_property('list_sources', '')
         autoplay = False
     else:
@@ -295,7 +296,7 @@ def GOGO_PLAY(payload, params):
         'notfound': control.lang(30103),
     })
 
-    control.play_source(s.get_video_link(), None, None, None, force_list_sources)
+    control.play_source(s.get_video_link())
 
 @route('')
 def LIST_MENU(payload, params):
