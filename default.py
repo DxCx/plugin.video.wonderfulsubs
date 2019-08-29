@@ -240,6 +240,11 @@ def SEARCH_ALT(payload, params):
 
     return control.draw_items(search_res)
 
+@route('list_sources/*')
+def LIST_SOURCES(payload, params):
+    control.set_property('list_sources', '1')
+    xbmc.executebuiltin('PlayMedia('+payload+')')
+
 @route('play/*')
 def PLAY(payload, params):
     anime_url, kitsu_id = payload.rsplit("/", 1)
@@ -249,8 +254,13 @@ def PLAY(payload, params):
     is_dubbed = True if "dub" == flavor else False
     name, image = _BROWSER.get_anime_metadata(anime_url, is_dubbed)
     sources = _BROWSER.get_episode_sources(anime_url, is_dubbed, season, episode)
-    force_list_sources = ('sources' in params)
-    autoplay = control.getSetting('autoplay') == 'true' and not force_list_sources
+
+    force_list_sources = (control.get_property('list_sources') is not None)
+    if force_list_sources:
+        control.set_property('list_sources', '')
+        autoplay = False
+    else:
+        autoplay = (control.getSetting('autoplay') == 'true')
 
     s = SourcesList(sorted(sources.items()), autoplay, sortResultsByRes, {
         'title': control.lang(30100),
@@ -270,8 +280,13 @@ def PLAY(payload, params):
 @route('gogo_play/*')
 def GOGO_PLAY(payload, params):
     sources = GogoAnimeBrowser().get_episode_sources(payload)
-    force_list_sources = ('sources' in params)
-    autoplay = control.getSetting('autoplay') == 'true' and not force_list_sources
+    
+    force_list_sources = (control.get_property('list_sources') is not None)
+    if force_list_sources:
+        control.set_property('list_sources', '')
+        autoplay = False
+    else:
+        autoplay = (control.getSetting('autoplay') == 'true')
 
     s = SourcesList(sorted(sources.items()), autoplay, sortResultsByRes, {
         'title': control.lang(30100),
