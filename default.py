@@ -243,7 +243,7 @@ def SEARCH_ALT(payload, params):
 @route('list_sources/*')
 def LIST_SOURCES(payload, params):
     control.set_property('list_sources', '1')
-    xbmc.executebuiltin('PlayMedia('+payload+')')
+    xbmc.executebuiltin('PlayMedia('+control.addon_url(payload)+')')
 
 @route('play/*')
 def PLAY(payload, params):
