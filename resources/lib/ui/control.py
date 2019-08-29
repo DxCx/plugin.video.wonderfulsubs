@@ -189,7 +189,7 @@ def xbmc_add_player_item(name, url, iconimage='', description='', draw_cm=None):
     ok=True
     u=addon_url(url)
     cm = draw_cm(addon_url, name) if draw_cm is not None else []
-    cm.append(("List Sources", "RunPlugin(%s)" % addon_url("list_sources/" + url)))
+    cm.append(("List Sources", "RunPlugin(%s)" % addon_url("list_sources/"+u)))
 
     liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
     liz.setInfo('video', infoLabels={ "Title": name, "Plot": description, "Mediatype": "episode" })
