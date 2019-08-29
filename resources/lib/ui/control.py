@@ -11,10 +11,10 @@ try:
 except:
     import storageserverdummy as StorageServer
 
-__settings__ = xbmcaddon.Addon(ADDON_NAME)
+__settings__ = xbmcaddon.Addon()
 __language__ = __settings__.getLocalizedString
 
-HANDLE=int(sys.argv[1])
+HANDLE = int(sys.argv[1])
 ADDON_NAME = __settings__.getAddonInfo('id')
 CACHE = StorageServer.StorageServer("%s.animeinfo" % ADDON_NAME, 24)
 
