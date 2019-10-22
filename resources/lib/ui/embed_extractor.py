@@ -184,3 +184,8 @@ __register_extractor(["https://www.fembed.com/v/"],
                      __extract_xstreamcdn,
                      lambda x: x.replace('/v/', '/api/source/'),
                      {'d': 'www.fembed.com'})
+
+__register_extractor(["https://www.novelplanet.me/v/"],
+                     __extract_xstreamcdn,
+                     lambda x: x.replace('/v/', '/api/source/'),
+                     {'d': 'www.novelplanet.me'})
