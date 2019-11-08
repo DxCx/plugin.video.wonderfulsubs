@@ -23,14 +23,12 @@ class hook_mimetype(object):
 
     @classmethod
     def trigger(cls, mimetype, item):
-
-        if mimetype in cls.__MIME_HOOKS.keys():
-            return cls.__MIME_HOOKS[mimetype](item)
-
+        if mimetype.lower() in cls.__MIME_HOOKS:
+            return cls.__MIME_HOOKS[mimetype.lower()](item)        
         return item
 
     def __init__(self, mimetype):
-        self._type = mimetype
+        self._type = mimetype.lower()
 
     def __call__(self, func):
         assert self._type not in self.__MIME_HOOKS.keys()
@@ -182,10 +180,10 @@ def _get_view_type(viewType):
 def xbmc_add_player_item(name, url, iconimage='', description='', draw_cm=None):
     ok=True
     u=addon_url(url)
-    cm = draw_cm(u) if draw_cm is not None else []
+    cm = draw_cm(addon_url, name) if draw_cm is not None else []
 
     liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
-    liz.setInfo('video', infoLabels={ "Title": name, "Plot": description })
+    liz.setInfo('video', infoLabels={ "Title": name, "Plot": description, "Mediatype": "episode" })
     liz.setProperty("fanart_image", __settings__.getAddonInfo('path') + "/fanart.jpg")
     liz.setProperty("Video", "true")
     liz.setProperty("IsPlayable", "true")
@@ -196,7 +194,7 @@ def xbmc_add_player_item(name, url, iconimage='', description='', draw_cm=None):
 def xbmc_add_dir(name, url, iconimage='', description='', draw_cm=None):
     ok=True
     u=addon_url(url)
-    cm = draw_cm(u) if draw_cm is not None else []
+    cm = draw_cm(addon_url, name) if draw_cm is not None else []
 
     liz=xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
     liz.setInfo('video', infoLabels={ "Title": name, "Plot": description })
@@ -206,6 +204,9 @@ def xbmc_add_dir(name, url, iconimage='', description='', draw_cm=None):
     return ok
 
 def _prefetch_play_link(link):
+    if isinstance(link, list):
+        link, subtitles = link
+
     if callable(link):
         link = link()
 
@@ -219,6 +220,7 @@ def _prefetch_play_link(link):
     return {
         "url": linkInfo.url,
         "headers": linkInfo.headers,
+        "subtitles": subtitles
     }
 
 def play_source(link, on_episode_done=None, on_stopped=None, on_percent=None):
@@ -230,6 +232,8 @@ def play_source(link, on_episode_done=None, on_stopped=None, on_percent=None):
     item = xbmcgui.ListItem(path=linkInfo['url'])
     if 'Content-Type' in linkInfo['headers']:
         item.setProperty('mimetype', linkInfo['headers']['Content-Type'])
+
+    item.setSubtitles([linkInfo.get('subtitles')])
 
     # Run any mimetype hook
     item = hook_mimetype.trigger(linkInfo['headers']['Content-Type'], item)
@@ -266,6 +270,7 @@ def _DASH_HOOK(item):
     return item
 
 @hook_mimetype('application/vnd.apple.mpegurl')
+@hook_mimetype('application/x-mpegURL')
 def _HLS_HOOK(item):
     import inputstreamhelper
     is_helper = inputstreamhelper.Helper('hls')

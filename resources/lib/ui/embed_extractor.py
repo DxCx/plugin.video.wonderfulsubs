@@ -3,8 +3,10 @@ import urllib
 import urlparse
 import utils
 import http
+import requests
 import json
 import time
+from bs4 import BeautifulSoup
 
 _EMBED_EXTRACTORS = {}
 
@@ -24,6 +26,11 @@ def load_video_from_url(in_url):
         if found_extractor['preloader'] is not None:
             print "Modifying Url: %s" % in_url
             in_url = found_extractor['preloader'](in_url)
+
+        data = found_extractor['data']
+        if data is not None:
+            return found_extractor['parser'](in_url,
+                                             data)
 
         print "Probing source: %s" % in_url
         reqObj = http.send_request(in_url)
@@ -56,53 +63,54 @@ def __check_video_list(refer_url, vidlist, add_referer=False,
             if ignore_cookie:
                 out_url = http.strip_cookie_url(out_url)
 
-            nlist.append((item[0], out_url))
+            nlist.append((item[0], out_url, item[2]))
         except Exception, e:
             # Just don't add source.
             pass
 
     return nlist
 
-def __final_resolve_rapidvideo(url, label, referer=None):
-    VIDEO_RE = re.compile("\<source\ssrc=\"([^\"]+?)\"")
-    VIDEO_RE_NEW = re.compile(",\ssrc: \"([^\"]+?)\"")
-    raw_url = "%s&q=%s" % (url, label)
-
-    def playSource():
-        reqObj = http.send_request(http.add_referer_url(raw_url, ""))
-        if reqObj.status_code != 200:
-            raise Exception("Error from server %d" % reqObj.status_code)
-
-        results = VIDEO_RE.findall(reqObj.text)
-        if not results:
-            results = VIDEO_RE_NEW.findall(reqObj.text)
-        if not results:
-            raise Exception("Unable to find source")
-
-        return results[0]
-
-    return playSource
-
 def __extract_wonderfulsubs(url, content, referer=None):
     res = json.loads(content)
     if res["status"] != 200:
         raise Exception("Failed with error code of %d" % res["status"])
 
+    if res.has_key("embed"):
+        embed_url = res["embed"]
+        return load_video_from_url(embed_url)
+
     results = __check_video_list(url,
-                                 map(lambda x: (x['label'], x['src']),
-                                     res["urls"]))
+                                 map(lambda x: (x['label'],
+                                                x['src'],
+                                                x['captions']['src'] if x.has_key('captions') else None), res["urls"]))
+
     return results
 
 def __extract_rapidvideo(url, page_content, referer=None):
-    SOURCES_RE = re.compile("\<a\shref=\".+&q=(.+?)\"\>")
-    source_labels = SOURCES_RE.findall(page_content)
-    sources = [
-        (label, __final_resolve_rapidvideo(url, label, referer))
-        for label in source_labels]
+    soup = BeautifulSoup(page_content, 'html.parser')
+    results = map(lambda x: (x['label'], x['src']),
+                  soup.select('source'))
+    return results
 
-    return sources
+def __extract_mp4upload(url, page_content, referer=None):
+    SOURCE_RE_1 = re.compile(r'.*?\|IFRAME\|(\d+)\|.*?\|\d+\|false\|h1\|w1\|(.*?)\|.*?',
+                             re.DOTALL)
+    SOURCE_RE_2 = re.compile(r'.*?\|video\|(.*?)\|(\d+)\|.*?',
+                             re.DOTALL)
+    label, domain = SOURCE_RE_1.match(page_content).groups()
+    video_id, protocol = SOURCE_RE_2.match(page_content).groups()
+    stream_url = 'https://{}.mp4upload.com:{}/d/{}/video.mp4'
+    stream_url = stream_url.format(domain, protocol, video_id)
+    stream = [(label, stream_url)]
+    return stream
 
-def __register_extractor(urls, function, url_preloader=None):
+def __extract_xstreamcdn(url, data):
+    res = requests.post(url, data=data)
+    res = res.json()['data']
+    results = map(lambda x: (x['label'], x['file']), res)
+    return results
+
+def __register_extractor(urls, function, url_preloader=None, data=None):
     if type(urls) is not list:
         urls = [urls]
 
@@ -110,6 +118,7 @@ def __register_extractor(urls, function, url_preloader=None):
         _EMBED_EXTRACTORS[url] = {
             "preloader": url_preloader,
             "parser": function,
+            "data": data
         }
 
 def __ignore_extractor(url, content, referer=None):
@@ -149,6 +158,34 @@ def __extractor_factory(regex, double_ref=False, match=0, debug=False):
 
 __register_extractor(["https://www.wonderfulsubs.com/api/media/stream"],
                      __extract_wonderfulsubs)
-__register_extractor(["https://www.rapidvideo.com/e/"],
+
+__register_extractor(["https://www.rapidvideo.com/e/",
+                      "https://www.rapidvid.to/e/"],
                      __extract_rapidvideo,
                      lambda x: x.replace('/e/', '/v/'))
+
+__register_extractor(["http://mp4upload.com/",
+                      "http://www.mp4upload.com/",
+                      "https://www.mp4upload.com/",
+                      "https://mp4upload.com/"],
+                     __extract_mp4upload)
+
+__register_extractor(["https://www.xstreamcdn.com/v/"],
+                     __extract_xstreamcdn,
+                     lambda x: x.replace('/v/', '/api/source/'),
+                     {'d': 'www.xstreamcdn.com'})
+
+__register_extractor(["https://gcloud.live/v/"],
+                     __extract_xstreamcdn,
+                     lambda x: x.replace('/v/', '/api/source/'),
+                     {'d': 'gcloud.live'})
+
+__register_extractor(["https://www.fembed.com/v/"],
+                     __extract_xstreamcdn,
+                     lambda x: x.replace('/v/', '/api/source/'),
+                     {'d': 'www.fembed.com'})
+
+__register_extractor(["https://www.novelplanet.me/v/"],
+                     __extract_xstreamcdn,
+                     lambda x: x.replace('/v/', '/api/source/'),
+                     {'d': 'www.novelplanet.me'})

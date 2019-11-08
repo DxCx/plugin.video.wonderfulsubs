@@ -1,0 +1,224 @@
+# Kodi Media Center language file
+# Addon Name: WonderfulSubs : Anime Subs &amp; Dubs
+# Addon id: plugin.video.wonderfulsubs
+# Addon Provider: DxCx
+msgid ""
+msgstr ""
+
+#. Category strings
+msgctxt "#30000"
+msgid "Last Watched: "
+msgstr ""
+
+msgctxt "#30001"
+msgid "Airing Anime Calendar - AniChart"
+msgstr ""
+
+msgctxt "#30002"
+msgid "All"
+msgstr ""
+
+msgctxt "#30003"
+msgid "A-Z Listing"
+msgstr ""
+
+msgctxt "#30004"
+msgid "Genres & Tags"
+msgstr ""
+
+msgctxt "#30005"
+msgid "Latest"
+msgstr ""
+
+msgctxt "#30006"
+msgid "Popular"
+msgstr ""
+
+msgctxt "#30007"
+msgid "Random"
+msgstr ""
+
+msgctxt "#30008"
+msgid "Search"
+msgstr ""
+
+msgctxt "#30009"
+msgid "Settings"
+msgstr ""
+
+#. Sources strings
+msgctxt "#30100"
+msgid "Fetching Sources"
+msgstr ""
+
+msgctxt "#30101"
+msgid "Processing %s"
+msgstr ""
+
+msgctxt "#30102"
+msgid "Please choose source: "
+msgstr ""
+
+msgctxt "#30103"
+msgid "Couldn't find eligible sources"
+msgstr ""
+
+#. Watchlist strings
+msgctxt "#30200"
+msgid "Watchlist"
+msgstr ""
+
+msgctxt "#30201"
+msgid "Update Watchlist Episode Progress"
+msgstr ""
+
+msgctxt "#30202"
+msgid "Not Yet"
+msgstr ""
+
+#. Tools strings
+msgctxt "#30300"
+msgid "Tools"
+msgstr ""
+
+msgctxt "#30301"
+msgid "This will completely clear your addon settings. Are you sure you want to do this?"
+msgstr ""
+
+#. Login strings - WatchListFlavor.__init__.py
+msgctxt "#30400"
+msgid "Login"
+msgstr ""
+
+msgctxt "#30401"
+msgid "Incorrect username or password"
+msgstr ""
+
+msgctxt "#30402"
+msgid "Success"
+msgstr ""
+
+msgctxt "#30403"
+msgid "Token expired, relogin to watchlist"
+msgstr ""
+
+#. Settings.xml labels
+msgctxt "#40001"
+msgid "Filter anime"
+msgstr ""
+
+msgctxt "#40002"
+msgid "Episode order"
+msgstr ""
+
+msgctxt "#40003"
+msgid "Enable search history"
+msgstr ""
+
+msgctxt "#40004"
+msgid "Set content types"
+msgstr ""
+
+msgctxt "#40005"
+msgid "- Menu content type"
+msgstr ""
+
+msgctxt "#40006"
+msgid "- Seasons content type"
+msgstr ""
+
+msgctxt "#40007"
+msgid "- Episodes content type"
+msgstr ""
+
+msgctxt "#40008"
+msgid "Force view types"
+msgstr ""
+
+msgctxt "#40009"
+msgid "- Episode view"
+msgstr ""
+
+msgctxt "#40010"
+msgid "Prefere Resolution"
+msgstr ""
+
+msgctxt "#40011"
+msgid "Automatically play first result"
+msgstr ""
+
+msgctxt "#40012"
+msgid "Click to Clear Cache..."
+msgstr ""
+
+msgctxt "#40013"
+msgid "Click to Clear Settings..."
+msgstr ""
+
+msgctxt "#40014"
+msgid "Enable update on watched percent"
+msgstr ""
+
+msgctxt "#40015"
+msgid "- Update when watched percent is..."
+msgstr ""
+
+msgctxt "#40016"
+msgid "Select a watchlist"
+msgstr ""
+
+msgctxt "#40017"
+msgid "AniList"
+msgstr ""
+
+msgctxt "#40018"
+msgid "- Username:"
+msgstr ""
+
+msgctxt "#40019"
+msgid "- Access Token:"
+msgstr ""
+
+msgctxt "#40020"
+msgid "- Click to Add..."
+msgstr ""
+
+msgctxt "#40021"
+msgid "List settings..."
+msgstr ""
+
+msgctxt "#40022"
+msgid "- Sort by:"
+msgstr ""
+
+msgctxt "#40023"
+msgid "Kitsu"
+msgstr ""
+
+msgctxt "#40024"
+msgid "- Email:"
+msgstr ""
+
+msgctxt "#40025"
+msgid "- Password:"
+msgstr ""
+
+msgctxt "#40026"
+msgid "- Click to Login..."
+msgstr ""
+
+msgctxt "#40027"
+msgid "- How titles will be displayed:"
+msgstr ""
+
+msgctxt "#40028"
+msgid "MyAnimeList"
+msgstr ""
+
+msgctxt "#40029"
+msgid "WonderfulSubs"
+msgstr ""
+
+msgctxt "#40030"
+msgid "- Filter anime"
+msgstr ""

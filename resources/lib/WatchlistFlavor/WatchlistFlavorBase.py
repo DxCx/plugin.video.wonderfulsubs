@@ -86,8 +86,8 @@ class WatchlistFlavorBase(object):
             url = url[1:]
         return "%s/%s" % (self._URL, url)
 
-    def _send_request(self, url, headers=None, cookies=None, data=None, params=None):
-        return requests.get(url, headers=headers, cookies=cookies, data=data, params=params).text
+    def _get_request(self, url, headers=None, cookies=None, data=None, params=None):
+        return requests.get(url, headers=headers, cookies=cookies, data=data, params=params)
 
     def _post_request(self, url, headers=None, cookies=None, params=None, json=None):
         return requests.post(url, headers=headers, cookies=cookies, params=params, json=json)

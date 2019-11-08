@@ -1,59 +1,65 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
 	<category label="General">
-		<setting id="baseflavor" type="labelenum" label="Filter Anime" values="Subs Only|Dubs Only|None" default="None"/>
-		<setting id="reverseorder" type="labelenum" label="Episode order" values="Ascending|Descending" default="Descending"/>
-		<setting id="searchhistory" type="labelenum" label="Enable search history" values="Yes|No" default="Yes"/>
+		<setting id="baseflavor" label="40001" type="labelenum" values="Subs Only|Dubs Only|None" default="None"/>
+		<setting id="reverseorder" label="40002" type="labelenum" values="Ascending|Descending" default="Descending"/>
+		<setting id="searchhistory" label="40003" type="labelenum" values="Yes|No" default="Yes"/>
+
 		<setting type="lsep" label="UI"/>
-		<setting type="sep"/>
-		<setting id="contenttype.menu" type="labelenum" label="Set menu content type" values="addons|tvshows" default="tvshows"/>
-		<setting id="viewtype.bool" label="Force view types" type="bool" default="false"/>
-		<setting id="viewtype.episode" type="select" label="- Episode view" values='Default|Poster|Icon Wall|Shift|Info Wall|Wide List|Wall|Banner|Fanart' default="Default" visible="eq(-1,true)"/>
+		<setting id="sep"/>
+		<setting id="contenttype.bool" label="40004" type="bool" default="false"/>
+		<setting id="contenttype.menu" label="40005" type="labelenum" values="addons|tvshows" default="tvshows" visible="eq(-1,true)"/>
+		<setting id="contenttype.seasons" label="40006" type="labelenum" values="seasons|tvshows" default="tvshows" visible="eq(-2,true)"/>
+		<setting id="contenttype.episodes" label="40007" type="labelenum" values="episodes|tvshows" default="tvshows" visible="eq(-3,true)"/>
+
+		<setting id="sep"/>
+		<setting id="viewtype.bool" label="40008" type="bool" default="false"/>
+		<setting id="viewtype.episode" label="40009" type="select" values='Default|Poster|Icon Wall|Shift|Info Wall|Wide List|Wall|Banner|Fanart' default="Default" visible="eq(-1,true)"/>
 	</category>
 	<category label="Servers">
-		<setting id="prefres" label="Prefere Resolution" type="labelenum" values="360p|480p|720p|1080p|Auto (DASH)|Auto (HLS)" default="Auto (HLS)"/>
-		<setting id="autoplay" label="Automatically play first result" type="bool" default="false"/>
+		<setting id="prefres" label="40010" type="labelenum" values="360p|480p|720p|1080p|Auto (DASH)|Auto (HLS)" default="Auto (HLS)"/>
+		<setting id="autoplay" label="40011" type="bool" default="false"/>
 	</category>
 	<category label="Tools">
-		<setting id="tools.clear.cache" type="action" label="Click to Clear Cache..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/clear_cache)"/>
-		<setting id="tools.clear.settings" type="action" label="Click to Clear Settings..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/clear_settings)"/>
+		<setting id="tools.clear.cache" label="40012" type="action" option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/clear_cache)"/>
+		<setting id="tools.clear.settings" label="40013" type="action" option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/clear_settings)"/>
 	</category>
 	<category label="Watchlist">
-		<setting id="watchlist.percentbool" label="Enable update on watched percent" type="bool" default="false"/>
-		<setting id="watchlist.percent" type="slider" label="- Update when watched percent is..." default="80" range="50, 99" option="int" visible="eq(-1,true)"/>
-		<setting type="lsep" label="Select a watchlist"/>
+		<setting id="watchlist.percentbool" label="40014" type="bool" default="false"/>
+		<setting id="watchlist.percent" label="40015" type="slider" default="80" range="50, 99" option="int" visible="eq(-1,true)"/>
+		<setting type="lsep" label="40016"/>
 
 		<setting id="sep"/>
-		<setting id="anilist.bool" label="AniList" type="bool" default="false"/>
-		<setting id="anilist.name" type="text" label="- Username:" default="" visible="eq(-1,true)"/>
-    		<setting id="anilist.password" type="text" option="hidden" visible="false" label="Password:" default=""/>
-		<setting id="anilist.login" type="action" label="- Click to Add..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/anilist)" visible="eq(-3,true)"/>
-		<setting id="anilist.listsettings" type="action" label="List settings..." option="close" visible="eq(-4,true)"/>
-		<setting id="anilist.sort" type="labelenum" label="- Sort by:" values="Score|Progress|Last Updated|Last Added" default="Progress" visible="eq(-5,true)"/>
+		<setting id="anilist.bool" label="40017" type="bool" default="false"/>
+		<setting id="anilist.name" label="40018" type="text" default="" visible="eq(-1,true)"/>
+    		<setting id="anilist.password" label="40019" type="text" option="hidden" default="" visible="eq(-2,true)"/>
+		<setting id="anilist.login" label="40020" type="action" option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/anilist)" visible="eq(-3,true)"/>
+		<setting id="anilist.listsettings" label="40021" type="action" option="close" visible="eq(-4,true)"/>
+		<setting id="anilist.sort" label="40022" type="labelenum" values="Score|Progress|Last Updated|Last Added" default="Progress" visible="eq(-5,true)"/>
         	
 		<setting id="sep"/>
-		<setting id="kitsu.bool" label="Kitsu" type="bool" default="false"/>
-		<setting id="kitsu.name" type="text" label="- Email:" default="" visible="eq(-1,true)"/>
-    		<setting id="kitsu.password" type="text" option="hidden" label="- Password:" default="" visible="eq(-2,true)"/>
-		<setting id="kitsu.login" type="action" label="- Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/kitsu)" visible="eq(-3,true)"/>
-		<setting id="kitsu.listsettings" type="action" label="List settings..." option="close" visible="eq(-4,true)"/>
-		<setting id="kitsu.sort" type="labelenum" label="- Sort by:" values="Date Updated|Progress|Title" default="Title" visible="eq(-5,true)"/>
-		<setting id="kitsu.titles" type="labelenum" label="- How titles will be displayed:" values="Canonical|Romanized|English" default="Canonical" visible="eq(-6,true)"/>
+		<setting id="kitsu.bool" label="40023" type="bool" default="false"/>
+		<setting id="kitsu.name" label="40024" type="text" default="" visible="eq(-1,true)"/>
+    		<setting id="kitsu.password" label="40025" type="text" option="hidden" default="" visible="eq(-2,true)"/>
+		<setting id="kitsu.login" label="40026" type="action" option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/kitsu)" visible="eq(-3,true)"/>
+		<setting id="kitsu.listsettings" label="40021" type="action" option="close" visible="eq(-4,true)"/>
+		<setting id="kitsu.sort" label="40022" type="labelenum" values="Date Updated|Progress|Title" default="Title" visible="eq(-5,true)"/>
+		<setting id="kitsu.titles" label="40027" type="labelenum" values="Canonical|Romanized|English" default="Canonical" visible="eq(-6,true)"/>
 
 		<setting id="sep"/>
-		<setting id="mal.bool" label="MyAnimeList" type="bool" default="false"/>
-    		<setting id="mal.name" type="text" label="- Username:" default="" visible="eq(-1,true)"/>
-    		<setting id="mal.password" type="text" option="hidden" label="- Password:" default="" visible="eq(-2,true)"/>
-		<setting id="mal.login" type="action" label="- Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/mal)" visible="eq(-3,true)"/>
-		<setting id="mal.listsettings" type="action" label="List settings..." option="close" visible="eq(-4,true)"/>
-		<setting id="mal.sort" type="labelenum" label="- Sort by:" values="Last Updated|Progress|Anime Title" default="Anime Title" visible="eq(-5,true)"/>
+		<setting id="mal.bool" label="40028" type="bool" default="false"/>
+    		<setting id="mal.name" label="40018" type="text" default="" visible="eq(-1,true)"/>
+    		<setting id="mal.password" label="40025" type="text" option="hidden" default="" visible="eq(-2,true)"/>
+		<setting id="mal.login" label="40026" type="action" option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/mal)" visible="eq(-3,true)"/>
+		<setting id="mal.listsettings" label="40021" type="action" option="close" visible="eq(-4,true)"/>
+		<setting id="mal.sort" label="40022" type="labelenum" values="Last Updated|Progress|Anime Title" default="Anime Title" visible="eq(-5,true)"/>
 
 		<setting id="sep"/>
-		<setting id="wonderfulsubs.bool" label="WonderfulSubs" type="bool" default="false"/>
-    		<setting id="wonderfulsubs.name" type="text" label="- Username:" default="" visible="eq(-1,true)"/>
-    		<setting id="wonderfulsubs.password" type="text" option="hidden" label="- Password:" default="" visible="eq(-2,true)"/>
-		<setting id="wonderfulsubs.login" type="action" label="- Click to Login..." option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/wonderfulsubs)" visible="eq(-3,true)"/>
-		<setting id="wonderfulsubs.listsettings" type="action" label="List settings..." option="close" visible="eq(-4,true)"/>
-		<setting id="wonderfulsubs.sort" type="labelenum" label="Filter Anime" values="Subs Only|Dubs Only|None" default="None" visible="eq(-5,true)"/>
+		<setting id="wonderfulsubs.bool" label="40029" type="bool" default="false"/>
+    		<setting id="wonderfulsubs.name" label="40018" type="text" default="" visible="eq(-1,true)"/>
+    		<setting id="wonderfulsubs.password" label="40025" type="text" option="hidden" default="" visible="eq(-2,true)"/>
+		<setting id="wonderfulsubs.login" label="40026" type="action" option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/watchlist_login/wonderfulsubs)" visible="eq(-3,true)"/>
+		<setting id="wonderfulsubs.listsettings" label="40021" type="action" option="close" visible="eq(-4,true)"/>
+		<setting id="wonderfulsubs.sort" label="40030" type="labelenum" values="Subs Only|Dubs Only|None" default="None" visible="eq(-5,true)"/>
 	</category>
 </settings>
