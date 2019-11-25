@@ -75,7 +75,9 @@ def __extract_wonderfulsubs(url, content, referer=None):
                                                              temp_req.status_code)
                 continue # Skip Item.
             
-            if 'wonderfulsubs.com' not in source_url:
+            if 'wonderfulsubs.com' in source_url:
+                source_url = temp_req.url
+            else:
                 source_url = http.strip_cookie_url(temp_req.url)
         except Exception, e:
             # Just don't add source.
