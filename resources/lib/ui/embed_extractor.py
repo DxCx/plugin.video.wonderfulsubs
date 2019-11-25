@@ -69,12 +69,14 @@ def __extract_wonderfulsubs(url, content, referer=None):
         caption_url = item['captions']['src'] if 'captions' in item else None
         
         try:
-            temp_req = http.head_request(item_url)
+            temp_req = http.head_request(source_url)
             if temp_req.status_code != 200:
-                print "[*] Skiping Invalid Url: %s - status = %d" % (item[1],
+                print "[*] Skiping Invalid Url: %s - status = %d" % (source_url,
                                                              temp_req.status_code)
                 continue # Skip Item.
-            item_url = http.strip_cookie_url(temp_req.url)
+            
+            if 'wonderfulsubs.com' not in source_url:
+                source_url = http.strip_cookie_url(temp_req.url)
         except Exception, e:
             # Just don't add source.
             pass
