@@ -1,7 +1,7 @@
 import urllib
 from http_imports import *
 
-_USER_AGENT = 'AppleCoreMedia/1.0.0.16E227 (iPhone; U; CPU OS 12_2 like Mac OS X; en_us)'
+_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
 _SESSION = None
 _REFERER_HEADER = "Referer"
 _COOKIE_HEADER = "Cookie"
