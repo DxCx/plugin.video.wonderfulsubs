@@ -44,31 +44,12 @@ def load_video_from_url(in_url):
 
     return None
 
-def __check_video_list(refer_url, vidlist, add_referer=False,
-                       ignore_cookie=False):
-    nlist = []
-    for item in vidlist:
-        try:
-            item_url = item[1]
-            if add_referer:
-                item_url = http.add_referer_url(item_url, refer_url)
+    except http.URLError:
+        return None # Dead link, Skip result
+    except:
+        raise
 
-            temp_req = http.head_request(item_url)
-            if temp_req.status_code != 200:
-                print "[*] Skiping Invalid Url: %s - status = %d" % (item[1],
-                                                             temp_req.status_code)
-                continue # Skip Item.
-
-            out_url = temp_req.url
-            if ignore_cookie:
-                out_url = http.strip_cookie_url(out_url)
-
-            nlist.append((item[0], out_url, item[2]))
-        except Exception, e:
-            # Just don't add source.
-            pass
-
-    return nlist
+    return None
 
 def __extract_wonderfulsubs(url, content, referer=None):
     res = json.loads(content)
@@ -79,17 +60,25 @@ def __extract_wonderfulsubs(url, content, referer=None):
         embed_url = res["embed"]
         return load_video_from_url(embed_url)
 
-    results = __check_video_list(url,
-                                 map(lambda x: (x['label'],
-                                                x['src'],
-                                                x['captions']['src'] if x.has_key('captions') else None), res["urls"]))
-
-    return results
-
-def __extract_rapidvideo(url, page_content, referer=None):
-    soup = BeautifulSoup(page_content, 'html.parser')
-    results = map(lambda x: (x['label'], x['src']),
-                  soup.select('source'))
+    results = [ ]
+    for item in res["urls"]:
+        source_label = item['label']        
+        source_url = item['src']
+        if 'playlist?' in source_url:
+            source_url += '|Platform=Kodi'
+        caption_url = item['captions']['src'] if 'captions' in item else None
+        
+        try:
+            temp_req = http.head_request(item_url)
+            if temp_req.status_code != 200:
+                print "[*] Skiping Invalid Url: %s - status = %d" % (item[1],
+                                                             temp_req.status_code)
+                continue # Skip Item.
+            item_url = http.strip_cookie_url(temp_req.url)
+        except Exception, e:
+            # Just don't add source.
+            pass
+        results.append((source_label, source_url, caption_url))
     return results
 
 def __extract_mp4upload(url, page_content, referer=None):
@@ -158,11 +147,6 @@ def __extractor_factory(regex, double_ref=False, match=0, debug=False):
 
 __register_extractor(["https://www.wonderfulsubs.com/api/media/stream"],
                      __extract_wonderfulsubs)
-
-__register_extractor(["https://www.rapidvideo.com/e/",
-                      "https://www.rapidvid.to/e/"],
-                     __extract_rapidvideo,
-                     lambda x: x.replace('/e/', '/v/'))
 
 __register_extractor(["http://mp4upload.com/",
                       "http://www.mp4upload.com/",
