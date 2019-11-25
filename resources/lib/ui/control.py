@@ -228,8 +228,14 @@ def play_source(link, on_episode_done=None, on_stopped=None, on_percent=None):
     if not linkInfo:
         xbmcplugin.setResolvedUrl(HANDLE, False, xbmcgui.ListItem())
         return
+        
+    # Append Kodi-style HTTP headers.
+    # See (ttps://kodi.wiki/view/HTTP#HTTP.2FHTTPS_url_format)
+    url = linkInfo['url']
+    if '|' in url:
+        url = url.split('|', 1)[0] + '|' + '&'.join(url.split('|')[1:])
 
-    item = xbmcgui.ListItem(path=linkInfo['url'])
+    item = xbmcgui.ListItem(path=url)
     if 'Content-Type' in linkInfo['headers']:
         item.setProperty('mimetype', linkInfo['headers']['Content-Type'])
 
