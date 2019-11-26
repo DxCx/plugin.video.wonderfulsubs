@@ -1,3 +1,5 @@
+[B]0.0.28[/B]
+- Add platform header [RedNinjaX]
 [B]0.0.27[/B]
 - Update User-Agent to fix playback
 [B]0.0.26[/B]
