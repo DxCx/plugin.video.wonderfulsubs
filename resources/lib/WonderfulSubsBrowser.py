@@ -183,6 +183,7 @@ class WonderfulSubsBrowser(BrowserBase):
 
         video_data = {
             "code": rlink,
+            "platform": "Kodi",
             }
         link = "%s?%s" % (self._to_url("api/media/stream"), urllib.urlencode(video_data))
         return {sname: link}
