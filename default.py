@@ -18,6 +18,8 @@ LASTWATCHED_URL_KEY = "%s.url" % LASTWATCHED_KEY
 LASTWATCHED_IMAGE_KEY = "%s.image" % LASTWATCHED_KEY
 HISTORY_DELIM = ";"
 
+Home = xbmcgui.Window(10000)
+
 MENU_ITEMS = [
     (control.lang(30001), "anichart_airing", ''),
     (control.lang(30002), "all", ''),
@@ -43,6 +45,8 @@ def _add_last_watched():
         control.getSetting(LASTWATCHED_URL_KEY),
         control.getSetting(LASTWATCHED_IMAGE_KEY)
     ))
+    
+    Home.setProperty('LastWatched', control.getSetting(LASTWATCHED_URL_KEY))
 
 def __set_last_watched(url, is_dubbed, name, image):
     control.setSetting(LASTWATCHED_URL_KEY, 'animes/%s/%s' %(url, "dub" if is_dubbed else "sub"))
