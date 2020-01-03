@@ -7,6 +7,7 @@ from resources.lib.GogoAnimeBrowser import GogoAnimeBrowser
 from resources.lib.AniListBrowser import AniListBrowser
 from resources.lib.WatchlistIntegration import set_browser, add_watchlist, watchlist_update
 import urlparse
+import xbmcgui
 
 AB_LIST = ["none"] + [chr(i) for i in range(ord("a"), ord("z")+1)]
 AB_LIST_NAMING = ["No Letter"] + [chr(i) for i in range(ord("A"), ord("Z")+1)]
@@ -47,6 +48,7 @@ def _add_last_watched():
     ))
     
     Home.setProperty('LastWatched', control.getSetting(LASTWATCHED_URL_KEY))
+    Home.setProperty('LastWatchedName', control.getSetting(LASTWATCHED_NAME_KEY))
 
 def __set_last_watched(url, is_dubbed, name, image):
     control.setSetting(LASTWATCHED_URL_KEY, 'animes/%s/%s' %(url, "dub" if is_dubbed else "sub"))
