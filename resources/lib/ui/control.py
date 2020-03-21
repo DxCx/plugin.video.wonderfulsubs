@@ -9,14 +9,15 @@ import urlparse
 
 try:
     import StorageServer
-except:
+except ImportError:
     import storageserverdummy as StorageServer
 
-HANDLE=int(sys.argv[1])
+HANDLE = int(sys.argv[1])
 ADDON_NAME = re.findall('plugin:\/\/([\w\d\.]+)\/', sys.argv[0])[0]
 __settings__ = xbmcaddon.Addon(ADDON_NAME)
 __language__ = __settings__.getLocalizedString
 CACHE = StorageServer.StorageServer("%s.animeinfo" % ADDON_NAME, 24)
+
 
 class hook_mimetype(object):
     __MIME_HOOKS = {}
@@ -34,6 +35,7 @@ class hook_mimetype(object):
         assert self._type not in self.__MIME_HOOKS.keys()
         self.__MIME_HOOKS[self._type] = func
         return func
+
 
 class watchlistPlayer(xbmc.Player):
 
@@ -93,37 +95,48 @@ class watchlistPlayer(xbmc.Player):
         while self.isPlaying():
             xbmc.sleep(5000)
 
+
 def refresh():
     return xbmc.executebuiltin('Container.Refresh')
+
 
 def settingsMenu():
     return xbmcaddon.Addon().openSettings()
 
+
 def getSetting(key):
     return __settings__.getSetting(key)
+
 
 def setSetting(id, value):
     return __settings__.setSetting(id=id, value=value)
 
+
 def cache(funct, *args):
     return CACHE.cacheFunction(funct, *args)
+
 
 def clear_cache():
     return CACHE.delete("%")
 
+
 def lang(x):
     return __language__(x).encode('utf-8')
 
+
 def addon_url(url=''):
     return "plugin://%s/%s" % (ADDON_NAME, url)
+
 
 def get_plugin_url():
     addon_base = addon_url()
     assert sys.argv[0].startswith(addon_base), "something bad happened in here"
     return sys.argv[0][len(addon_base):]
 
+
 def get_plugin_params():
     return dict(urlparse.parse_qsl(sys.argv[2].replace('?', '')))
+
 
 def keyboard(text):
     keyboard = xbmc.Keyboard("", text, False)
@@ -132,16 +145,20 @@ def keyboard(text):
         return keyboard.getText()
     return None
 
+
 def ok_dialog(title, text):
     return xbmcgui.Dialog().ok(title, text)
 
+
 def yesno_dialog(title, text, nolabel=None, yeslabel=None):
     return xbmcgui.Dialog().yesno(title, text, nolabel=nolabel, yeslabel=yeslabel)
+
 
 def multiselect_dialog(title, _list):
     if isinstance(_list, list):
         return xbmcgui.Dialog().multiselect(title, _list)
     return None
+
 
 def clear_settings(dialog):
     confirm = dialog
@@ -163,6 +180,7 @@ def clear_settings(dialog):
     os.mkdir(dataPath)
     refresh()
 
+
 def _get_view_type(viewType):
     viewTypes = {
         'Default': 50,
@@ -176,6 +194,7 @@ def _get_view_type(viewType):
         'Fanart': 502,
     }
     return viewTypes[viewType]
+
 
 def xbmc_add_player_item(name, url, iconimage='', description='', draw_cm=None):
     ok=True
@@ -191,6 +210,7 @@ def xbmc_add_player_item(name, url, iconimage='', description='', draw_cm=None):
     ok=xbmcplugin.addDirectoryItem(handle=HANDLE,url=u,listitem=liz, isFolder=False)
     return ok
 
+
 def xbmc_add_dir(name, url, iconimage='', description='', draw_cm=None):
     ok=True
     u=addon_url(url)
@@ -202,6 +222,7 @@ def xbmc_add_dir(name, url, iconimage='', description='', draw_cm=None):
     liz.addContextMenuItems(cm, replaceItems=False)
     ok=xbmcplugin.addDirectoryItem(handle=HANDLE,url=u,listitem=liz,isFolder=True)
     return ok
+
 
 def _prefetch_play_link(link):
     if isinstance(link, list):
@@ -223,6 +244,7 @@ def _prefetch_play_link(link):
         "subtitles": subtitles
     }
 
+
 def play_source(link, on_episode_done=None, on_stopped=None, on_percent=None):
     linkInfo = _prefetch_play_link(link)
     if not linkInfo:
@@ -240,6 +262,7 @@ def play_source(link, on_episode_done=None, on_stopped=None, on_percent=None):
     xbmcplugin.setResolvedUrl(HANDLE, True, item)
     watchlistPlayer().handle_player(on_episode_done, on_stopped, on_percent)
 
+
 def draw_items(video_data, contentType="tvshows", viewType=None, draw_cm=None):
     for vid in video_data:
         if vid['is_dir']:
@@ -255,6 +278,7 @@ def draw_items(video_data, contentType="tvshows", viewType=None, draw_cm=None):
 
     return True
 
+
 @hook_mimetype('application/dash+xml')
 def _DASH_HOOK(item):
     import inputstreamhelper
@@ -268,6 +292,7 @@ def _DASH_HOOK(item):
         raise Exception("InputStream Adaptive is not supported.")
 
     return item
+
 
 @hook_mimetype('application/vnd.apple.mpegurl')
 @hook_mimetype('application/x-mpegURL')

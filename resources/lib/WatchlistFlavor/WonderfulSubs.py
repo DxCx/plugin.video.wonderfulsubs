@@ -1,9 +1,9 @@
 import itertools
-import json
 
 from ..constants import API_BASE, BASE_URL
 from ..ui import utils
 from WatchlistFlavorBase import WatchlistFlavorBase
+
 
 class WonderfulSubsWLF(WatchlistFlavorBase):
     _URL = BASE_URL

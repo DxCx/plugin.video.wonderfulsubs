@@ -1,16 +1,15 @@
 import re
-import urllib
 import urlparse
 import utils
 import http
 import requests
 import json
-import time
 from bs4 import BeautifulSoup
 
 from ..constants import API_BASE, BASE_URL
 
 _EMBED_EXTRACTORS = {}
+
 
 def load_video_from_url(in_url):
     found_extractor = None
@@ -40,11 +39,12 @@ def load_video_from_url(in_url):
                                          reqObj.text,
                                          http.get_referer(in_url))
     except http.URLError:
-        return None # Dead link, Skip result
+        return None  # Dead link, Skip result
     except:
         raise
 
     return None
+
 
 def __check_video_list(refer_url, vidlist, add_referer=False,
                        ignore_cookie=False):
@@ -72,6 +72,7 @@ def __check_video_list(refer_url, vidlist, add_referer=False,
 
     return nlist
 
+
 def __extract_wonderfulsubs(url, content, referer=None):
     res = json.loads(content)
     if res["status"] != 200:
@@ -88,11 +89,13 @@ def __extract_wonderfulsubs(url, content, referer=None):
 
     return results
 
+
 def __extract_rapidvideo(url, page_content, referer=None):
     soup = BeautifulSoup(page_content, 'html.parser')
     results = map(lambda x: (x['label'], x['src']),
                   soup.select('source'))
     return results
+
 
 def __extract_mp4upload(url, page_content, referer=None):
     SOURCE_RE_1 = re.compile(r'.*?\|IFRAME\|(\d+)\|.*?\|\d+\|false\|h1\|w1\|(.*?)\|.*?',
@@ -106,11 +109,13 @@ def __extract_mp4upload(url, page_content, referer=None):
     stream = [(label, stream_url)]
     return stream
 
+
 def __extract_xstreamcdn(url, data):
     res = requests.post(url, data=data)
     res = res.json()['data']
     results = map(lambda x: (x['label'], x['file']), res)
     return results
+
 
 def __register_extractor(urls, function, url_preloader=None, data=None):
     if type(urls) is not list:
@@ -123,8 +128,10 @@ def __register_extractor(urls, function, url_preloader=None, data=None):
             "data": data
         }
 
+
 def __ignore_extractor(url, content, referer=None):
     return None
+
 
 def __relative_url(original_url, new_url):
     if new_url.startswith("http://") or new_url.startswith("https://"):
@@ -134,6 +141,7 @@ def __relative_url(original_url, new_url):
         return "http:%s" % new_url
     else:
         return urlparse.urljoin(original_url, new_url)
+
 
 def __extractor_factory(regex, double_ref=False, match=0, debug=False):
     compiled_regex = re.compile(regex, re.DOTALL)
@@ -157,6 +165,7 @@ def __extractor_factory(regex, double_ref=False, match=0, debug=False):
             print "[*E*] Failed to load link: %s: %s" % (url, e)
             return None
     return f
+
 
 __register_extractor(["{}/{}/media/stream".format(BASE_URL, API_BASE)],
                      __extract_wonderfulsubs)

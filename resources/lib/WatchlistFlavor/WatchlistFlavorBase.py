@@ -1,6 +1,7 @@
 import requests
 from ..ui import utils
 
+
 class WatchlistFlavorBase(object):
     _URL = None
     _TITLE = None

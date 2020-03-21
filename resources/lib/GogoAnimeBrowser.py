@@ -1,8 +1,8 @@
-import json
 import requests
 from bs4 import BeautifulSoup
 from ui import utils
 from ui.BrowserBase import BrowserBase
+
 
 class GogoAnimeBrowser(BrowserBase):
     _BASE_URL = "https://www3.gogoanime.io"

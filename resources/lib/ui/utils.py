@@ -1,5 +1,4 @@
 from . import embed_extractor
-from http import URLError, send_request, head_request
 import re
 
 _numbers_in_parentheses_regex = re.compile(ur'(\d+)\D*')
@@ -8,6 +7,7 @@ _res = {
     'Auto (DASH)': 1081,
     'Auto (HLS)': 1082,
     }
+
 
 def allocate_item(name, url, is_dir=False, image='', plot=''):
     new_res = {}
@@ -18,21 +18,25 @@ def allocate_item(name, url, is_dir=False, image='', plot=''):
     new_res['plot'] = plot
     return new_res
 
+
 def parse_resolution_of_source(data):
     matches = _numbers_in_parentheses_regex.findall(data)
     if len(matches) == 0:
         return _res.get(data, 0)
     return int(matches[0])
 
+
 def remove_flavor_from_name(name):
     name = re.sub(r'\s\(.*\)', '', name)
     name = name.rsplit(' - ', 1)[0]
     return name
 
+
 def _format_source(i, item):
     label, fetched_url, subtitles, name = item
     label = " (%s)" % label if len(label) else ''
     return ("%02d | %s%s" % (i, name, label), [fetched_url, subtitles])
+
 
 def fetch_sources(sources, dialog, raise_exceptions=False, autoplay=False,
                   sortBy=None):
@@ -51,8 +55,8 @@ def fetch_sources(sources, dialog, raise_exceptions=False, autoplay=False,
             if type(fetched_urls) is not list:
                 fetched_urls = [('', fetched_urls)]
 
-            # TODO: If first source doesn't contain perfered res,
-            # Autoplay won't try to search for next source prefere
+            # TODO: If first source doesn't contain preferred res,
+            # Autoplay won't try to search for next source prefer
             # But use the first best source found.
             if autoplay and sortBy is not None:
                 fetched_urls = sortBy(fetched_urls)
@@ -72,7 +76,7 @@ def fetch_sources(sources, dialog, raise_exceptions=False, autoplay=False,
                                          name), valid_urls)
             dialog.update(int(i * factor))
         except Exception, e:
-            print "[*E*] Skiping %s because Exception at parsing" % name
+            print "[*E*] Skipping %s because Exception at parsing" % name
             if raise_exceptions:
                 raise
             else:
