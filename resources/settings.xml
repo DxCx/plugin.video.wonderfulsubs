@@ -5,6 +5,13 @@
 		<setting id="reverseorder" label="40002" type="labelenum" values="Ascending|Descending" default="Descending"/>
 		<setting id="searchhistory" label="40003" type="labelenum" values="Yes|No" default="Yes"/>
 
+		<setting type="lsep" label="Login"/>
+		<setting id="sep"/>
+		<setting id="login.name" label="40031" type="text" default=""/>
+		<setting id="login.password" label="40032" type="text" option="hidden" default=""/>
+		<setting id="login.login_button" label="40033" type="action" option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/wonderful_login)"/>
+		<setting id="login.logout_button" label="40034" type="action" option="close" action="RunPlugin(plugin://plugin.video.wonderfulsubs/wonderful_logout)"/>
+
 		<setting type="lsep" label="UI"/>
 		<setting id="sep"/>
 		<setting id="contenttype.bool" label="40004" type="bool" default="false"/>
