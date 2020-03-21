@@ -5,7 +5,7 @@ class BrowserBase(object):
     _BASE_URL = None
 
     def _to_url(self, url=''):
-        assert self._BASE_URL is not None, "Must be set on inherentance"
+        assert self._BASE_URL is not None, "Must be set on inheritance"
 
         if url.startswith("/"):
             url = url[1:]
@@ -21,3 +21,11 @@ class BrowserBase(object):
         if data:
             url = "%s?%s" % (url, urllib.urlencode(data))
         return self._send_request(url, None, set_request)
+
+    def _response_forbidden(self, response):
+        """Return, if a response was forbidden.
+
+        :param response: http response
+        :return: True, if the response was forbidden. False otherwise.
+        """
+        return response.encode("utf-8") == u"Forbidden"

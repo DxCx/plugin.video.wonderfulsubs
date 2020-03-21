@@ -1,5 +1,7 @@
 import urllib
-from http_imports import *
+
+import control
+from .http_imports import *
 
 _USER_AGENT = 'AppleCoreMedia/1.0.0.16E227 (iPhone; U; CPU OS 12_2 like Mac OS X; en_us)'
 _SESSION = None
@@ -154,6 +156,10 @@ def __send_request(session, url, data=None, set_request=None, head=False):
         'url': url,
         'allow_redirects': True,
     }
+
+    token = control.getSetting('login.token')
+    if token:
+        kargs['headers']['Authorization'] = "Bearer {}".format(token)
 
     if head:
         return session.head(**kargs)

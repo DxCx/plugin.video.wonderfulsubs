@@ -1,10 +1,13 @@
 import itertools
 import json
+
+from ..constants import API_BASE, BASE_URL
 from ..ui import utils
 from WatchlistFlavorBase import WatchlistFlavorBase
 
 class WonderfulSubsWLF(WatchlistFlavorBase):
-    _URL = "https://www.wonderfulsubs.com"
+    _URL = BASE_URL
+    _API_BASE = API_BASE
     _TITLE = "WonderfulSubs"
     _NAME = "wonderfulsubs"
 
@@ -13,7 +16,7 @@ class WonderfulSubsWLF(WatchlistFlavorBase):
         return self._login_image
 
     def login(self):
-        url = self._to_url("api/users/login")
+        url = self._to_url("{}/users/login".format(self._API_BASE))
         data = (self._post_request(url, json={"username": self._username, "password": self._password})).json()
 
         if data['success'] is not True:
@@ -24,7 +27,10 @@ class WonderfulSubsWLF(WatchlistFlavorBase):
                                        ('%s/%s' % (data['data']['_id'], data['token'])))
 
     def watchlist(self):
-        url = self._to_url("api/watchlist/list?_id=%s" % (self._login_token.split("/")[0]))
+        url = self._to_url("%s/watchlist/list?_id=%s" % (
+            self._API_BASE,
+            self._login_token.split("/")[0]
+        ))
         return self._process_watchlist_view(url, "watchlist/%d", page=1)
 
     def __header(self):
