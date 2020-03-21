@@ -222,3 +222,19 @@ msgstr ""
 msgctxt "#40030"
 msgid "- Filter anime"
 msgstr ""
+
+msgctxt "#40031"
+msgid "Username"
+msgstr ""
+
+msgctxt "#40032"
+msgid "Password"
+msgstr ""
+
+msgctxt "#40033"
+msgid "Login"
+msgstr ""
+
+msgctxt "#40034"
+msgid "Logout"
+msgstr ""
