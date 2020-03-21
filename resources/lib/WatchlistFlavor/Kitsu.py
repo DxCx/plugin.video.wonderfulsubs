@@ -1,6 +1,6 @@
 import itertools
-import json
 from WatchlistFlavorBase import WatchlistFlavorBase
+
 
 class KitsuWLF(WatchlistFlavorBase):
     _URL = "https://kitsu.io/api"

@@ -1,10 +1,10 @@
 import itertools
 import requests
-import json
 import time
 import datetime
 import ast
 from ui import utils
+
 
 class AniListBrowser():
     _URL = "https://graphql.anilist.co"

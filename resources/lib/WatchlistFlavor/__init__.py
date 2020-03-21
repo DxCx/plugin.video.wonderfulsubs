@@ -7,6 +7,7 @@ import WonderfulSubs
 import Kitsu
 import AniList
 
+
 class WatchlistFlavor(object):
     __LOGIN_KEY = "addon.login"
     __LOGIN_FLAVOR_KEY = "%s.flavor" % __LOGIN_KEY

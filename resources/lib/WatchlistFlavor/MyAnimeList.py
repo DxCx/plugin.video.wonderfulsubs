@@ -1,9 +1,9 @@
 import re
 import bs4 as bs
 import itertools
-import json
 import requests
 from WatchlistFlavorBase import WatchlistFlavorBase
+
 
 class MyAnimeListWLF(WatchlistFlavorBase):
     _URL = "https://myanimelist.net"

@@ -299,10 +299,10 @@ class WonderfulSubsBrowser(BrowserBase):
 
     # TODO: Not sure i want this here..
     def search_history(self,search_array):
-    	result = map(self._parse_history_view,search_array)
-    	result.insert(0,utils.allocate_item("New Search", "search", True))
-    	result.insert(len(result),utils.allocate_item("Clear..", "clear_history", True))
-    	return result
+        result = map(self._parse_history_view,search_array)
+        result.insert(0,utils.allocate_item("New Search", "search", True))
+        result.insert(len(result),utils.allocate_item("Clear..", "clear_history", True))
+        return result
 
     def get_by_letter(self, letter, page = 1):
         data = {

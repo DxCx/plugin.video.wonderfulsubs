@@ -3,6 +3,7 @@
 _REGISTERED_ROUTES = []
 _REGISTERED_PARAM_HOOKS = []
 
+
 class on_param(object):
     def __init__(self, key, value):
         self._key = key
@@ -26,6 +27,7 @@ class on_param(object):
     @property
     def func(self):
         return self._func
+
 
 class route(object):
     def __init__(self,route_path):
@@ -54,6 +56,7 @@ class route(object):
     @property
     def func(self):
         return self._func
+
 
 def router_process(url, params={}):
     payload = "/".join(url.split("/")[1:])

@@ -1,6 +1,7 @@
 import urllib
 import http
 
+
 class BrowserBase(object):
     _BASE_URL = None
 
@@ -22,7 +23,8 @@ class BrowserBase(object):
             url = "%s?%s" % (url, urllib.urlencode(data))
         return self._send_request(url, None, set_request)
 
-    def _response_forbidden(self, response):
+    @staticmethod
+    def _response_forbidden(response):
         """Return, if a response was forbidden.
 
         :param response: http response

@@ -1,7 +1,7 @@
 from utils import fetch_sources
 from DialogProgressWrapper import DialogProgressWrapper
-import re
 import xbmcgui
+
 
 class SourcesList(object):
     def __init__(self, raw_results, autoplay = False, sortResults = None, strings = None):

@@ -9,12 +9,14 @@ _REFERER_HEADER = "Referer"
 _COOKIE_HEADER = "Cookie"
 _HEADER_RE = re.compile("^([\w\d-]+?)=(.*?)$")
 
+
 class SSLAdapter(HTTPAdapter):
     '''An HTTPS Transport Adapter that uses an arbitrary SSL version.'''
     def init_poolmanager(self, connections, maxsize, block=False):
         self.poolmanager = PoolManager(num_pools=connections,
                               maxsize=maxsize,
                               block=block)
+
 
 class PrepReq(object):
     def __init__(self, session):
@@ -35,6 +37,7 @@ class PrepReq(object):
     def cookies(self):
         return self._cookies.keys()
 
+
 def Session():
     global _SESSION
     if not _SESSION:
@@ -47,14 +50,17 @@ def Session():
 
     return _SESSION
 
+
 def raw_url(url):
     return _strip_url(url)[0]
+
 
 def get_referer(url):
     url, headers = _strip_url(url)
     if _REFERER_HEADER in headers:
         return headers[_REFERER_HEADER]
     return None
+
 
 def send_request(url, data=None, set_request=None, head=False):
     session = Session()
@@ -91,10 +97,12 @@ def send_request(url, data=None, set_request=None, head=False):
     # Otherwise, no Cloudflare anti-bot detected
     return resp
 
+
 def add_referer_url(url, referer):
     url, headers = _strip_url(url)
     headers[_REFERER_HEADER] = referer
     return _url_with_headers(url, headers)
+
 
 def strip_cookie_url(url):
     url, headers = _strip_url(url)
@@ -103,8 +111,10 @@ def strip_cookie_url(url):
 
     return _url_with_headers(url, headers)
 
+
 def head_request(url, set_request=None):
     return send_request(url, set_request=set_request, head=True)
+
 
 def _url_with_headers(url, headers):
     if not len(headers.keys()):
@@ -114,6 +124,7 @@ def _url_with_headers(url, headers):
                    headers.iteritems()]
 
     return "|".join([url] + headers_arr)
+
 
 def _strip_url(url):
     if url.find('|') == -1:
@@ -131,6 +142,7 @@ def _strip_url(url):
 
     return (target_url, out_headers)
 
+
 def __set_header(set_request, header_name, header_value):
     def f(req):
         if set_request is not None:
@@ -139,11 +151,14 @@ def __set_header(set_request, header_name, header_value):
         return req
     return f
 
+
 def __set_referer(set_request, url):
     return __set_header(set_request, _REFERER_HEADER, url)
 
+
 def __set_cookie(set_request, c):
     return __set_header(set_request, _COOKIE_HEADER, c)
+
 
 def __send_request(session, url, data=None, set_request=None, head=False):
     r = PrepReq(session)

@@ -1,6 +1,6 @@
 import itertools
-import json
 from WatchlistFlavorBase import WatchlistFlavorBase
+
 
 class AniListWLF(WatchlistFlavorBase):
     _URL = "https://graphql.anilist.co"

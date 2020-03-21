@@ -1,5 +1,6 @@
 import xbmcgui
 
+
 class DialogProgressWrapper(object):
     def __init__(self, title, progress_string):
         self._dialog = xbmcgui.DialogProgress()
