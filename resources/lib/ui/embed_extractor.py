@@ -8,6 +8,9 @@ import json
 import time
 from bs4 import BeautifulSoup
 
+BASE_URL = "https://www.wonderfulsubs.com"
+API_BASE = "api/v2"
+
 _EMBED_EXTRACTORS = {}
 
 def load_video_from_url(in_url):
@@ -166,7 +169,7 @@ def __extractor_factory(regex, double_ref=False, match=0, debug=False):
             return None
     return f
 
-__register_extractor(["https://www.wonderfulsubs.com/api/media/stream"],
+__register_extractor(["{}/{}/media/stream".format(BASE_URL, API_BASE)],
                      __extract_wonderfulsubs)
 
 __register_extractor(["https://www.rapidvideo.com/e/",

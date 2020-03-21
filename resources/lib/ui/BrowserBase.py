@@ -5,7 +5,7 @@ class BrowserBase(object):
     _BASE_URL = None
 
     def _to_url(self, url=''):
-        assert self._BASE_URL is not None, "Must be set on inherentance"
+        assert self._BASE_URL is not None, "Must be set on inheritance"
 
         if url.startswith("/"):
             url = url[1:]
