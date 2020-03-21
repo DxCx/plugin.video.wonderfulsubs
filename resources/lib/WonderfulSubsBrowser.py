@@ -5,8 +5,11 @@ import json
 from ui import utils
 from ui.BrowserBase import BrowserBase
 
+from .constants import API_BASE, BASE_URL
+
+
 class WonderfulSubsBrowser(BrowserBase):
-    _BASE_URL = "https://www.wonderfulsubs.com"
+    _BASE_URL = "{}/{}".format(BASE_URL, API_BASE)
     _RESULTS_PER_SEARCH_PAGE = 25
 
     def __init__(self, base_flavor):
@@ -102,7 +105,6 @@ class WonderfulSubsBrowser(BrowserBase):
 
         return response["json"]
 
-
     def _process_anime_view(self, url, data, base_plugin_url, page):
         json_resp = self._json_request(url, data)
         results = json_resp["series"]
@@ -184,14 +186,18 @@ class WonderfulSubsBrowser(BrowserBase):
         video_data = {
             "code": rlink,
             "platform": "Kodi",
-            }
-        link = "%s?%s" % (self._to_url("api/media/stream"), urllib.urlencode(video_data))
+        }
+        link = "%s?%s" % (
+            self._to_url("media/stream"),
+            urllib.urlencode(video_data)
+        )
         return {sname: link}
 
     def _get_anime_info_obj(self, anime_url):
-        results = self._json_request(self._to_url("/api/media/series"), {
-            "series": anime_url,
-        })
+        results = self._json_request(
+            self._to_url("media/series"),
+            {"series": anime_url}
+        )
 
         return results
 
@@ -285,7 +291,7 @@ class WonderfulSubsBrowser(BrowserBase):
             "index": (page-1) * self._RESULTS_PER_SEARCH_PAGE,
         }
 
-        url = self._to_url("api/media/search")
+        url = self._to_url("media/search")
         return self._process_anime_view(url, data, "search/%s/%%d" % search_string, page)
 
     # TODO: Not sure i want this here..
@@ -301,7 +307,7 @@ class WonderfulSubsBrowser(BrowserBase):
             "count": self._RESULTS_PER_SEARCH_PAGE,
             "index": (page-1) * self._RESULTS_PER_SEARCH_PAGE,
         }
-        url = self._to_url("api/media/all")
+        url = self._to_url("media/all")
         return self._process_anime_view(url, data, "letter/%s/%%d" % letter, page)
 
     def get_all(self,  page=1):
@@ -309,7 +315,7 @@ class WonderfulSubsBrowser(BrowserBase):
             "count": self._RESULTS_PER_SEARCH_PAGE,
             "index": (page-1) * self._RESULTS_PER_SEARCH_PAGE,
         }
-        url = self._to_url("api/media/all")
+        url = self._to_url("media/all")
         return self._process_anime_view(url, data, "all/%d", page)
 
     def get_popular(self,  page=1):
@@ -317,7 +323,7 @@ class WonderfulSubsBrowser(BrowserBase):
             "count": self._RESULTS_PER_SEARCH_PAGE,
             "index": (page-1) * self._RESULTS_PER_SEARCH_PAGE,
         }
-        url = self._to_url("api/media/popular")
+        url = self._to_url("media/popular")
         return self._process_anime_view(url, data, "popular/%d", page)
 
     def get_latest(self, page=1):
@@ -325,7 +331,7 @@ class WonderfulSubsBrowser(BrowserBase):
             "count": self._RESULTS_PER_SEARCH_PAGE,
             "index": (page-1) * self._RESULTS_PER_SEARCH_PAGE,
         }
-        url = self._to_url("api/media/latest")
+        url = self._to_url("media/latest")
         return self._process_anime_view(url, data, "latest/%d", page)
 
     def get_random(self, page=1):
@@ -333,7 +339,7 @@ class WonderfulSubsBrowser(BrowserBase):
             "count": self._RESULTS_PER_SEARCH_PAGE,
             "index": (page-1) * self._RESULTS_PER_SEARCH_PAGE,
         }
-        url = self._to_url("api/media/random")
+        url = self._to_url("media/random")
         return self._process_anime_view(url, data, "random/%d", page)
 
     def get_anime_metadata(self, anime_url, is_dubbed):
