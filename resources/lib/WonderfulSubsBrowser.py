@@ -2,10 +2,12 @@ import urllib
 import math
 import itertools
 import json
+
 from ui import utils
 from ui.BrowserBase import BrowserBase
 
 from .constants import API_BASE, BASE_URL
+from .login import login
 
 
 class WonderfulSubsBrowser(BrowserBase):
@@ -97,14 +99,14 @@ class WonderfulSubsBrowser(BrowserBase):
         name = "Next Page (%d/%d)" % (next_page, total_pages)
         return [utils.allocate_item(name, base_url % next_page, True, None)]
 
-    def _json_request(self, url, data):
-        response = json.loads(self._get_request(url, data))
-        if response["status"] != 200:
-            raise Exception("Request %s returned with error code %d" % (url,
-                                                                        response["status"]))
+    def _json_request(self, url, data, reauth=True):
+        response = self._get_request(url, data)
 
-        return response["json"]
+        if self._response_forbidden(response) and reauth:
+            login()
+            return self._json_request(url, data, reauth=False)
 
+        return json.loads(response)["json"]
 
     def _process_anime_view(self, url, data, base_plugin_url, page):
         json_resp = self._json_request(url, data)
