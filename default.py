@@ -1,3 +1,4 @@
+from resources.lib.login import login, logout
 from resources.lib.ui import control
 from resources.lib.ui import utils
 from resources.lib.ui.SourcesList import SourcesList
@@ -285,6 +286,15 @@ def LIST_MENU(payload, params):
         [utils.allocate_item(name, url, True, image) for name, url, image in MENU_ITEMS],
         contentType=control.getSetting("contenttype.menu"),
     )
+
+@route('wonderful_login')
+def wonderful_login(payload, params):
+    return login()
+
+
+@route('wonderful_logout')
+def wonderful_logout(payload, params):
+    return logout()
 
 set_browser(_BROWSER, draw_cm)
 add_watchlist(MENU_ITEMS)
