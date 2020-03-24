@@ -108,6 +108,15 @@ class WonderfulSubsBrowser(BrowserBase):
 
         return json.loads(response)["json"]
 
+    @staticmethod
+    def _response_forbidden(response):
+        """Return, if a response was forbidden.
+
+        :param response: http response
+        :return: True, if the response was forbidden. False otherwise.
+        """
+        return response.encode("utf-8") == u"Forbidden"
+
     def _process_anime_view(self, url, data, base_plugin_url, page):
         json_resp = self._json_request(url, data)
         results = json_resp["series"]

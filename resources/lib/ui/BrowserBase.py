@@ -22,12 +22,3 @@ class BrowserBase(object):
         if data:
             url = "%s?%s" % (url, urllib.urlencode(data))
         return self._send_request(url, None, set_request)
-
-    @staticmethod
-    def _response_forbidden(response):
-        """Return, if a response was forbidden.
-
-        :param response: http response
-        :return: True, if the response was forbidden. False otherwise.
-        """
-        return response.encode("utf-8") == u"Forbidden"

@@ -6,7 +6,8 @@ import requests
 import json
 from bs4 import BeautifulSoup
 
-from ..constants import API_BASE, BASE_URL
+BASE_URL = "https://www.wonderfulsubs.com"
+API_BASE = "api/v2"
 
 _EMBED_EXTRACTORS = {}
 
