@@ -11,6 +11,10 @@ class BrowserBase(object):
             url = url[1:]
         return "%s/%s" % (self._BASE_URL, url)
 
+    @property
+    def base_url(self):
+        return self._BASE_URL
+
     def _send_request(self, url, data=None, json=None, set_request=None):
         return http.send_request(url, data, json, set_request).text
 

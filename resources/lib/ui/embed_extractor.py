@@ -8,10 +8,11 @@ import json
 import time
 from bs4 import BeautifulSoup
 
-BASE_URL = "https://www.wonderfulsubs.com"
-API_BASE = "api/v2"
-
 _EMBED_EXTRACTORS = {}
+
+def register_wonderful_subs(base_url, token):
+    __register_extractor(["{}/media/stream".format(base_url)],
+            __wrapper_add_token, data=(token, __extract_wonderfulsubs))
 
 def load_video_from_url(in_url):
     found_extractor = None
@@ -168,9 +169,6 @@ def __extractor_factory(regex, double_ref=False, match=0, debug=False):
             print "[*E*] Failed to load link: %s: %s" % (url, e)
             return None
     return f
-
-__register_extractor(["{}/{}/media/stream".format(BASE_URL, API_BASE)],
-                     __extract_wonderfulsubs)
 
 __register_extractor(["https://www.rapidvideo.com/e/",
                       "https://www.rapidvid.to/e/"],
