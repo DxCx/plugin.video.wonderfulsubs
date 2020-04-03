@@ -53,7 +53,7 @@ def add_watchlist(items):
     ))
 
     items.insert(len(items), (
-        "Logout",
+        "Logout Watchlist",
         "watchlist_logout",
         ''
     ))

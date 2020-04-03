@@ -46,6 +46,10 @@ msgctxt "#30009"
 msgid "Settings"
 msgstr "הגדרות"
 
+msgctxt "#30010"
+msgid "Please use settings to login."
+msgstr "אנא השתמש בהגדרות על מנת להתחבר"
+
 #. Sources strings
 msgctxt "#30100"
 msgid "Fetching Sources"
@@ -95,10 +99,14 @@ msgid "Incorrect username or password"
 msgstr ""
 
 msgctxt "#30402"
-msgid "Success"
+msgid "Missing username or password"
 msgstr ""
 
 msgctxt "#30403"
+msgid "Success"
+msgstr ""
+
+msgctxt "#30404"
 msgid "Token expired, relogin to watchlist"
 msgstr ""
 

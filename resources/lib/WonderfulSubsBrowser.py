@@ -2,19 +2,21 @@ import urllib
 import math
 import itertools
 import json
+
 from ui import utils
 from ui.BrowserBase import BrowserBase
 
 from .constants import API_BASE, BASE_URL
 
-
 class WonderfulSubsBrowser(BrowserBase):
     _BASE_URL = "{}/{}".format(BASE_URL, API_BASE)
     _RESULTS_PER_SEARCH_PAGE = 25
 
-    def __init__(self, base_flavor):
+    def __init__(self, base_flavor, token=None, relogin_cb=None):
         super(WonderfulSubsBrowser, self).__init__()
         self._FILTER_FLAVOR = self._filter_flavor_key(base_flavor)
+        self._token = token
+        self._relogin = relogin_cb
 
     def _filter_flavor_key(self, base_flavor):
         flavor_key = {
@@ -98,12 +100,35 @@ class WonderfulSubsBrowser(BrowserBase):
         return [utils.allocate_item(name, base_url % next_page, True, None)]
 
     def _json_request(self, url, data):
-        response = json.loads(self._get_request(url, data))
-        if response["status"] != 200:
-            raise Exception("Request %s returned with error code %d" % (url,
-                                                                        response["status"]))
+        authorization = None if not self._token else \
+                "Bearer {}".format(self._token)
 
-        return response["json"]
+        def inject_headers(req):
+            req.add_header("Content-Type", "application/json")
+            req.add_header("Accept", "application/json")
+            if authorization:
+                req.add_header("Authorization", authorization)
+
+            return req
+
+        response = self._get_request(url, data, set_request=inject_headers)
+
+        if self._response_forbidden(response):
+            if self._relogin is not None:
+                self._relogin()
+                return None
+            raise Exception("Forbidden")
+
+        return json.loads(response)["json"]
+
+    @staticmethod
+    def _response_forbidden(response):
+        """Return, if a response was forbidden.
+
+        :param response: http response
+        :return: True, if the response was forbidden. False otherwise.
+        """
+        return response.encode("utf-8") == u"Forbidden"
 
     def _process_anime_view(self, url, data, base_plugin_url, page):
         json_resp = self._json_request(url, data)
@@ -143,7 +168,7 @@ class WonderfulSubsBrowser(BrowserBase):
 
         else:
             base.update({
-                "name": einfo["title"] if "Episode" in einfo["title"] else "Ep. %s (%s)" %(einfo["episode_number"], einfo["title"]), 
+                "name": einfo["title"] if "Episode" in einfo["title"] else "Ep. %s (%s)" %(einfo["episode_number"], einfo["title"]),
                 "id": str(einfo["episode_number"]),
                 "url": "play/%s/%s/%d/%s/%s" % (anime_url,
                                           "dub" if is_dubbed else "sub",
@@ -156,7 +181,7 @@ class WonderfulSubsBrowser(BrowserBase):
             })
         return base
 
-    def _format_sources(self, sname, is_dubbed, einfo): 
+    def _format_sources(self, sname, is_dubbed, einfo):
         sources = {}
 
         value = einfo.get("sources", None)
@@ -369,3 +394,29 @@ class WonderfulSubsBrowser(BrowserBase):
 
         ep = season["episodes"][episode]
         return ep["sources"]
+
+    def has_token(self):
+        return self._token is not None and len(self._token)
+
+    @property
+    def token(self):
+        assert(self.has_token())
+
+        return self._token
+
+    def login(self, username, password):
+        if not (username and password):
+            raise Exception("Not provided")
+
+        self._token = None
+        url = self._to_url("users/login")
+        payload = {"username": username, "password": password}
+
+        response = self._post_request(url, json=payload)
+        response = json.loads(response)
+
+        if response["success"] is not True:
+            return None
+
+        self._token = response["token"]
+        return self._token

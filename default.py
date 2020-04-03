@@ -2,6 +2,7 @@ from resources.lib.ui import control
 from resources.lib.ui import utils
 from resources.lib.ui.SourcesList import SourcesList
 from resources.lib.ui.router import on_param, route, router_process
+from resources.lib.ui.embed_extractor import register_wonderful_subs
 from resources.lib.WonderfulSubsBrowser import WonderfulSubsBrowser
 from resources.lib.GogoAnimeBrowser import GogoAnimeBrowser
 from resources.lib.AniListBrowser import AniListBrowser
@@ -31,7 +32,40 @@ MENU_ITEMS = [
 ]
 
 _FLAVOR = control.getSetting('baseflavor')
-_BROWSER = WonderfulSubsBrowser(_FLAVOR)
+_TOKEN = control.getSetting('login.token')
+
+def _logout(full):
+    control.setSetting('login.token', None)
+    if full:
+        control.setSetting("wonderfulsubs.name", None)
+        control.setSetting("wonderfulsubs.password", None)
+
+def _on_relogin():
+    _logout(False)
+
+    username = control.getSetting("wonderfulsubs.name")
+    password = control.getSetting("wonderfulsubs.password")
+    if not (username and password):
+        control.ok_dialog(control.lang(30400), control.lang(30402))
+        return
+
+    token = _BROWSER.login(username, password)
+    if not token:
+        control.ok_dialog(control.lang(30400), control.lang(30401))
+        return
+
+    control.setSetting('login.token', token)
+    control.refresh()
+
+_BROWSER = WonderfulSubsBrowser(_FLAVOR, _TOKEN, _on_relogin)
+
+@route('wonderful_login')
+def wonderful_login(payload, params):
+    return _on_relogin()
+
+@route('wonderful_logout')
+def wonderful_logout(payload, params):
+    _logout(True)
 
 def _add_last_watched():
     if not control.getSetting(LASTWATCHED_URL_KEY):
@@ -286,7 +320,13 @@ def LIST_MENU(payload, params):
         contentType=control.getSetting("contenttype.menu"),
     )
 
-set_browser(_BROWSER, draw_cm)
-add_watchlist(MENU_ITEMS)
-_add_last_watched()
+if not _BROWSER.has_token():
+    # Deny access to menu.
+    MENU_ITEMS = [(control.lang(30010), "settings", '')]
+else:
+    set_browser(_BROWSER, draw_cm)
+    register_wonderful_subs(_BROWSER.base_url, _BROWSER.token)
+    add_watchlist(MENU_ITEMS)
+    _add_last_watched()
+
 router_process(control.get_plugin_url(), control.get_plugin_params())
