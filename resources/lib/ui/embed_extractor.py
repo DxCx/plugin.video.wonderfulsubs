@@ -70,6 +70,16 @@ def __check_video_list(refer_url, vidlist, add_referer=False,
 
     return nlist
 
+def __wrapper_add_token(url, data):
+    token, cb = data
+
+    def inject_token(req):
+        req.add_header("Authorization", "Bearer {}".format(token))
+        return req
+
+    response = http.send_request(url, set_request=inject_token)
+    return cb(url, response.text)
+
 def __extract_wonderfulsubs(url, content, referer=None):
     res = json.loads(content)
     if res["status"] != 200:
