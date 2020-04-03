@@ -54,7 +54,7 @@ def get_referer(url):
         return headers[_REFERER_HEADER]
     return None
 
-def send_request(url, data=None, set_request=None, head=False):
+def send_request(url, data=None, json=None, set_request=None, head=False):
     session = Session()
     target_url, headers = _strip_url(url)
 
@@ -72,7 +72,7 @@ def send_request(url, data=None, set_request=None, head=False):
     if refer_url:
         set_request = __set_referer(set_request, refer_url)
 
-    resp = __send_request(session, target_url, data, set_request, head)
+    resp = __send_request(session, target_url, data, json, set_request, head)
 
     # Append Cookie if exists
     cookie = resp.request.headers.get(_COOKIE_HEADER)
@@ -102,7 +102,7 @@ def strip_cookie_url(url):
     return _url_with_headers(url, headers)
 
 def head_request(url, set_request=None):
-    return send_request(url, set_request=set_request, head=True)
+    return send_request(url, set_request=set_request, json=None, head=True)
 
 def _url_with_headers(url, headers):
     if not len(headers.keys()):
@@ -143,7 +143,7 @@ def __set_referer(set_request, url):
 def __set_cookie(set_request, c):
     return __set_header(set_request, _COOKIE_HEADER, c)
 
-def __send_request(session, url, data=None, set_request=None, head=False):
+def __send_request(session, url, data=None, json_data=None, set_request=None, head=False):
     r = PrepReq(session)
     if set_request:
         r = set_request(r)
@@ -158,7 +158,11 @@ def __send_request(session, url, data=None, set_request=None, head=False):
     if head:
         return session.head(**kargs)
 
-    if data:
-        data = urllib.urlencode(data)
-        return session.post(data=data, **kargs)
+    if data or json_data:
+        if data:
+            data = urllib.urlencode(data)
+            return session.post(json=data, **kargs)
+
+        return session.post(json=json_data, **kargs)
+
     return session.get(**kargs)
